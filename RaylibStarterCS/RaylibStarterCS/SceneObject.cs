@@ -1,31 +1,186 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Diagnostics;
 
 namespace RaylibStarterCS
 {
-    class SceneObject
+    public class SceneObject
     {
         protected SceneObject parent = null;
         protected List<SceneObject> children = new List<SceneObject>();
+
+        protected Matrix3 localTransform = new Matrix3(1);
+        protected Matrix3 globalTransform = new Matrix3(1);
+        public Matrix3 LocalTransform
+        {
+            get { return localTransform; }
+        }
+
+        public Matrix3 GlobalTransform
+        {
+            get { return globalTransform; }
+        }
 
         public SceneObject Parent
         {
             get { return parent; }
         }
 
+        // Constructor
         public SceneObject()
         {
         }
 
+        // Deconstruct the sceneObject
+        ~SceneObject()
+        {
+            // Remove self from parent
+            if (parent != null)
+            {
+                parent.RemoveChild(this);
+            }
+
+            // Remove each child from this sceneObject
+            foreach (SceneObject so in children)
+            {
+                so.parent = null;
+            }
+        }
+
+        // Called on every update
+        public virtual void OnUpdate(float deltaTime) 
+        { 
+ 
+        } 
+        
+        // Called on every draw
+        public virtual void OnDraw() 
+        { 
+ 
+        }
+
+        public void Update(float deltaTime)
+        {
+            // Call OnUpdate 
+            OnUpdate(deltaTime);
+
+            // Update all children of this sceneObject
+            foreach (SceneObject child in children)
+            {
+                child.Update(deltaTime);
+            }
+        }
+
+        // Draw SceneObject
+        public void Draw()
+        {
+            // Call OnDraw 
+            OnDraw();
+
+            // Draw all children of this sceneObject
+            foreach (SceneObject child in children)
+            {
+                child.Draw();
+            }
+        }
+
+        // Update the transform of this sceneObject. This is called everytime the sceneObjects transformation is changed
+        public void UpdateTransform()
+        {
+            // If this sceneObject has a parent, calculate the globalTransform
+            if (parent != null)
+            {
+                globalTransform = parent.globalTransform * localTransform;
+            }  
+            // Default to localTransform
+            else
+            {
+                globalTransform = localTransform;
+            }
+            
+            // Update transform for each child in this sceneObject
+            foreach (SceneObject child in children)
+            {
+                child.UpdateTransform();
+            }
+                
+        }
+
+        // Set position
+        public void SetPosition(float x, float y)
+        {
+            localTransform.SetTranslation(x, y);
+            UpdateTransform();
+        }
+
+        // Set rotation
+        public void SetRotate(float radians)
+        {
+            localTransform.SetRotateZ(radians);
+            UpdateTransform();
+        }
+
+        // Set scale
+        public void SetScale(float width, float height)
+        {
+            localTransform.SetScaled(width, height, 1);
+            UpdateTransform();
+        }
+
+        // Translate scene object
+        public void Translate(float x, float y)
+        {
+            localTransform.Translate(x, y);
+            UpdateTransform();
+        }
+
+        // Rotate scene object
+        public void Rotate(float radians)
+        {
+            localTransform.RotateZ(radians);
+            UpdateTransform();
+        }
+
+        // Scale scene object
+        public void Scale(float width, float height)
+        {
+            localTransform.Scale(width, height, 1);
+            UpdateTransform();
+        }
+
+
+        // Return the amount of children
         public int GetChildCount()
         {
             return children.Count;
         }
 
+        // Get a child of a certain index
         public SceneObject GetChild(int index)
         {
             return children[index];
+        }
+
+        // Add child to this sceneObject
+        public void AddChild(SceneObject child)
+        {
+            // Check and make sure the object that's being added doesn't already have a parent
+            Debug.Assert(child.parent == null);
+            // Make this sceneObject the parent of the child 
+            child.parent = this;
+            // Add the child to children list
+            children.Add(child);
+        }
+
+        // Remove child from this sceneObject
+        public void RemoveChild(SceneObject child)
+        {
+            // If removal is succesful, remove the childs parent
+            if (children.Remove(child) == true)
+            {
+                child.parent = null;
+            }
         }
     }
 }

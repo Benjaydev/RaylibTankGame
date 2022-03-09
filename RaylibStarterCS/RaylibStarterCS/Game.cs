@@ -18,15 +18,11 @@ namespace RaylibStarterCS
 
         private float deltaTime = 0.005f;
 
-        Image logo;
-        Texture2D logoTexture;
+        SceneObject tankObject = new SceneObject();
+        SceneObject turretObject = new SceneObject();
 
-        Image ship;
-        Texture2D shipTexture;
-
-        float m_timer = 0;
-
-        Camera2D camera;
+        SpriteObject tankSprite = new SpriteObject();
+        SpriteObject turretSprite = new SpriteObject();
 
         public Game()
         {
@@ -37,23 +33,25 @@ namespace RaylibStarterCS
             stopwatch.Start();
             lastTime = stopwatch.ElapsedMilliseconds;
 
-            if (Stopwatch.IsHighResolution)
-            {
-                Console.WriteLine("Stopwatch high-resolution frequency: {0} ticks per second", Stopwatch.Frequency);
-            }
+            tankSprite.Load("./PNG/Tanks/tankBlue_outline.png");
+            // Setup the tank barrel starting rotation
+            tankSprite.SetRotate(-90 * (float)(Math.PI / 180.0f));
+            // Set position of turret to be centered in tank sprite
+            tankSprite.SetPosition(-tankSprite.Width / 2.0f, tankSprite.Height / 2.0f);
 
-            logo = LoadImage("../Images/aie-logo-dark.png");
-            logoTexture = LoadTextureFromImage(logo);
+            turretSprite.Load("./PNG/Tanks/barrelBlue.png");
+            // Setup the tank base starting rotation
+            turretSprite.SetRotate(-90 * (float)(Math.PI / 180.0f));
+            // Set position of base to be centered in turret sprite
+            turretSprite.SetPosition(0, turretSprite.Width / 2.0f);
 
-            ship = LoadImage("../Images/ship.png");
-            shipTexture = LoadTextureFromImage(ship);
+            // Set up the scene object hierarchy - Add turretSprite to turretObject, then add tankSprite and turretObject to tankObject
+            turretObject.AddChild(turretSprite);
+            tankObject.AddChild(tankSprite);
+            tankObject.AddChild(turretObject);
 
-            SetTargetFPS(60);       // Set our game to run at 60 frames-per-second
-
-            camera.target = new Vector2(0, 0);
-            camera.offset = Vector2.Zero;
-            camera.rotation = 0;
-            camera.zoom = 1.0f;
+            // Now tankObject position can be changed without effecting the children
+            tankObject.SetPosition(GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f);
         }
 
         public void Shutdown()
@@ -62,9 +60,11 @@ namespace RaylibStarterCS
 
         public void Update()
         {
-            lastTime = currentTime;
+            // Calculate the deltatime for update
             currentTime = stopwatch.ElapsedMilliseconds;
             deltaTime = (currentTime - lastTime) / 1000.0f;
+
+            // Calculate the fps
             timer += deltaTime;
             if (timer >= 1)
             {
@@ -73,64 +73,54 @@ namespace RaylibStarterCS
                 timer -= 1;
             }
             frames++;
+            lastTime = currentTime;
 
-            // insert game logic here            
-
-            m_timer += deltaTime;
-
-            // use arrow keys to move camera
-            if (IsKeyDown(KeyboardKey.KEY_UP))
-                camera.target.Y += 500.0f * deltaTime;
-
-            if (IsKeyDown(KeyboardKey.KEY_DOWN))
-                camera.target.Y -= 500.0f * deltaTime;
-
-            if (IsKeyDown(KeyboardKey.KEY_LEFT))
-                camera.target.X -= 500.0f * deltaTime;
-
-            if (IsKeyDown(KeyboardKey.KEY_RIGHT))
-                camera.target.X += 500.0f * deltaTime;
-
-
-            // Camera zoom controls
-            camera.zoom += ((float)GetMouseWheelMove() * 0.05f);
-
-            if (camera.zoom > 3.0f) camera.zoom = 3.0f;
-            else if (camera.zoom < 0.1f) camera.zoom = 0.1f;
-
-            // Camera reset (zoom and rotation)
-            if (IsKeyPressed(KeyboardKey.KEY_R))
+            // Move and rotate the tank
+            if (IsKeyDown(KeyboardKey.KEY_A))
             {
-                camera.zoom = 1.0f;
-                camera.rotation = 0.0f;
+                tankObject.Rotate(-deltaTime);
             }
+            if (IsKeyDown(KeyboardKey.KEY_D))
+            {
+                tankObject.Rotate(deltaTime);
+            }
+            if (IsKeyDown(KeyboardKey.KEY_W))
+            {
+                Vector3 facing = new Vector3(tankObject.LocalTransform.m00, tankObject.LocalTransform.m01, 1) * deltaTime * 100;
+                tankObject.Translate(facing.x, facing.y);
+            }
+            if (IsKeyDown(KeyboardKey.KEY_S))
+            {
+                Vector3 facing = new Vector3(
+                tankObject.LocalTransform.m00, tankObject.LocalTransform.m01, 1) * deltaTime * -100; 
+                tankObject.Translate(facing.x, facing.y);
+            }
+
+            // Move barrrel
+            if (IsKeyDown(KeyboardKey.KEY_Q))
+            {
+                turretObject.Rotate(-deltaTime);
+            }
+            if (IsKeyDown(KeyboardKey.KEY_E))
+            {
+                turretObject.Rotate(deltaTime);
+            }
+
+
+            tankObject.Update(deltaTime);
         }
 
         public void Draw()
         {
             BeginDrawing();
-                BeginMode2D(camera);
 
-                    ClearBackground(Color.WHITE);
+            ClearBackground(Color.WHITE);
 
-			DrawTexture(logoTexture,
-				GetScreenWidth() - logoTexture.width, 0, Color.WHITE);
+            // Display fps
+            DrawText(fps.ToString(), 10, 10, 12, Color.RED);
 
-            // demonstrate spinning sprite
-            DrawTextureEx(shipTexture, new Vector2(150, 300), m_timer*30, 1, Color.WHITE);
-
-            // draw a thin line
-            DrawLine(300, 300, 600, 400, Color.BLACK);
-
-            // draw a moving purple circle
-            DrawCircle((int)(Math.Sin(m_timer) * 100) + 300, 150, 50, Color.PURPLE);
-            
-            // draw a rotating red box
-            DrawRectanglePro(new Rectangle(100, 200, 60, 20), new Vector2(30, 10), m_timer*30, Color.RED);
-
-            EndMode2D();
-
-                DrawText(fps.ToString(), 10, 10, 14, Color.RED);
+            // Draw tank
+            tankObject.Draw();
 
             EndDrawing();
         }

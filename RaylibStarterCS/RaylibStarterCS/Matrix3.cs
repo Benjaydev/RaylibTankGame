@@ -10,6 +10,7 @@ namespace RaylibStarterCS
     public struct Matrix3
     {
         // Initialise the matrix values
+
         public float m00, m01, m02;
         public float m10, m11, m12;
         public float m20, m21, m22;
@@ -100,6 +101,20 @@ namespace RaylibStarterCS
             Set((float)Math.Cos(rad), (float)Math.Sin(rad), 0, -(float)Math.Sin(rad), (float)Math.Cos(rad), 0, 0, 0, 1);
         }
 
+        // Rotate the z axis of matrix by radians
+        public void RotateZ(double radZ)
+        {
+            // Make new matrix for each axis
+            Matrix3 z = new Matrix3();
+            // Set rotate for each new matrix
+            z.SetRotateZ(radZ);
+
+            // Apply rotations to this matrix by multiplying it by each axis matrix and setting
+            Set(this * z);
+
+        }
+
+        // Rotate all axes
         public void Rotate(double radX, double radY, double radZ)
         {
             // Make new matrix for each axis
@@ -118,8 +133,8 @@ namespace RaylibStarterCS
 
         }
 
-        // Rotate multiple axis at once
-        public void SetEuler(float pitchX, float yawY, float rollZ)
+        // Rotate multiple axes at once
+        public void SetRotate(float pitchX, float yawY, float rollZ)
         {
             // Make new matrix for each axis
             Matrix3 x = new Matrix3();
@@ -133,6 +148,26 @@ namespace RaylibStarterCS
 
             // Combine the rotations
             Set(z * y * x);
+        }
+        // Set scale of matrix
+        public void SetScaled(float x, float y, float z)
+        {
+            m00 = x; m01 = 0; m02 = 0;
+            m10 = 0; m11 = y; m12 = 0;
+            m20 = 0; m21 = 0; m22 = z;
+        }
+        public void Scale(float x, float y, float z)
+        {
+            Matrix3 m = new Matrix3();
+            m.SetScaled(x, y, z);
+
+            Set(this * m);
+        }
+
+
+        public void Translate(float x, float y)
+        {
+            m20 = m20 + x; m21 = m21 + y;
         }
 
         // Set translation
@@ -168,5 +203,12 @@ namespace RaylibStarterCS
                 M1.GetRow(1).Dot(M2.GetColumn(2)),
                 M1.GetRow(2).Dot(M2.GetColumn(2)));
         }
+
+        public static Matrix3 operator +(Matrix3 M1, Vector3 v)
+        {
+            return new Matrix3(M1.m00 + v.x, M1.m01 + v.x, M1.m02 + v.x, M1.m10 + v.y, M1.m11 + v.y, M1.m12 + v.y, M1.m20 + v.z, M1.m21 + v.z, M1.m22 + v.z);
+        }
+
+
     }
 }

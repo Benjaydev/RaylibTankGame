@@ -6,6 +6,100 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="PNG\Tanks\barrelBeige.png" />
+    <None Remove="PNG\Tanks\barrelBeige_outline.png" />
+    <None Remove="PNG\Tanks\barrelBlack.png" />
+    <None Remove="PNG\Tanks\barrelBlack_outline.png" />
+    <None Remove="PNG\Tanks\barrelBlue.png" />
+    <None Remove="PNG\Tanks\barrelBlue_outline.png" />
+    <None Remove="PNG\Tanks\barrelGreen.png" />
+    <None Remove="PNG\Tanks\barrelGreen_outline.png" />
+    <None Remove="PNG\Tanks\barrelRed.png" />
+    <None Remove="PNG\Tanks\barrelRed_outline.png" />
+    <None Remove="PNG\Tanks\tankBeige.png" />
+    <None Remove="PNG\Tanks\tankBeige_outline.png" />
+    <None Remove="PNG\Tanks\tankBlack.png" />
+    <None Remove="PNG\Tanks\tankBlack_outline.png" />
+    <None Remove="PNG\Tanks\tankBlue.png" />
+    <None Remove="PNG\Tanks\tankBlue_outline.png" />
+    <None Remove="PNG\Tanks\tankGreen.png" />
+    <None Remove="PNG\Tanks\tankGreen_outline.png" />
+    <None Remove="PNG\Tanks\tankRed.png" />
+    <None Remove="PNG\Tanks\tankRed_outline.png" />
+    <None Remove="PNG\Tanks\tracksLarge.png" />
+    <None Remove="PNG\Tanks\tracksSmall.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="PNG\Tanks\barrelBeige.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PNG\Tanks\barrelBeige_outline.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PNG\Tanks\barrelBlack.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PNG\Tanks\barrelBlack_outline.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PNG\Tanks\barrelBlue.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PNG\Tanks\barrelBlue_outline.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PNG\Tanks\barrelGreen.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PNG\Tanks\barrelGreen_outline.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PNG\Tanks\barrelRed.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PNG\Tanks\barrelRed_outline.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PNG\Tanks\tankBeige.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PNG\Tanks\tankBeige_outline.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PNG\Tanks\tankBlack.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PNG\Tanks\tankBlack_outline.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PNG\Tanks\tankBlue.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PNG\Tanks\tankBlue_outline.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PNG\Tanks\tankGreen.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PNG\Tanks\tankGreen_outline.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PNG\Tanks\tankRed.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PNG\Tanks\tankRed_outline.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PNG\Tanks\tracksLarge.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PNG\Tanks\tracksSmall.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Raylib-cs" Version="3.5.0" />
   </ItemGroup>
 
