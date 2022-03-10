@@ -9,7 +9,8 @@ namespace RaylibStarterCS
 {
     public class BulletObject : SpriteObject
     {
-        public float velocity = 1000f;
+        public float startVelocity = 1000f;
+        public float velocityMultiple = 1f;
         public int bounces = 0;
         public int maxBounces = 4;
         public Vector3 ForwardVector;
@@ -18,7 +19,7 @@ namespace RaylibStarterCS
 
         public BulletObject(Vector3 facing)
         {
-            ForwardVector = facing * velocity;
+            ForwardVector = facing * startVelocity;
             Load("./PNG/Bullets/bulletBlueSilver_outline.png");
             SetRotate(90 * (float)(Math.PI / 180.0f));
             Rotate(MathF.Atan2(ForwardVector.y, ForwardVector.x));
@@ -40,19 +41,20 @@ namespace RaylibStarterCS
 
                 // Reset position to where it's meant to be
                 SetPosition(prevpos.x, prevpos.y);
-                bounces++;
-                ForwardVector = ForwardVector * 0.75f;
+                //bounces++;
+                //ForwardVector = ForwardVector * velocityMultiple;
             }
                 
         }
 
         public bool UpdateBullet(Vector3 trans, float deltaTime)
         {
-            if(bounces >= maxBounces)
+            velocityMultiple *= 1 - (0.5f * deltaTime);
+            if(bounces >= maxBounces || velocityMultiple < (0.01f * (1+deltaTime)))
             {
                 return true;
             }
-            Translate(trans.x, trans.y);
+            Translate(trans.x* velocityMultiple, trans.y* velocityMultiple);
 
             return false;
         }
