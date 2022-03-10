@@ -21,30 +21,32 @@ namespace RaylibStarterCS
         private float deltaTime = 0.005f;
         public Vector3[] sceneBoundries = new Vector3[2] {new Vector3(GetScreenWidth() / 2, GetScreenHeight() / 2, 0), new Vector3(-GetScreenWidth() / 2, -GetScreenHeight() / 2, 0) };
 
-        SceneObject tankObject = new SceneObject();
-        SceneObject turretObject = new SceneObject();
-        SceneObject firePoint = new SceneObject();
-        SceneObject trackPoint = new SceneObject();
+        Tank tankObject = new Tank();
+        //SceneObject turretObject = new SceneObject();
+        //SceneObject firePoint = new SceneObject();
+        //SceneObject trackPoint = new SceneObject();
 
-        SpriteObject tankSprite = new SpriteObject();
-        SpriteObject turretSprite = new SpriteObject();
+        //SpriteObject tankSprite = new SpriteObject();
+        //SpriteObject turretSprite = new SpriteObject();
 
-        List<BulletObject> bullets = new List<BulletObject>();
-        List<BulletObject> removeBullets = new List<BulletObject>();
         List<Smoke> smoke = new List<Smoke>();
         List<Smoke> removeSmoke = new List<Smoke>();
-        List<SpriteObject> tracks = new List<SpriteObject>();
+    
 
         public Game()
         {
         }
 
+        bool initiated = false;
         public void Init()
         {
 
             stopwatch.Start();
             lastTime = stopwatch.ElapsedMilliseconds;
 
+            
+
+            /*
             tankSprite.Load("./PNG/Tanks/tankRed_outline.png");
             // Setup the tank barrel starting rotation
             tankSprite.SetRotate(-90 * (float)(Math.PI / 180.0f));
@@ -71,7 +73,7 @@ namespace RaylibStarterCS
             tankObject.AddChild(trackPoint);
 
             // Now tankObject position can be changed without effecting the children
-            tankObject.SetPosition(GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f);
+            tankObject.SetPosition(GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f);*/
         }
 
         public void Shutdown()
@@ -84,8 +86,15 @@ namespace RaylibStarterCS
         public float trackCooldown = 0.5f;
         public float trackCooldownCount = 0.5f;
         public int trackCount = 0;
+
         public void Update()
         {
+            if (!initiated)
+            {
+                tankObject = new Tank();
+                tankObject.Init(GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f);
+                initiated = true;
+            }
             // Calculate the deltatime for update
             currentTime = stopwatch.ElapsedMilliseconds;
             deltaTime = (currentTime - lastTime) / 1000.0f;
@@ -101,41 +110,15 @@ namespace RaylibStarterCS
             frames++;
             lastTime = currentTime;
 
-            if(cooldownCount <= shootCooldown)
-            {
-                cooldownCount += deltaTime;
-            }
 
             // Shoot bullet
-            Vector3 facing = new Vector3(tankObject.LocalTransform.m00, tankObject.LocalTransform.m01, 1);
-            if (IsKeyDown(KeyboardKey.KEY_SPACE) && cooldownCount >= shootCooldown)
+     
+            if (IsKeyDown(KeyboardKey.KEY_SPACE))
             {
-                Vector3 turretFacing = new Vector3(firePoint.GlobalTransform.m00, firePoint.GlobalTransform.m01, 1);
-                BulletObject newbullet = new BulletObject(turretFacing);
-                newbullet.SetPosition(firePoint.GlobalTransform.m20, firePoint.GlobalTransform.m21);
-                bullets.Add(newbullet);
-
-                cooldownCount = 0f;
+                tankObject.ShootBullet();
             }
 
-            foreach(BulletObject bullet in bullets)
-            {
-                Vector3 f = bullet.ForwardVector * deltaTime;
-                if(bullet.UpdateBullet(f, deltaTime))
-                {
-                    removeBullets.Add(bullet);
-                }
-            }
-            foreach(BulletObject bullet in removeBullets)
-            {
-                bullets.Remove(bullet);
-            }
-
-
-            if (trackCooldownCount <= trackCooldown)
-            {
-                trackCooldownCount += deltaTime;
-            }
+          
 
 
             // Move and rotate the tank
@@ -149,70 +132,26 @@ namespace RaylibStarterCS
             }
             if (IsKeyDown(KeyboardKey.KEY_W))
             {
-                MakeTrack(facing);
-                Vector3 f = facing * 100 * deltaTime;
-                tankObject.Translate(f.x, f.y);
-
-                
+                tankObject.MoveTank(deltaTime,1);  
             }
             if (IsKeyDown(KeyboardKey.KEY_S))
-            {   
-                MakeTrack(facing);
-                Vector3 f = facing * -100 * deltaTime;
-                tankObject.Translate(f.x, f.y);
-                
+            {
+                tankObject.MoveTank(deltaTime, -1);
             }
 
             // Move barrrel
             if (IsKeyDown(KeyboardKey.KEY_Q))
             {
-                turretObject.Rotate(-deltaTime);
+                tankObject.RotateTurret(deltaTime, -1);
             }
             if (IsKeyDown(KeyboardKey.KEY_E))
             {
-                turretObject.Rotate(deltaTime);
+                tankObject.RotateTurret(deltaTime, 1);
             }
 
-
-            tankObject.Update(deltaTime);
-            foreach (BulletObject bullet in bullets)
-            {
-                bullet.Update(deltaTime);
-            }
-            // Update smoke
-            foreach (Smoke s in smoke)
-            {
-                if (s.Update(deltaTime))
-                {
-                    removeSmoke.Add(s);
-                }
-            }
-            // Remove all finished smoke
-            foreach (Smoke rs in removeSmoke)
-            {
-                smoke.Remove(rs);
-            }
+            tankObject.Update(deltaTime); 
         }
 
-        public void MakeTrack(Vector3 facing)
-        {
-            if (trackCooldownCount >= trackCooldown)
-            {
-                SpriteObject track = new SpriteObject();
-                track.Load("./PNG/Tanks/tracksSmall.png");
-
-                track.SetRotate(90 * (float)(Math.PI / 180.0f));
-                track.Rotate(MathF.Atan2(facing.y, facing.x));
-                track.SetPosition(trackPoint.GlobalTransform.m20, trackPoint.GlobalTransform.m21);
-                tracks.Add(track);
-                trackCooldownCount = 0f;
-                trackCount++;
-                if (trackCount >= 15)
-                {
-                    tracks.RemoveAt(0);
-                }
-            }
-        }
 
 
         public void Draw()
@@ -224,27 +163,8 @@ namespace RaylibStarterCS
             // Display fps
             DrawText(fps.ToString(), 10, 10, 12, Color.RED);
 
-            foreach (BulletObject bullet in bullets)
-            {
-                bullet.Draw();
-            }
-            // Draw smoke
-            foreach (Smoke s in smoke)
-            {
-                s.Draw();
-            }
-
-            foreach (SpriteObject track in tracks)
-            {
-                track.Draw();
-            }
-
             // Draw tank
             tankObject.Draw();
-
-            
-
-            removeSmoke = new List<Smoke>();
 
             EndDrawing();
         }

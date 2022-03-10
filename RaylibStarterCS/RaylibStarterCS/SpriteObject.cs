@@ -7,8 +7,8 @@ namespace RaylibStarterCS
 {
     public class SpriteObject : SceneObject
     {
-        Texture2D texture = new Texture2D();
-        Image image = new Image();
+        public Texture2D texture = new Texture2D();
+        public Image image = new Image();
         public float scale = 1f;
 
         public float Width
