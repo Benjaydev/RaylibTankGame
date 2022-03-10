@@ -2,12 +2,16 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
+using Raylib_cs;
 using static Raylib_cs.Raylib;
 
 namespace RaylibStarterCS
 {
     public class SceneObject
     {
+
+        public string tag = "";
+
         protected SceneObject parent = null;
         protected List<SceneObject> children = new List<SceneObject>();
 
@@ -16,6 +20,7 @@ namespace RaylibStarterCS
 
         // Right top and left bottom
         protected Vector3[] WorldBoundries = new Vector3[2];
+        //protected float HitRadius = 5f;
 
         public Matrix3 LocalTransform
         {
@@ -111,6 +116,8 @@ namespace RaylibStarterCS
             {
                 child.UpdateTransform();
             }
+
+         
                 
         }
 
@@ -138,32 +145,63 @@ namespace RaylibStarterCS
         // Translate scene object
         public void Translate(float x, float y)
         {
-            Vector3[] WorldBoundries = { new Vector3(GetScreenWidth(), GetScreenHeight(), 0), new Vector3(0, 0, 0) };
-            if ( !(globalTransform.m20+x >= WorldBoundries[0].x || globalTransform.m20 + x <= WorldBoundries[1].x || globalTransform.m21 + y >= WorldBoundries[0].y || globalTransform.m21 + y <= WorldBoundries[1].y))
+            if (!CheckCollision(x, y))
             {
                 localTransform.Translate(x, y);
                 UpdateTransform();
             }
+        }
+
+        public bool CheckCollision(float x, float y)
+        {
+            Vector3[] WorldBoundries = { new Vector3(GetScreenWidth(), GetScreenHeight(), 0), new Vector3(0, 0, 0) };
+            // Check edge of window collisions
+            if ((globalTransform.m20 + x >= WorldBoundries[0].x || globalTransform.m20 + x <= WorldBoundries[1].x || globalTransform.m21 + y >= WorldBoundries[0].y || globalTransform.m21 + y <= WorldBoundries[1].y))
+            {
+                // Right wall
+                if (globalTransform.m20 + x >= WorldBoundries[0].x)
+                {
+                    CollideEvent(new Vector3(-1, 0, 0));
+                }
+                // Left wall
+                else if (globalTransform.m20 + x <= WorldBoundries[1].x)
+                {
+                    CollideEvent(new Vector3(1, 0, 0));
+                }
+                // Bottom wall
+                else if (globalTransform.m21 + y >= WorldBoundries[0].y)
+                {
+                    CollideEvent(new Vector3(0, 1, 0));
+                }
+                // Top wall
+                else if (globalTransform.m21 + y <= WorldBoundries[1].y)
+                {
+                    CollideEvent(new Vector3(0, -1, 0));
+                }
+                return true;
+            }
+            foreach(SceneObject obj in Game.sceneObjects)
+            {
+                if(obj != this && !(tag == "Bullet" && obj.tag == "Bullet"))
+                {
+                    Vector3 sceneObjectPos = new Vector3(obj.GlobalTransform.m20, obj.GlobalTransform.m21, 0);
+                    Vector3 thisObjectPos = new Vector3(GlobalTransform.m20, GlobalTransform.m21, 0);
+                    float dist = MathF.Sqrt(Math.Abs(sceneObjectPos.x - thisObjectPos.x) + Math.Abs(sceneObjectPos.y - thisObjectPos.y));
+
+                    
+                    if (dist < 7.5f)
+                    {
+                        Console.WriteLine(dist);
+                    }
+                }
+            }
             
-            if(globalTransform.m20 + x >= WorldBoundries[0].x)
-            {
-                CollideEvent(new Vector3(-1, 0, 0));
-            }
-            else if(globalTransform.m20 + x <= WorldBoundries[1].x)
-            {
-                CollideEvent(new Vector3(1, 0, 0));
-            }
-            else if(globalTransform.m21 + y >= WorldBoundries[0].y)
-            {
-                CollideEvent(new Vector3(0, 1, 0));
-            }
-            else if(globalTransform.m21 + y <= WorldBoundries[1].y)
-            {
-                CollideEvent(new Vector3(0, -1, 0));
-            }
 
 
-            
+            return false;
+
+
+          
         }
 
         public virtual void CollideEvent(Vector3 Normal)

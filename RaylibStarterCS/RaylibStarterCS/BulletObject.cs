@@ -19,6 +19,7 @@ namespace RaylibStarterCS
 
         public BulletObject(Vector3 facing)
         {
+            tag = "Bullet";
             ForwardVector = facing * startVelocity;
             Load("./PNG/Bullets/bulletRedSilver_outline.png");
             SetRotate(90 * (float)(Math.PI / 180.0f));
@@ -55,6 +56,8 @@ namespace RaylibStarterCS
                 return true;
             }
             Translate(trans.x* velocityMultiple, trans.y* velocityMultiple);
+
+            
 
             return false;
         }

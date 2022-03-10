@@ -29,8 +29,9 @@ namespace RaylibStarterCS
         public int maxTrackCount = 15;
 
 
-        public Tank()
+        public Tank(string t)
         {
+            tag = t;
         }
 
         // Initiate tank
@@ -104,16 +105,17 @@ namespace RaylibStarterCS
         public override void OnDraw()
         {
             base.OnDraw();
-            // Draw each bullet
-            foreach (BulletObject bullet in bullets)
-            {
-                bullet.Draw();
-            }
             // Draw each track
             foreach (SpriteObject track in tracks)
             {
                 track.Draw();
             }
+            // Draw each bullet
+            foreach (BulletObject bullet in bullets)
+            {
+                bullet.Draw();
+            }
+            
         }
 
         // Function used to move tank in direction adjusted by delta time
@@ -149,6 +151,7 @@ namespace RaylibStarterCS
                 newbullet.SetPosition(firePoint.GlobalTransform.m20, firePoint.GlobalTransform.m21);
                 // Add to bullet list to keep track of it
                 bullets.Add(newbullet);
+                Game.sceneObjects.Add(newbullet);
 
                 // Reset cooldown
                 shootCooldownCount = 0f;

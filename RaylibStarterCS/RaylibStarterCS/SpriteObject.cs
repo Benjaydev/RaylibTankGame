@@ -31,6 +31,8 @@ namespace RaylibStarterCS
         {
             Image img = LoadImage(filename);
             texture = LoadTextureFromImage(img);
+            // Set radius to biggest of width and height
+            //HitRadius = texture.width > texture.height ? texture.width : texture.height;
         }
 
         public override void OnDraw()

@@ -21,17 +21,9 @@ namespace RaylibStarterCS
         private float deltaTime = 0.005f;
         public Vector3[] sceneBoundries = new Vector3[2] {new Vector3(GetScreenWidth() / 2, GetScreenHeight() / 2, 0), new Vector3(-GetScreenWidth() / 2, -GetScreenHeight() / 2, 0) };
 
-        Tank tankObject = new Tank();
-        //SceneObject turretObject = new SceneObject();
-        //SceneObject firePoint = new SceneObject();
-        //SceneObject trackPoint = new SceneObject();
-
-        //SpriteObject tankSprite = new SpriteObject();
-        //SpriteObject turretSprite = new SpriteObject();
-
-        List<Smoke> smoke = new List<Smoke>();
-        List<Smoke> removeSmoke = new List<Smoke>();
-    
+        Tank playerTank = new Tank("Player");
+        SpriteObject background = new SpriteObject();
+        public static List<SceneObject> sceneObjects = new List<SceneObject>();
 
         public Game()
         {
@@ -40,40 +32,11 @@ namespace RaylibStarterCS
         bool initiated = false;
         public void Init()
         {
-
             stopwatch.Start();
             lastTime = stopwatch.ElapsedMilliseconds;
 
-            
-
-            /*
-            tankSprite.Load("./PNG/Tanks/tankRed_outline.png");
-            // Setup the tank barrel starting rotation
-            tankSprite.SetRotate(-90 * (float)(Math.PI / 180.0f));
-            // Set position of turret to be centered in tank sprite
-            tankSprite.SetPosition(-tankSprite.Width / 2.0f, tankSprite.Height / 2.0f);
-
-            turretSprite.Load("./PNG/Tanks/barrelBlack_outline.png");
-            // Setup the tank base starting rotation
-            turretSprite.SetRotate(-90 * (float)(Math.PI / 180.0f));
-            // Set position of base to be centered in turret sprite
-            turretSprite.SetPosition(0, turretSprite.Width / 2.0f);
-
-            firePoint.SetRotate(-90 * (float)(Math.PI));
-            firePoint.SetPosition(turretSprite.Height+30, (turretSprite.Width / 2.0f)-17.5f);
-
-            trackPoint.SetRotate(-90 * (float)(Math.PI));
-            trackPoint.SetPosition(tankSprite.Height-35, -(tankSprite.Width/2));
-
-            // Set up the scene object hierarchy - Add turretSprite to turretObject, then add tankSprite and turretObject to tankObject
-            turretObject.AddChild(turretSprite);
-            turretObject.AddChild(firePoint);
-            tankObject.AddChild(tankSprite);
-            tankObject.AddChild(turretObject);
-            tankObject.AddChild(trackPoint);
-
-            // Now tankObject position can be changed without effecting the children
-            tankObject.SetPosition(GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f);*/
+            background.Load("./PNG/Environment/dirt.png");
+            background.scale = 5;
         }
 
         public void Shutdown()
@@ -91,10 +54,15 @@ namespace RaylibStarterCS
         {
             if (!initiated)
             {
-                tankObject = new Tank();
-                tankObject.Init(GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f);
+                sceneObjects.Add(playerTank);
+                playerTank.Init(GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f);
                 initiated = true;
             }
+
+            
+
+
+
             // Calculate the deltatime for update
             currentTime = stopwatch.ElapsedMilliseconds;
             deltaTime = (currentTime - lastTime) / 1000.0f;
@@ -115,7 +83,7 @@ namespace RaylibStarterCS
      
             if (IsKeyDown(KeyboardKey.KEY_SPACE))
             {
-                tankObject.ShootBullet();
+                playerTank.ShootBullet();
             }
 
           
@@ -124,32 +92,32 @@ namespace RaylibStarterCS
             // Move and rotate the tank
             if (IsKeyDown(KeyboardKey.KEY_A))
             {
-                tankObject.Rotate(-deltaTime);
+                playerTank.Rotate(-deltaTime);
             }
             if (IsKeyDown(KeyboardKey.KEY_D))
             {
-                tankObject.Rotate(deltaTime);
+                playerTank.Rotate(deltaTime);
             }
             if (IsKeyDown(KeyboardKey.KEY_W))
             {
-                tankObject.MoveTank(deltaTime,1);  
+                playerTank.MoveTank(deltaTime,1);  
             }
             if (IsKeyDown(KeyboardKey.KEY_S))
             {
-                tankObject.MoveTank(deltaTime, -1);
+                playerTank.MoveTank(deltaTime, -1);
             }
 
             // Move barrrel
             if (IsKeyDown(KeyboardKey.KEY_Q))
             {
-                tankObject.RotateTurret(deltaTime, -1);
+                playerTank.RotateTurret(deltaTime, -1);
             }
             if (IsKeyDown(KeyboardKey.KEY_E))
             {
-                tankObject.RotateTurret(deltaTime, 1);
+                playerTank.RotateTurret(deltaTime, 1);
             }
 
-            tankObject.Update(deltaTime); 
+            playerTank.Update(deltaTime); 
         }
 
 
@@ -159,12 +127,13 @@ namespace RaylibStarterCS
             BeginDrawing();
 
             ClearBackground(Color.WHITE);
+            background.Draw();
 
             // Display fps
             DrawText(fps.ToString(), 10, 10, 12, Color.RED);
 
             // Draw tank
-            tankObject.Draw();
+            playerTank.Draw();
 
             EndDrawing();
         }
