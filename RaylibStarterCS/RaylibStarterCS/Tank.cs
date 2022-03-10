@@ -37,13 +37,26 @@ namespace RaylibStarterCS
         // Initiate tank
         public void Init(float xPos = 0, float yPos = 0)
         {
-            tankSprite.Load("./PNG/Tanks/tankRed_outline.png");
+            if(tag == "Player"){
+                tankSprite.Load("./PNG/Tanks/tankRed_outline.png");
+                turretSprite.Load("./PNG/Tanks/barrelBlack_outline.png");
+            }
+            else if(tag == "Enemy")
+            {
+                tankSprite.Load("./PNG/Tanks/tankBlack_outline.png");
+                turretSprite.Load("./PNG/Tanks/barrelBeige_outline.png");
+            }
+            else
+            {
+                tankSprite.Load("./PNG/Tanks/tankBlue_outline.png");
+                turretSprite.Load("./PNG/Tanks/barrelBlue_outline.png");
+            }
+            
             // Setup the tank barrel starting rotation
             tankSprite.SetRotate(-90 * (float)(Math.PI / 180.0f));
             // Set position of turret to be centered in tank sprite
             tankSprite.SetPosition(-tankSprite.Width / 2.0f, tankSprite.Height / 2.0f);
 
-            turretSprite.Load("./PNG/Tanks/barrelBlack_outline.png");
             // Setup the tank base starting rotation
             turretSprite.SetRotate(-90 * (float)(Math.PI / 180.0f));
             // Set position of base to be centered in turret sprite
@@ -87,7 +100,7 @@ namespace RaylibStarterCS
             {
                 Vector3 f = bullet.ForwardVector * deltaTime;
                 // Check if bullet has finished
-                if (bullet.UpdateBullet(f, deltaTime))
+                if (bullet.UpdateBullet(f, deltaTime) || waitingDestroy)
                 {
                     // Keep track of bullets needing to be removed
                     removeBullets.Add(bullet);
@@ -98,6 +111,7 @@ namespace RaylibStarterCS
             foreach (BulletObject bullet in removeBullets)
             {
                 bullets.Remove(bullet);
+                bullet.RemoveSelfFromSceneObjects();
             }
         }
 

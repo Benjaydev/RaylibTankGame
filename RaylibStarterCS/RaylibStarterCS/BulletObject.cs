@@ -16,10 +16,13 @@ namespace RaylibStarterCS
         public Vector3 ForwardVector;
         public bool hit = false;
 
+        public string bulletTarget = "Enemy";
 
-        public BulletObject(Vector3 facing)
+
+        public BulletObject(Vector3 facing, string bt = "Enemy")
         {
             tag = "Bullet";
+            bulletTarget = bt;
             ForwardVector = facing * startVelocity;
             Load("./PNG/Bullets/bulletRedSilver_outline.png");
             SetRotate(90 * (float)(Math.PI / 180.0f));
@@ -53,13 +56,11 @@ namespace RaylibStarterCS
             velocityMultiple *= 1 - (0.5f * deltaTime);
             if(bounces >= maxBounces || velocityMultiple < (0.01f * (1+deltaTime)))
             {
-                return true;
+                waitingDestroy = true;
+                return waitingDestroy;
             }
             Translate(trans.x* velocityMultiple, trans.y* velocityMultiple);
-
-            
-
-            return false;
+            return waitingDestroy;
         }
 
 

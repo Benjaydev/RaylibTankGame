@@ -22,6 +22,8 @@ namespace RaylibStarterCS
         protected Vector3[] WorldBoundries = new Vector3[2];
         //protected float HitRadius = 5f;
 
+        public bool waitingDestroy = false;
+
         public Matrix3 LocalTransform
         {
             get { return localTransform; }
@@ -59,6 +61,10 @@ namespace RaylibStarterCS
                 so.parent = null;
             }
         }
+        public void RemoveSelfFromSceneObjects()
+        {
+            Game.sceneObjects.Remove(this);
+        }
 
         // Called on every update
         public virtual void OnUpdate(float deltaTime) 
@@ -73,7 +79,7 @@ namespace RaylibStarterCS
         }
 
         public void Update(float deltaTime)
-        {
+        { 
             // Call OnUpdate 
             OnUpdate(deltaTime);
 
@@ -82,6 +88,7 @@ namespace RaylibStarterCS
             {
                 child.Update(deltaTime);
             }
+
         }
 
         // Draw SceneObject
@@ -180,6 +187,8 @@ namespace RaylibStarterCS
                 }
                 return true;
             }
+
+            List<SceneObject> removeObjs = new List<SceneObject>();
             foreach(SceneObject obj in Game.sceneObjects)
             {
                 if(obj != this && !(tag == "Bullet" && obj.tag == "Bullet"))
@@ -191,9 +200,19 @@ namespace RaylibStarterCS
                     
                     if (dist < 7.5f)
                     {
+                        if (tag == "Bullet" && obj.tag == ((BulletObject)this).bulletTarget)
+                        {
+                            obj.waitingDestroy = true;
+                            waitingDestroy = true;
+                        }
                         Console.WriteLine(dist);
                     }
                 }
+            }
+            // Remove wanted sceneobject
+            foreach(SceneObject obj in removeObjs)
+            {
+                obj.RemoveSelfFromSceneObjects();
             }
             
 

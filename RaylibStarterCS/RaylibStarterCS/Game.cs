@@ -24,6 +24,12 @@ namespace RaylibStarterCS
         Tank playerTank = new Tank("Player");
         SpriteObject background = new SpriteObject();
         public static List<SceneObject> sceneObjects = new List<SceneObject>();
+        public static List<Tank> enemies = new List<Tank>();
+
+        public delegate void DelegateUpdate(float deltaTime);
+        public DelegateUpdate delegateUpdates;
+
+        Random random = new Random();
 
         public Game()
         {
@@ -43,13 +49,8 @@ namespace RaylibStarterCS
         {
         }
 
-        public float shootCooldown = 0.5f;
-        public float cooldownCount = 0.5f;
-
-        public float trackCooldown = 0.5f;
-        public float trackCooldownCount = 0.5f;
-        public int trackCount = 0;
-
+        float enemyCooldown = 5f;
+        float enemyCooldownCount = 0f;
         public void Update()
         {
             if (!initiated)
@@ -58,9 +59,6 @@ namespace RaylibStarterCS
                 playerTank.Init(GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f);
                 initiated = true;
             }
-
-            
-
 
 
             // Calculate the deltatime for update
@@ -78,16 +76,21 @@ namespace RaylibStarterCS
             frames++;
             lastTime = currentTime;
 
+            enemyCooldownCount += deltaTime;
+            if(enemyCooldownCount >= enemyCooldown)
+            {
+                CreateNewEnemy();
+                enemyCooldownCount = 0f;
+            }
+            
+
 
             // Shoot bullet
-     
+
             if (IsKeyDown(KeyboardKey.KEY_SPACE))
             {
                 playerTank.ShootBullet();
             }
-
-          
-
 
             // Move and rotate the tank
             if (IsKeyDown(KeyboardKey.KEY_A))
@@ -117,10 +120,47 @@ namespace RaylibStarterCS
                 playerTank.RotateTurret(deltaTime, 1);
             }
 
-            playerTank.Update(deltaTime); 
+            // Find all scene objects that are waiting to destroy
+            List<SceneObject> waitingDetroy = new List<SceneObject>();
+            foreach (SceneObject obj in sceneObjects)
+            {
+                if (obj.waitingDestroy)
+                {
+                    if(obj.tag == "Enemy")
+                    {
+                        enemies.Remove((Tank)obj);
+                    }
+                    waitingDetroy.Add(obj);
+                }
+            }
+            // Destroy each object
+            foreach (SceneObject obj in waitingDetroy)
+            {
+                obj.RemoveSelfFromSceneObjects();
+            }
+
+
+            delegateUpdates = null;
+            // Update scene objects (Stored in a delegate to avoid an error if object is destroyed during it's update)
+            foreach (SceneObject obj in sceneObjects)
+            {
+                delegateUpdates += (deltaTime) => obj.Update(deltaTime);
+            }
+            delegateUpdates.Invoke(deltaTime);
         }
 
-
+        // Create enemy tanks
+        public void CreateNewEnemy()
+        {
+            if(enemies.Count < 5)
+            {
+                Tank newEnemy = new Tank("Enemy");
+                sceneObjects.Add(newEnemy);
+                enemies.Add(newEnemy);
+                newEnemy.Init(random.Next(20, GetScreenWidth()-20), random.Next(20, GetScreenHeight() - 20));
+            }
+            
+        }
 
         public void Draw()
         {
@@ -133,7 +173,12 @@ namespace RaylibStarterCS
             DrawText(fps.ToString(), 10, 10, 12, Color.RED);
 
             // Draw tank
-            playerTank.Draw();
+            foreach(SceneObject obj in sceneObjects)
+            {
+                obj.Draw();
+            }
+            //playerTank.Draw();
+            //enemyTank.Draw();
 
             EndDrawing();
         }
