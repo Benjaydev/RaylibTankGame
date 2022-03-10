@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
+using static Raylib_cs.Raylib;
 
 namespace RaylibStarterCS
 {
@@ -12,6 +13,10 @@ namespace RaylibStarterCS
 
         protected Matrix3 localTransform = new Matrix3(1);
         protected Matrix3 globalTransform = new Matrix3(1);
+
+        // Right top and left bottom
+        protected Vector3[] WorldBoundries = new Vector3[2];
+
         public Matrix3 LocalTransform
         {
             get { return localTransform; }
@@ -27,9 +32,11 @@ namespace RaylibStarterCS
             get { return parent; }
         }
 
+
         // Constructor
         public SceneObject()
-        {
+        { 
+       
         }
 
         // Deconstruct the sceneObject
@@ -50,8 +57,8 @@ namespace RaylibStarterCS
 
         // Called on every update
         public virtual void OnUpdate(float deltaTime) 
-        { 
- 
+        {
+         
         } 
         
         // Called on every draw
@@ -131,8 +138,37 @@ namespace RaylibStarterCS
         // Translate scene object
         public void Translate(float x, float y)
         {
-            localTransform.Translate(x, y);
-            UpdateTransform();
+            Vector3[] WorldBoundries = { new Vector3(GetScreenWidth(), GetScreenHeight(), 0), new Vector3(0, 0, 0) };
+            if ( !(globalTransform.m20+x >= WorldBoundries[0].x || globalTransform.m20 + x <= WorldBoundries[1].x || globalTransform.m21 + y >= WorldBoundries[0].y || globalTransform.m21 + y <= WorldBoundries[1].y))
+            {
+                localTransform.Translate(x, y);
+                UpdateTransform();
+            }
+            
+            if(globalTransform.m20 + x >= WorldBoundries[0].x)
+            {
+                CollideEvent(new Vector3(-1, 0, 0));
+            }
+            else if(globalTransform.m20 + x <= WorldBoundries[1].x)
+            {
+                CollideEvent(new Vector3(1, 0, 0));
+            }
+            else if(globalTransform.m21 + y >= WorldBoundries[0].y)
+            {
+                CollideEvent(new Vector3(0, 1, 0));
+            }
+            else if(globalTransform.m21 + y <= WorldBoundries[1].y)
+            {
+                CollideEvent(new Vector3(0, -1, 0));
+            }
+
+
+            
+        }
+
+        public virtual void CollideEvent(Vector3 Normal)
+        {
+
         }
 
         // Rotate scene object

@@ -22,6 +22,7 @@ namespace RaylibStarterCS
 
         public SpriteObject()
         {
+            
         }
 
         // Load image for this sprite texture
