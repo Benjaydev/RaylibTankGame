@@ -149,30 +149,18 @@ namespace RaylibStarterCS
             }
             if (IsKeyDown(KeyboardKey.KEY_W))
             {
+                MakeTrack(facing);
                 Vector3 f = facing * 100 * deltaTime;
                 tankObject.Translate(f.x, f.y);
 
-                if(trackCooldownCount >= trackCooldown)
-                {
-                    SpriteObject track = new SpriteObject();
-                    track.Load("./PNG/Tanks/tracksSmall.png");
-                    
-                    track.SetRotate(90 * (float)(Math.PI / 180.0f));
-                    track.Rotate(MathF.Atan2(f.y, f.x));
-                    track.SetPosition(trackPoint.GlobalTransform.m20, trackPoint.GlobalTransform.m21);
-                    tracks.Add(track);
-                    trackCooldownCount = 0f;
-                    trackCount++;
-                    if(trackCount >= 15)
-                    {
-                        tracks.RemoveAt(0);
-                    }
-                }
+                
             }
             if (IsKeyDown(KeyboardKey.KEY_S))
-            {
+            {   
+                MakeTrack(facing);
                 Vector3 f = facing * -100 * deltaTime;
                 tankObject.Translate(f.x, f.y);
+                
             }
 
             // Move barrrel
@@ -205,6 +193,27 @@ namespace RaylibStarterCS
                 smoke.Remove(rs);
             }
         }
+
+        public void MakeTrack(Vector3 facing)
+        {
+            if (trackCooldownCount >= trackCooldown)
+            {
+                SpriteObject track = new SpriteObject();
+                track.Load("./PNG/Tanks/tracksSmall.png");
+
+                track.SetRotate(90 * (float)(Math.PI / 180.0f));
+                track.Rotate(MathF.Atan2(facing.y, facing.x));
+                track.SetPosition(trackPoint.GlobalTransform.m20, trackPoint.GlobalTransform.m21);
+                tracks.Add(track);
+                trackCooldownCount = 0f;
+                trackCount++;
+                if (trackCount >= 15)
+                {
+                    tracks.RemoveAt(0);
+                }
+            }
+        }
+
 
         public void Draw()
         {
