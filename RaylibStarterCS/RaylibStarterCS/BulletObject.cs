@@ -9,12 +9,11 @@ namespace RaylibStarterCS
 {
     public class BulletObject : SpriteObject
     {
-        public float velocity = 400f;
+        public float velocity = 1000f;
         public int bounces = 0;
         public int maxBounces = 4;
         public Vector3 ForwardVector;
         public bool hit = false;
-        SpriteObject explosion;
 
 
         public BulletObject(Vector3 facing)
@@ -42,6 +41,7 @@ namespace RaylibStarterCS
                 // Reset position to where it's meant to be
                 SetPosition(prevpos.x, prevpos.y);
                 bounces++;
+                ForwardVector = ForwardVector * 0.75f;
             }
                 
         }
@@ -53,6 +53,7 @@ namespace RaylibStarterCS
                 return true;
             }
             Translate(trans.x, trans.y);
+
             return false;
         }
 

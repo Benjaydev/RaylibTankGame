@@ -72,7 +72,7 @@ namespace RaylibStarterCS
         {
         }
 
-        public float shootCooldown = 0f;
+        public float shootCooldown = 0.5f;
         public float cooldownCount = 0.5f;
         public void Update()
         {
