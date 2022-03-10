@@ -20,7 +20,7 @@ namespace RaylibStarterCS
         public BulletObject(Vector3 facing)
         {
             ForwardVector = facing * startVelocity;
-            Load("./PNG/Bullets/bulletBlueSilver_outline.png");
+            Load("./PNG/Bullets/bulletRedSilver_outline.png");
             SetRotate(90 * (float)(Math.PI / 180.0f));
             Rotate(MathF.Atan2(ForwardVector.y, ForwardVector.x));
         }

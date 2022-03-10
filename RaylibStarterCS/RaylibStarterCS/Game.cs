@@ -24,6 +24,7 @@ namespace RaylibStarterCS
         SceneObject tankObject = new SceneObject();
         SceneObject turretObject = new SceneObject();
         SceneObject firePoint = new SceneObject();
+        SceneObject trackPoint = new SceneObject();
 
         SpriteObject tankSprite = new SpriteObject();
         SpriteObject turretSprite = new SpriteObject();
@@ -32,6 +33,7 @@ namespace RaylibStarterCS
         List<BulletObject> removeBullets = new List<BulletObject>();
         List<Smoke> smoke = new List<Smoke>();
         List<Smoke> removeSmoke = new List<Smoke>();
+        List<SpriteObject> tracks = new List<SpriteObject>();
 
         public Game()
         {
@@ -43,13 +45,13 @@ namespace RaylibStarterCS
             stopwatch.Start();
             lastTime = stopwatch.ElapsedMilliseconds;
 
-            tankSprite.Load("./PNG/Tanks/tankBlue_outline.png");
+            tankSprite.Load("./PNG/Tanks/tankRed_outline.png");
             // Setup the tank barrel starting rotation
             tankSprite.SetRotate(-90 * (float)(Math.PI / 180.0f));
             // Set position of turret to be centered in tank sprite
             tankSprite.SetPosition(-tankSprite.Width / 2.0f, tankSprite.Height / 2.0f);
 
-            turretSprite.Load("./PNG/Tanks/barrelBlue.png");
+            turretSprite.Load("./PNG/Tanks/barrelBlack_outline.png");
             // Setup the tank base starting rotation
             turretSprite.SetRotate(-90 * (float)(Math.PI / 180.0f));
             // Set position of base to be centered in turret sprite
@@ -58,11 +60,15 @@ namespace RaylibStarterCS
             firePoint.SetRotate(-90 * (float)(Math.PI));
             firePoint.SetPosition(turretSprite.Height+30, (turretSprite.Width / 2.0f)-17.5f);
 
+            trackPoint.SetRotate(-90 * (float)(Math.PI));
+            trackPoint.SetPosition(tankSprite.Height-35, -(tankSprite.Width/2));
+
             // Set up the scene object hierarchy - Add turretSprite to turretObject, then add tankSprite and turretObject to tankObject
             turretObject.AddChild(turretSprite);
             turretObject.AddChild(firePoint);
             tankObject.AddChild(tankSprite);
             tankObject.AddChild(turretObject);
+            tankObject.AddChild(trackPoint);
 
             // Now tankObject position can be changed without effecting the children
             tankObject.SetPosition(GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f);
@@ -74,6 +80,10 @@ namespace RaylibStarterCS
 
         public float shootCooldown = 0.5f;
         public float cooldownCount = 0.5f;
+
+        public float trackCooldown = 0.5f;
+        public float trackCooldownCount = 0.5f;
+        public int trackCount = 0;
         public void Update()
         {
             // Calculate the deltatime for update
@@ -122,6 +132,11 @@ namespace RaylibStarterCS
             }
 
 
+            if (trackCooldownCount <= trackCooldown)
+            {
+                trackCooldownCount += deltaTime;
+            }
+
 
             // Move and rotate the tank
             if (IsKeyDown(KeyboardKey.KEY_A))
@@ -136,6 +151,23 @@ namespace RaylibStarterCS
             {
                 Vector3 f = facing * 100 * deltaTime;
                 tankObject.Translate(f.x, f.y);
+
+                if(trackCooldownCount >= trackCooldown)
+                {
+                    SpriteObject track = new SpriteObject();
+                    track.Load("./PNG/Tanks/tracksSmall.png");
+                    
+                    track.SetRotate(90 * (float)(Math.PI / 180.0f));
+                    track.Rotate(MathF.Atan2(f.y, f.x));
+                    track.SetPosition(trackPoint.GlobalTransform.m20, trackPoint.GlobalTransform.m21);
+                    tracks.Add(track);
+                    trackCooldownCount = 0f;
+                    trackCount++;
+                    if(trackCount >= 15)
+                    {
+                        tracks.RemoveAt(0);
+                    }
+                }
             }
             if (IsKeyDown(KeyboardKey.KEY_S))
             {
@@ -183,10 +215,7 @@ namespace RaylibStarterCS
             // Display fps
             DrawText(fps.ToString(), 10, 10, 12, Color.RED);
 
-            // Draw tank
-            tankObject.Draw();
-
-            foreach(BulletObject bullet in bullets)
+            foreach (BulletObject bullet in bullets)
             {
                 bullet.Draw();
             }
@@ -195,7 +224,17 @@ namespace RaylibStarterCS
             {
                 s.Draw();
             }
-           
+
+            foreach (SpriteObject track in tracks)
+            {
+                track.Draw();
+            }
+
+            // Draw tank
+            tankObject.Draw();
+
+            
+
             removeSmoke = new List<Smoke>();
 
             EndDrawing();
