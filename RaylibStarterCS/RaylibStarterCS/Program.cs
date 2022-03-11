@@ -8,24 +8,19 @@ namespace RaylibStarterCS
 		static void Main(string[] args)
         {
             Game game = new Game();
-
             Raylib.InitWindow(640, 480, "Tank Game - Ben Wharton");
-
             game.Init();
 
             while (!Raylib.WindowShouldClose())
             {
-                if (game.GameActive)
+                game.Update();
+                game.Draw();
+                if (game.GameEndOption == "Restart")
                 {
-                    game.Update();
-                    game.Draw();
+                    game = new Game();
+                    game.Init();
                 }
-                
             }
-
-            game.Shutdown();
-
-            Raylib.CloseWindow();
         }
 	}
 }

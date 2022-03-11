@@ -267,7 +267,7 @@ namespace RaylibStarterCS
         public void AddChild(SceneObject child)
         {
             // Check and make sure the object that's being added doesn't already have a parent
-            Debug.Assert(child.parent == null);
+            //Debug.Assert(child.parent == null);
             // Make this sceneObject the parent of the child 
             child.parent = this;
             // Add the child to children list
