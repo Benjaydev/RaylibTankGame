@@ -16,6 +16,7 @@ namespace RaylibStarterCS
         public SpriteObject turretSprite = new SpriteObject();
 
         public List<SpriteObject> tracks = new List<SpriteObject>();
+        Texture2D trackTexture = LoadTextureFromImage(LoadImage("./PNG/Tanks/tracksSmall.png"));
 
         public float shootCooldown = 1f;
         public float shootCooldownCount = 1f;
@@ -230,7 +231,7 @@ namespace RaylibStarterCS
             {
                 // Create new track sprite
                 SpriteObject track = new SpriteObject();
-                track.Load("./PNG/Tanks/tracksSmall.png");
+                track.texture = trackTexture;
 
                 // Rotate sprite to face same direction as tank
                 track.SetRotate(90 * (float)(Math.PI / 180.0f));

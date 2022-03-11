@@ -23,6 +23,9 @@ namespace RaylibStarterCS
 
         public static Tank playerTank;
         SpriteObject background = new SpriteObject();
+
+        SpriteObject titleBackground = new SpriteObject();
+
         public static List<SceneObject> sceneObjects;
         public List<Tank> enemies = new List<Tank>();
 
@@ -49,6 +52,9 @@ namespace RaylibStarterCS
 
             background.Load("./PNG/Environment/dirt.png");
             background.scale = 10;
+
+            titleBackground.Load("./PNG/Environment/TitleBackground.png");
+            titleBackground.scale = 5;
 
             playerTank = new Tank("Player");
             sceneObjects = new List<SceneObject>();
@@ -223,8 +229,6 @@ namespace RaylibStarterCS
 
             if (!GameActive)
             {
-                SpriteObject titleBackground = new SpriteObject();
-                titleBackground.Load("./PNG/Environment/TitleBackground.png");
                 titleBackground.Draw();
 
                 int gameOverSize = MeasureText("Game Over!", 50);
