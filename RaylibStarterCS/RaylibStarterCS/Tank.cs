@@ -15,10 +15,6 @@ namespace RaylibStarterCS
         public SpriteObject tankSprite = new SpriteObject();
         public SpriteObject turretSprite = new SpriteObject();
 
-
-        public List<BulletObject> bullets = new List<BulletObject>();
-        public List<BulletObject> removeBullets = new List<BulletObject>();
-
         public List<SpriteObject> tracks = new List<SpriteObject>();
 
         public float shootCooldown = 1f;
@@ -46,7 +42,7 @@ namespace RaylibStarterCS
             else if(tag == "Enemy")
             {
                 tankSprite.Load("./PNG/Tanks/tankBlack_outline.png");
-                turretSprite.Load("./PNG/Tanks/barrelBeige_outline.png");
+                turretSprite.Load("./PNG/Tanks/barrelBlack_outline.png");
 
                 shootCooldown = 3f;
             }
@@ -103,24 +99,6 @@ namespace RaylibStarterCS
             {
                 ExecuteEnemyAI(deltaTime);
             }
-
-            // Update each active bullet
-            foreach (BulletObject bullet in bullets)
-            {
-                // Check if bullet has finished
-                if (waitingDestroy)
-                {
-                    // Keep track of bullets needing to be removed
-                    removeBullets.Add(bullet);
-                }
-            }
-
-            // Remove needed bullets
-            foreach (BulletObject bullet in removeBullets)
-            {
-                bullets.Remove(bullet);
-                bullet.RemoveSelfFromSceneObjects();
-            }
         }
 
         int totalDestroyedTanks = 0;
@@ -130,26 +108,65 @@ namespace RaylibStarterCS
             totalDestroyedTanks++;
         }
 
-
+        bool AIturning = true;
+        bool AImoving = true;
+        float AImovingDirection = 1f;
+        float AIturningDirection = 1f;
+        // The enemy AI
         public void ExecuteEnemyAI(float deltaTime)
         {
             Tank playerTank = Game.playerTank;
+            
+            // Should AI toggle turn
+            if(random.Next(0, 10000) == 1)
+            {
+                AIturning = !AIturning;
+            }
 
+            // Should AI change turning direction
+            if(random.Next(0, 10000) == 1)
+            {
+                AIturningDirection = -AIturningDirection;
+            }
+
+            // Should AI toggle movement
+            if(random.Next(0, 100000) == 1){
+                AImoving = !AImoving;
+            }
+
+            if(random.Next(0, 100000) == 1)
+            {
+                AImovingDirection = -AImovingDirection;
+            }
+
+
+            if (AIturning)
+            {
+                Rotate(AIturningDirection*deltaTime);
+            }
+            if (AImoving)
+            {
+                MoveTank(deltaTime, AImovingDirection);
+            }
+
+            // Calculate the angle to face player
             Vector3 directionB = new Vector3(turretObject.GlobalTransform.m20, turretObject.GlobalTransform.m21, 0);
             Vector3 directionA = new Vector3(playerTank.globalTransform.m20, playerTank.globalTransform.m21, 0);
             Vector3 d = directionA - directionB;
 
             float angle = MathF.Atan2(d.y, d.x);
+            // Find the angle that the main body of the tank has rotated (Used to correct turret rotation)
+            float angle2 = MathF.Atan2(GlobalTransform.m01, GlobalTransform.m00);
+            Console.WriteLine(angle2);
 
-            turretObject.SetRotate(angle);
-
-
+            turretObject.SetRotate(angle-angle2);
 
 
             ShootBullet(500f, "Player");
+
+
+            //MoveTank(deltaTime, 1);
         }
-
-
 
 
         // Draw function
@@ -160,11 +177,6 @@ namespace RaylibStarterCS
             foreach (SpriteObject track in tracks)
             {
                 track.Draw();
-            }
-            // Draw each bullet
-            foreach (BulletObject bullet in bullets)
-            {
-                bullet.Draw();
             }
             
         }
@@ -201,7 +213,6 @@ namespace RaylibStarterCS
                 // Set position of new bullet to the tank fire point
                 newbullet.SetPosition(firePoint.GlobalTransform.m20, firePoint.GlobalTransform.m21);
                 // Add to bullet list to keep track of it
-                //bullets.Add(newbullet);
                 Game.sceneObjects.Add(newbullet);
 
                 // Reset cooldown
@@ -224,8 +235,10 @@ namespace RaylibStarterCS
                 // Rotate sprite to face same direction as tank
                 track.SetRotate(90 * (float)(Math.PI / 180.0f));
                 track.Rotate(MathF.Atan2(facing.y, facing.x));
+
                 // Set position of track to track spawn point
                 track.SetPosition(trackPoint.GlobalTransform.m20, trackPoint.GlobalTransform.m21);
+
                 // Add to tracks list to keep track of it
                 tracks.Add(track);
                 // Reset cooldown

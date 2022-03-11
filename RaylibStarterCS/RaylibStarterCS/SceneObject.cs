@@ -25,6 +25,8 @@ namespace RaylibStarterCS
 
         public bool waitingDestroy = false;
 
+        public Random random = new Random();
+
         public Matrix3 LocalTransform
         {
             get { return localTransform; }

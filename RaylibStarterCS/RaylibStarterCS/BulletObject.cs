@@ -69,7 +69,7 @@ namespace RaylibStarterCS
         {
             Vector3 f = ForwardVector * deltaTime;
             velocityMultiple *= 1 - (0.5f * deltaTime);
-            if(bounces >= maxBounces || velocityMultiple < (0.01f * (1+deltaTime)))
+            if(bounces >= maxBounces || velocityMultiple < (0.05f * (1+deltaTime)))
             {
                 waitingDestroy = true;
             }

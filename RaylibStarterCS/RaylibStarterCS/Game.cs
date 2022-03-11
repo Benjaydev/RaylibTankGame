@@ -31,6 +31,8 @@ namespace RaylibStarterCS
 
         Random random = new Random();
 
+        public bool GameActive = true;
+
         public Game()
         {
         }
@@ -60,6 +62,10 @@ namespace RaylibStarterCS
                 sceneObjects.Add(playerTank);
                 playerTank.Init(GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f);
                 initiated = true;
+            }
+            if (playerTank.waitingDestroy)
+            {
+                EndGame();
             }
 
 
@@ -151,10 +157,17 @@ namespace RaylibStarterCS
             delegateUpdates?.Invoke(deltaTime);
         }
 
+        public void EndGame()
+        {
+            GameActive = false;
+
+        }
+
+
         // Create enemy tanks
         public void CreateNewEnemy()
         {
-            if(enemies.Count < 1)
+            if(enemies.Count < 5)
             {
                 Tank newEnemy = new Tank("Enemy");
                 sceneObjects.Add(newEnemy);
@@ -171,7 +184,6 @@ namespace RaylibStarterCS
 
             ClearBackground(Color.WHITE);
             background.Draw();
-
             // Display fps
             DrawText(fps.ToString(), 10, 10, 12, Color.RED);
 
@@ -183,8 +195,21 @@ namespace RaylibStarterCS
             {
                 obj.Draw();
             }
-            //playerTank.Draw();
-            //enemyTank.Draw();
+
+
+            if (!GameActive)
+            {
+                SpriteObject titleBackground = new SpriteObject();
+                titleBackground.Load("./PNG/Environment/TitleBackground.png");
+                titleBackground.Draw();
+
+                int gameOverSize = MeasureText("Game Over!", 50);
+                int pointsSize = MeasureText($"Points: {playerTank.points.ToString()}", 50);
+
+                DrawText("Game Over!", (GetScreenWidth()/2) - (gameOverSize / 2), (GetScreenHeight() / 2)-100, 50, Color.RED);
+                DrawText($"Points: {playerTank.points.ToString()}", (GetScreenWidth() / 2)- (pointsSize / 2), (GetScreenHeight() / 2), 50, Color.RED);
+
+            }
 
             EndDrawing();
         }
