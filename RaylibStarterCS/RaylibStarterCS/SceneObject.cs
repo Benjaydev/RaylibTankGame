@@ -20,7 +20,8 @@ namespace RaylibStarterCS
 
         // Right top and left bottom
         protected Vector3[] WorldBoundries = new Vector3[2];
-        //protected float HitRadius = 5f;
+        public bool hasCollision = true;
+        protected float HitRadius = 3.75f;
 
         public bool waitingDestroy = false;
 
@@ -161,66 +162,71 @@ namespace RaylibStarterCS
 
         public bool CheckCollision(float x, float y)
         {
-            Vector3[] WorldBoundries = { new Vector3(GetScreenWidth(), GetScreenHeight(), 0), new Vector3(0, 0, 0) };
-            // Check edge of window collisions
-            if ((globalTransform.m20 + x >= WorldBoundries[0].x || globalTransform.m20 + x <= WorldBoundries[1].x || globalTransform.m21 + y >= WorldBoundries[0].y || globalTransform.m21 + y <= WorldBoundries[1].y))
+            if (hasCollision)
             {
-                // Right wall
-                if (globalTransform.m20 + x >= WorldBoundries[0].x)
+                Vector3[] WorldBoundries = { new Vector3(GetScreenWidth(), GetScreenHeight(), 0), new Vector3(0, 0, 0) };
+                // Check edge of window collisions
+                if ((globalTransform.m20 + x >= WorldBoundries[0].x || globalTransform.m20 + x <= WorldBoundries[1].x || globalTransform.m21 + y >= WorldBoundries[0].y || globalTransform.m21 + y <= WorldBoundries[1].y))
                 {
-                    CollideEvent(new Vector3(-1, 0, 0));
-                }
-                // Left wall
-                else if (globalTransform.m20 + x <= WorldBoundries[1].x)
-                {
-                    CollideEvent(new Vector3(1, 0, 0));
-                }
-                // Bottom wall
-                else if (globalTransform.m21 + y >= WorldBoundries[0].y)
-                {
-                    CollideEvent(new Vector3(0, 1, 0));
-                }
-                // Top wall
-                else if (globalTransform.m21 + y <= WorldBoundries[1].y)
-                {
-                    CollideEvent(new Vector3(0, -1, 0));
-                }
-                return true;
-            }
-
-            List<SceneObject> removeObjs = new List<SceneObject>();
-            foreach(SceneObject obj in Game.sceneObjects)
-            {
-                if(obj != this && !(tag == "Bullet" && obj.tag == "Bullet"))
-                {
-                    Vector3 sceneObjectPos = new Vector3(obj.GlobalTransform.m20, obj.GlobalTransform.m21, 0);
-                    Vector3 thisObjectPos = new Vector3(GlobalTransform.m20, GlobalTransform.m21, 0);
-                    float dist = MathF.Sqrt(Math.Abs(sceneObjectPos.x - thisObjectPos.x) + Math.Abs(sceneObjectPos.y - thisObjectPos.y));
-
-                    
-                    if (dist < 7.5f)
+                    // Right wall
+                    if (globalTransform.m20 + x >= WorldBoundries[0].x)
                     {
-                        if (tag == "Bullet" && obj.tag == ((BulletObject)this).bulletTarget)
+                        CollideEvent(new Vector3(-1, 0, 0));
+                    }
+                    // Left wall
+                    else if (globalTransform.m20 + x <= WorldBoundries[1].x)
+                    {
+                        CollideEvent(new Vector3(1, 0, 0));
+                    }
+                    // Bottom wall
+                    else if (globalTransform.m21 + y >= WorldBoundries[0].y)
+                    {
+                        CollideEvent(new Vector3(0, 1, 0));
+                    }
+                    // Top wall
+                    else if (globalTransform.m21 + y <= WorldBoundries[1].y)
+                    {
+                        CollideEvent(new Vector3(0, -1, 0));
+                    }
+                    return true;
+                }
+
+                foreach (SceneObject obj in Game.sceneObjects)
+                {
+                    if (obj.hasCollision && obj != this && !(tag == "Bullet" && obj.tag == "Bullet"))
+                    {
+                        Vector3 sceneObjectPos = new Vector3(obj.GlobalTransform.m20, obj.GlobalTransform.m21, 0);
+                        Vector3 thisObjectPos = new Vector3(GlobalTransform.m20 + x, GlobalTransform.m21 + y, 0);
+                        float dist = MathF.Sqrt(Math.Abs(sceneObjectPos.x - thisObjectPos.x) + Math.Abs(sceneObjectPos.y - thisObjectPos.y));
+                        // Check if collision distance is met
+                        if (dist < HitRadius+obj.HitRadius)
                         {
-                            obj.waitingDestroy = true;
-                            waitingDestroy = true;
+                            // If object is bullet
+                            if (tag == "Bullet" && obj.tag == ((BulletObject)this).bulletTarget)
+                            {
+                                obj.waitingDestroy = true;
+                                waitingDestroy = true;
+
+                                if(obj.tag == "Enemy")
+                                {
+                                    Game.playerTank.AddDestroyedTankPoints();
+                                    Console.WriteLine(Game.playerTank.points);
+                                }
+                                return true;
+                            }
+
+                            if((tag == "Player" && obj.tag == "Enemy") || (obj.tag == "Player" && tag == "Enemy"))
+                            {
+                                return true;
+                            }
+
+
                         }
-                        Console.WriteLine(dist);
                     }
                 }
+                return false;
             }
-            // Remove wanted sceneobject
-            foreach(SceneObject obj in removeObjs)
-            {
-                obj.RemoveSelfFromSceneObjects();
-            }
-            
-
-
             return false;
-
-
-          
         }
 
         public virtual void CollideEvent(Vector3 Normal)

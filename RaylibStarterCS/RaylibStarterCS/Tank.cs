@@ -21,13 +21,14 @@ namespace RaylibStarterCS
 
         public List<SpriteObject> tracks = new List<SpriteObject>();
 
-        public float shootCooldown = 0.5f;
-        public float shootCooldownCount = 0.5f;
+        public float shootCooldown = 1f;
+        public float shootCooldownCount = 1f;
 
-        public float trackCooldown = 0.5f;
-        public float trackCooldownCount = 0.5f;
+        public float trackCooldown = 0.35f;
+        public float trackCooldownCount = 0.35f;
         public int maxTrackCount = 15;
 
+        public int points = 0;
 
         public Tank(string t)
         {
@@ -37,6 +38,7 @@ namespace RaylibStarterCS
         // Initiate tank
         public void Init(float xPos = 0, float yPos = 0)
         {
+            HitRadius = 5f;
             if(tag == "Player"){
                 tankSprite.Load("./PNG/Tanks/tankRed_outline.png");
                 turretSprite.Load("./PNG/Tanks/barrelBlack_outline.png");
@@ -45,6 +47,8 @@ namespace RaylibStarterCS
             {
                 tankSprite.Load("./PNG/Tanks/tankBlack_outline.png");
                 turretSprite.Load("./PNG/Tanks/barrelBeige_outline.png");
+
+                shootCooldown = 3f;
             }
             else
             {
@@ -94,13 +98,17 @@ namespace RaylibStarterCS
             {
                 trackCooldownCount += deltaTime;
             }
+            
+            if(tag == "Enemy")
+            {
+                ExecuteEnemyAI(deltaTime);
+            }
 
             // Update each active bullet
             foreach (BulletObject bullet in bullets)
             {
-                Vector3 f = bullet.ForwardVector * deltaTime;
                 // Check if bullet has finished
-                if (bullet.UpdateBullet(f, deltaTime) || waitingDestroy)
+                if (waitingDestroy)
                 {
                     // Keep track of bullets needing to be removed
                     removeBullets.Add(bullet);
@@ -114,6 +122,35 @@ namespace RaylibStarterCS
                 bullet.RemoveSelfFromSceneObjects();
             }
         }
+
+        int totalDestroyedTanks = 0;
+        public void AddDestroyedTankPoints()
+        {
+            points += (int)MathF.Pow(100, 1 + (totalDestroyedTanks / 100f));
+            totalDestroyedTanks++;
+        }
+
+
+        public void ExecuteEnemyAI(float deltaTime)
+        {
+            Tank playerTank = Game.playerTank;
+
+            Vector3 directionB = new Vector3(turretObject.GlobalTransform.m20, turretObject.GlobalTransform.m21, 0);
+            Vector3 directionA = new Vector3(playerTank.globalTransform.m20, playerTank.globalTransform.m21, 0);
+            Vector3 d = directionA - directionB;
+
+            float angle = MathF.Atan2(d.y, d.x);
+
+            turretObject.SetRotate(angle);
+
+
+
+
+            ShootBullet(500f, "Player");
+        }
+
+
+
 
         // Draw function
         public override void OnDraw()
@@ -152,7 +189,7 @@ namespace RaylibStarterCS
         }
 
         // Shoot bullet
-        public void ShootBullet()
+        public void ShootBullet(float speed = 1000f, string target = "Enemy")
         {
             // If the shooting cooldown is complete
             if(shootCooldownCount >= shootCooldown)
@@ -160,11 +197,11 @@ namespace RaylibStarterCS
                 // FInd the direction that the turret is facing
                 Vector3 turretFacing = new Vector3(firePoint.GlobalTransform.m00, firePoint.GlobalTransform.m01, 1);
                 // Create new bullet
-                BulletObject newbullet = new BulletObject(turretFacing);
+                BulletObject newbullet = new BulletObject(turretFacing, speed, target);
                 // Set position of new bullet to the tank fire point
                 newbullet.SetPosition(firePoint.GlobalTransform.m20, firePoint.GlobalTransform.m21);
                 // Add to bullet list to keep track of it
-                bullets.Add(newbullet);
+                //bullets.Add(newbullet);
                 Game.sceneObjects.Add(newbullet);
 
                 // Reset cooldown

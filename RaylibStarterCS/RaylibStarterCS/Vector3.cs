@@ -18,6 +18,12 @@ namespace RaylibStarterCS
             y = Y;
             z = Z;
         }
+        public Vector3(Vector3 v)
+        {
+            x = v.x;
+            y = v.y;
+            z = v.z;
+        }
 
         // Calculate and return the dot product of this vector and another vector
         public float Dot(Vector3 v)

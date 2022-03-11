@@ -21,10 +21,10 @@ namespace RaylibStarterCS
         private float deltaTime = 0.005f;
         public Vector3[] sceneBoundries = new Vector3[2] {new Vector3(GetScreenWidth() / 2, GetScreenHeight() / 2, 0), new Vector3(-GetScreenWidth() / 2, -GetScreenHeight() / 2, 0) };
 
-        Tank playerTank = new Tank("Player");
+        public static Tank playerTank = new Tank("Player");
         SpriteObject background = new SpriteObject();
         public static List<SceneObject> sceneObjects = new List<SceneObject>();
-        public static List<Tank> enemies = new List<Tank>();
+        public List<Tank> enemies = new List<Tank>();
 
         public delegate void DelegateUpdate(float deltaTime);
         public DelegateUpdate delegateUpdates;
@@ -38,11 +38,13 @@ namespace RaylibStarterCS
         bool initiated = false;
         public void Init()
         {
+            SetWindowSize(900, 600);
+
             stopwatch.Start();
             lastTime = stopwatch.ElapsedMilliseconds;
 
             background.Load("./PNG/Environment/dirt.png");
-            background.scale = 5;
+            background.scale = 10;
         }
 
         public void Shutdown()
@@ -95,29 +97,29 @@ namespace RaylibStarterCS
             // Move and rotate the tank
             if (IsKeyDown(KeyboardKey.KEY_A))
             {
-                playerTank.Rotate(-deltaTime);
+                playerTank.Rotate(-deltaTime*2);
             }
             if (IsKeyDown(KeyboardKey.KEY_D))
             {
-                playerTank.Rotate(deltaTime);
+                playerTank.Rotate(deltaTime*2);
             }
             if (IsKeyDown(KeyboardKey.KEY_W))
             {
-                playerTank.MoveTank(deltaTime,1);  
+                playerTank.MoveTank(deltaTime*2,1);  
             }
             if (IsKeyDown(KeyboardKey.KEY_S))
             {
-                playerTank.MoveTank(deltaTime, -1);
+                playerTank.MoveTank(deltaTime*1.5f, -1);
             }
 
             // Move barrrel
             if (IsKeyDown(KeyboardKey.KEY_Q))
             {
-                playerTank.RotateTurret(deltaTime, -1);
+                playerTank.RotateTurret(deltaTime*2, -1);
             }
             if (IsKeyDown(KeyboardKey.KEY_E))
             {
-                playerTank.RotateTurret(deltaTime, 1);
+                playerTank.RotateTurret(deltaTime*2, 1);
             }
 
             // Find all scene objects that are waiting to destroy
@@ -146,18 +148,19 @@ namespace RaylibStarterCS
             {
                 delegateUpdates += (deltaTime) => obj.Update(deltaTime);
             }
-            delegateUpdates.Invoke(deltaTime);
+            delegateUpdates?.Invoke(deltaTime);
         }
 
         // Create enemy tanks
         public void CreateNewEnemy()
         {
-            if(enemies.Count < 5)
+            if(enemies.Count < 1)
             {
                 Tank newEnemy = new Tank("Enemy");
                 sceneObjects.Add(newEnemy);
                 enemies.Add(newEnemy);
                 newEnemy.Init(random.Next(20, GetScreenWidth()-20), random.Next(20, GetScreenHeight() - 20));
+                //newEnemy.Init(GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f);
             }
             
         }
@@ -172,8 +175,11 @@ namespace RaylibStarterCS
             // Display fps
             DrawText(fps.ToString(), 10, 10, 12, Color.RED);
 
+
+            DrawText($"Points: {playerTank.points.ToString()}", GetScreenWidth()-200, 20, 24, Color.BLUE);
+                
             // Draw tank
-            foreach(SceneObject obj in sceneObjects)
+            foreach (SceneObject obj in sceneObjects)
             {
                 obj.Draw();
             }
