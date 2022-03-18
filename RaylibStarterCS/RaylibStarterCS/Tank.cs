@@ -15,15 +15,17 @@ namespace RaylibStarterCS
         public SpriteObject tankSprite = new SpriteObject();
         public SpriteObject turretSprite = new SpriteObject();
 
-        public List<SpriteObject> tracks = new List<SpriteObject>();
-        Texture2D trackTexture = LoadTextureFromImage(LoadImage("./PNG/Tanks/tracksSmall.png"));
+        public float moveSpeed = 100f;
+        public float turretMoveSpeed = 1f;
+        public float turnSpeed = 1f;
+        public float shootSpeed = 1000f;
+        public float shootingAccuracy = .8f;
 
         public float shootCooldown = 1f;
         public float shootCooldownCount = 1f;
 
         public float trackCooldown = 0.35f;
         public float trackCooldownCount = 0.35f;
-        public int maxTrackCount = 15;
 
         public int points = 0;
 
@@ -42,10 +44,7 @@ namespace RaylibStarterCS
             }
             else if(tag == "Enemy")
             {
-                tankSprite.Load("./PNG/Tanks/tankBlack_outline.png");
-                turretSprite.Load("./PNG/Tanks/barrelBlack_outline.png");
-
-                shootCooldown = 3f;
+                EnemyRandomiseInit();
             }
             else
             {
@@ -109,61 +108,129 @@ namespace RaylibStarterCS
             totalDestroyedTanks++;
         }
 
+
+        public void EnemyRandomiseInit()
+        {
+            int chosen = random.Next(0, 4);
+
+            if(chosen == 0)
+            {
+                tankSprite.Load("./PNG/Tanks/tankBlack_outline.png");
+                turretSprite.Load("./PNG/Tanks/barrelBlack_outline.png");
+
+                shootCooldown = 5f;
+                shootSpeed = 2000f;
+
+                moveSpeed = 25f;
+                turnSpeed = 0.25f;
+                shootingAccuracy = 0.4f;
+            }
+            else if (chosen == 1)
+            {
+                tankSprite.Load("./PNG/Tanks/tankBlue_outline.png");
+                turretSprite.Load("./PNG/Tanks/barrelBlue_outline.png");
+
+                shootCooldown = 1f;
+                shootSpeed = 250f;
+
+                moveSpeed = 250f;
+                turnSpeed = 2f;
+                shootingAccuracy = 0.9f;
+            }
+            else if (chosen == 2)
+            {
+                tankSprite.Load("./PNG/Tanks/tankGreen_outline.png");
+                turretSprite.Load("./PNG/Tanks/barrelGreen_outline.png");
+
+                shootCooldown = 3f;
+                shootSpeed = 600f;
+
+                moveSpeed = 100f;
+                turnSpeed = 0.9f;
+                shootingAccuracy = 0.8f;
+            }
+            else if (chosen == 3)
+            {
+                tankSprite.Load("./PNG/Tanks/tankBeige_outline.png");
+                turretSprite.Load("./PNG/Tanks/barrelBeige_outline.png");
+
+                AICanMove = false;
+                AITurretTracksPlayer = false;
+                shootCooldown = .1f;
+                shootSpeed = 50f;
+
+                moveSpeed = 100f;
+                turnSpeed = 20f;
+                shootingAccuracy = 0.8f;
+            }
+
+        }
+
+
+        bool AICanTurn = true;
+        bool AICanMove = true;
+        bool AITurretTracksPlayer = true;
+
         bool AIturning = true;
         bool AImoving = true;
         float AImovingDirection = 1f;
         float AIturningDirection = 1f;
+
+
         // The enemy AI
         public void ExecuteEnemyAI(float deltaTime)
         {
             Tank playerTank = Game.playerTank;
+
+            if (AICanTurn)
+            {
+                // Should AI toggle turn
+                if (random.Next(0, 10000) == 1)
+                {
+                    AIturning = !AIturning;
+                }
+
+                // Should AI change turning direction
+                if (random.Next(0, 10000) == 1)
+                {
+                    AIturningDirection = -AIturningDirection;
+                }
+                if (AIturning)
+                {
+                    Rotate(AIturningDirection * deltaTime * turnSpeed);
+                }
+            }
+
+            if (AICanMove)
+            {
+                // Should AI toggle movement
+                if (random.Next(0, 100000) == 1)
+                {
+                    AImoving = !AImoving;
+                }
+
+                if (random.Next(0, 100000) == 1)
+                {
+                    AImovingDirection = -AImovingDirection;
+                }
+                if (AImoving)
+                {
+                    MoveTank(deltaTime, AImovingDirection);
+                }
+            }
+
+            if (AITurretTracksPlayer)
+            {
+                // Calculate the angle to face player
+                float angle = MathF.Atan2( (playerTank.globalTransform.m21-turretObject.GlobalTransform.m21), (playerTank.globalTransform.m20 - turretObject.GlobalTransform.m20));
+                // Find the angle that the main body of the tank has rotated (Used to correct turret rotation)
+                float angle2 = MathF.Atan2(GlobalTransform.m01, GlobalTransform.m00);
+
+                turretObject.SetRotate(angle - angle2);
+            }
             
-            // Should AI toggle turn
-            if(random.Next(0, 10000) == 1)
-            {
-                AIturning = !AIturning;
-            }
-
-            // Should AI change turning direction
-            if(random.Next(0, 10000) == 1)
-            {
-                AIturningDirection = -AIturningDirection;
-            }
-
-            // Should AI toggle movement
-            if(random.Next(0, 100000) == 1){
-                AImoving = !AImoving;
-            }
-
-            if(random.Next(0, 100000) == 1)
-            {
-                AImovingDirection = -AImovingDirection;
-            }
-
-
-            if (AIturning)
-            {
-                Rotate(AIturningDirection*deltaTime);
-            }
-            if (AImoving)
-            {
-                MoveTank(deltaTime, AImovingDirection);
-            }
-
-            // Calculate the angle to face player
-            Vector3 directionB = new Vector3(turretObject.GlobalTransform.m20, turretObject.GlobalTransform.m21, 0);
-            Vector3 directionA = new Vector3(playerTank.globalTransform.m20, playerTank.globalTransform.m21, 0);
-            Vector3 d = directionA - directionB;
-
-            float angle = MathF.Atan2(d.y, d.x);
-            // Find the angle that the main body of the tank has rotated (Used to correct turret rotation)
-            float angle2 = MathF.Atan2(GlobalTransform.m01, GlobalTransform.m00);
-            Console.WriteLine(angle2);
-
-            turretObject.SetRotate(angle-angle2);
-
-
-            ShootBullet(500f, "Player");
+         
+            ShootBullet("Player");
 
 
             //MoveTank(deltaTime, 1);
@@ -174,11 +241,6 @@ namespace RaylibStarterCS
         public override void OnDraw()
         {
             base.OnDraw();
-            // Draw each track
-            foreach (SpriteObject track in tracks)
-            {
-                track.Draw();
-            }
             
         }
 
@@ -190,7 +252,7 @@ namespace RaylibStarterCS
             // Create a new track
             MakeTrack(facing);
             // Calculate the direction and time adjusted movement vector
-            Vector3 f = facing * (direction*100f) * deltaTime;
+            Vector3 f = facing * (direction*moveSpeed) * deltaTime;
             // Translate position
             Translate(f.x, f.y);
         }
@@ -198,19 +260,30 @@ namespace RaylibStarterCS
         // Rotate tank turret adjusted by delta time
         public void RotateTurret(float deltaTime, float direction = 1f)
         {
-            turretObject.Rotate(deltaTime*direction);
+            turretObject.Rotate(deltaTime*direction*turretMoveSpeed);
         }
 
         // Shoot bullet
-        public void ShootBullet(float speed = 1000f, string target = "Enemy")
+        public void ShootBullet(string target = "Enemy")
         {
             // If the shooting cooldown is complete
             if(shootCooldownCount >= shootCooldown)
             {
-                // FInd the direction that the turret is facing
-                Vector3 turretFacing = new Vector3(firePoint.GlobalTransform.m00, firePoint.GlobalTransform.m01, 1);
+                Vector3 turretFacing = new Vector3(firePoint.GlobalTransform.m00, firePoint.GlobalTransform.m01, 1); ;
+                switch (random.Next(0, 1))
+                {
+                    case 0:
+                        // Find the direction that the turret is facing
+                        turretFacing.x *= shootingAccuracy;
+                        break;
+                    case 1:
+                        // Find the direction that the turret is facing
+                        turretFacing.y *= shootingAccuracy;
+                        break;
+                }
+                
                 // Create new bullet
-                BulletObject newbullet = new BulletObject(turretFacing, speed, target);
+                BulletObject newbullet = new BulletObject(turretFacing, shootSpeed, target);
                 // Set position of new bullet to the tank fire point
                 newbullet.SetPosition(firePoint.GlobalTransform.m20, firePoint.GlobalTransform.m21);
                 // Add to bullet list to keep track of it
@@ -230,8 +303,7 @@ namespace RaylibStarterCS
             if (trackCooldownCount >= trackCooldown)
             {
                 // Create new track sprite
-                SpriteObject track = new SpriteObject();
-                track.texture = trackTexture;
+                Track track = new Track();
 
                 // Rotate sprite to face same direction as tank
                 track.SetRotate(90 * (float)(Math.PI / 180.0f));
@@ -240,16 +312,8 @@ namespace RaylibStarterCS
                 // Set position of track to track spawn point
                 track.SetPosition(trackPoint.GlobalTransform.m20, trackPoint.GlobalTransform.m21);
 
-                // Add to tracks list to keep track of it
-                tracks.Add(track);
                 // Reset cooldown
                 trackCooldownCount = 0f;
-
-                // Remove tracks after reaching maximum amount
-                if (tracks.Count >= maxTrackCount)
-                {
-                    tracks.RemoveAt(0);
-                }
             }
         }
     }
