@@ -168,7 +168,7 @@ namespace RaylibStarterCS
                 delegateUpdates?.Invoke(deltaTime);
             }
 
-            if (IsKeyDown(KeyboardKey.KEY_R))
+            if (IsKeyDown(KeyboardKey.KEY_R) && !GameActive)
             {
                 GameEndOption = "Restart";
 
@@ -200,8 +200,20 @@ namespace RaylibStarterCS
                 Tank newEnemy = new Tank("Enemy");
                 sceneObjects.Add(newEnemy);
                 enemies.Add(newEnemy);
-                newEnemy.Init(random.Next(20, GetScreenWidth()-20), random.Next(20, GetScreenHeight() - 20));
-                //newEnemy.Init(GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f);
+
+                for(int attempts = 0; attempts < 100; attempts++)
+                {
+                    int randomX = random.Next(20, GetScreenWidth() - 20);
+                    int randomY = random.Next(20, GetScreenHeight() - 20);
+                    float dist = MathF.Sqrt(Math.Abs(randomY - randomX) + Math.Abs(playerTank.GlobalTransform.m21 - playerTank.GlobalTransform.m20));
+
+                    if (dist > 20)
+                    {
+                        newEnemy.Init(randomX, randomY);
+                        break;
+                    }
+                    
+                }
             }
             
         }
