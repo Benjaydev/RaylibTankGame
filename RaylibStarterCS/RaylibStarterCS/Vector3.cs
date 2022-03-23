@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RaylibStarterCS
+namespace MathClasses
 {
     public struct Vector3
     {

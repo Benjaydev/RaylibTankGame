@@ -4,16 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RaylibStarterCS
+namespace MathClasses
 {
 
     public struct Matrix3
     {
         // Initialise the matrix values
 
-        public float m00, m01, m02;
-        public float m10, m11, m12;
-        public float m20, m21, m22;
+        public float m00, m10, m20;
+        public float m01, m11, m21;
+        public float m02, m12, m22;
 
 
         // Construct matrix with single value
@@ -23,6 +23,7 @@ namespace RaylibStarterCS
             m00 = m11 = m22 = m;
             // Set the rest of the values to 0
             m01 = m02 = m10 = m12 = m20 = m21 = 0;
+
         }
         public Matrix3(float M00, float M01, float M02, float M10, float M11, float M12, float M20, float M21, float M22)
         {
@@ -45,6 +46,17 @@ namespace RaylibStarterCS
             m00 = m.m00; m10 = m.m10; m20 = m.m20;
             m01 = m.m01; m11 = m.m11; m21 = m.m21;
             m02 = m.m02; m12 = m.m12; m22 = m.m22;
+        }
+
+        // Transpose this matrix
+        public void Transpose()
+        {
+            Matrix3 temp = new Matrix3();
+            temp.m00 = m00; temp.m10 = m01; temp.m20 = m02;
+            temp.m01 = m10; temp.m11 = m11; temp.m21 = m12;
+            temp.m02 = m20; temp.m12 = m21; temp.m22 = m22;
+
+            this = temp;
         }
 
         // Get specific row of the matrix, this allows for cleaner code when trying to access individual rows
@@ -126,7 +138,7 @@ namespace RaylibStarterCS
             y.SetRotateY(radY);
             z.SetRotateZ(radZ);
 
-            // Apply rotations to this matrix by multiplying it by each axis matrix and setting
+            // Apply rotations to this matrix by multiplying it by each axis matrix then setting it
             Set(this * z);
             Set(this * y);
             Set(this * x);

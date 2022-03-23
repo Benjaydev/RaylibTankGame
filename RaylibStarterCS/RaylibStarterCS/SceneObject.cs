@@ -4,6 +4,7 @@ using System.Text;
 using System.Diagnostics;
 using Raylib_cs;
 using static Raylib_cs.Raylib;
+using MathClasses;
 
 namespace RaylibStarterCS
 {
