@@ -14,6 +14,7 @@ namespace RaylibStarterCS
 
         public SpriteObject tankSprite = new SpriteObject();
         public SpriteObject turretSprite = new SpriteObject();
+        public Texture2D bulletTexture;
 
         public float moveSpeed = 100f;
         public float turretMoveSpeed = 1f;
@@ -41,9 +42,11 @@ namespace RaylibStarterCS
             if(tag == "Player"){
                 tankSprite.Load("./PNG/Tanks/tankRed_outline.png");
                 turretSprite.Load("./PNG/Tanks/barrelBlack_outline.png");
+                bulletTexture = LoadTextureFromImage(LoadImage("./PNG/Bullets/bulletRedSilver_outline.png"));
             }
             else if(tag == "Enemy")
             {
+                bulletTexture = LoadTextureFromImage(LoadImage("./PNG/Bullets/bulletBeigeSilver_outline.png"));
                 EnemyRandomiseInit();
             }
             else
@@ -283,7 +286,7 @@ namespace RaylibStarterCS
                 }
                 
                 // Create new bullet
-                BulletObject newbullet = new BulletObject(turretFacing, shootSpeed, target);
+                BulletObject newbullet = new BulletObject(bulletTexture, turretFacing, shootSpeed, target);
                 // Set position of new bullet to the tank fire point
                 newbullet.SetPosition(firePoint.GlobalTransform.m20, firePoint.GlobalTransform.m21);
                 // Add to bullet list to keep track of it

@@ -207,13 +207,14 @@ namespace RaylibStarterCS
                     int randomY = random.Next(20, GetScreenHeight() - 20);
                     float dist = MathF.Sqrt(Math.Abs(randomY - randomX) + Math.Abs(playerTank.GlobalTransform.m21 - playerTank.GlobalTransform.m20));
 
-                    if (dist > 20)
+                    if (dist > 30)
                     {
                         newEnemy.Init(randomX, randomY);
-                        break;
+                        return;
                     }
                     
                 }
+                newEnemy.Init(20, 20);
             }
             
         }
@@ -224,21 +225,22 @@ namespace RaylibStarterCS
 
             ClearBackground(Color.WHITE);
             background.Draw();
-            // Display fps
-            DrawText(fps.ToString(), 10, 10, 24, Color.RED);
-
-
-            DrawText($"Points: {playerTank.points.ToString()}", GetScreenWidth()-200, 20, 24, Color.BLUE);
-            int keyShowSize = MeasureText("Move: W,S | Rotate Tank: A,D | Rotate Turret: Q,E | Shoot: Space", 20);
-            DrawText("Move: W,S | Rotate Tank: A,D | Rotate Turret: Q,E | Shoot: Space", (GetScreenWidth() / 2) - (keyShowSize / 2), GetScreenHeight() -30, 20, Color.BLUE);
-
-            // Draw tank
+         
+            // Draw scene objects
             foreach (SceneObject obj in sceneObjects)
             {
                 obj.Draw();
             }
 
+            // Display fps
+            DrawText(fps.ToString(), 10, 10, 24, Color.RED);
 
+
+            DrawText($"Points: {playerTank.points.ToString()}", GetScreenWidth() - 200, 20, 24, Color.BLUE);
+            int keyShowSize = MeasureText("Move: W,S | Rotate Tank: A,D | Rotate Turret: Q,E | Shoot: Space", 20);
+            DrawText("Move: W,S | Rotate Tank: A,D | Rotate Turret: Q,E | Shoot: Space", (GetScreenWidth() / 2) - (keyShowSize / 2), GetScreenHeight() - 30, 20, Color.BLUE);
+
+            // If game over
             if (!GameActive)
             {
                 titleBackground.Draw();
