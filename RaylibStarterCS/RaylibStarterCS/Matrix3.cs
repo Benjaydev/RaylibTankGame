@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace MathClasses
 {
 
-    public struct Matrix3
+    public class Matrix3
     {
         // Initialise the matrix values
 
@@ -15,6 +15,10 @@ namespace MathClasses
         public float m01, m11, m21;
         public float m02, m12, m22;
 
+        public Matrix3()
+        {
+            m00 = m11 = m22 = m01 = m02 = m10 = m12 = m20 = m21 = 0;
+        }
 
         // Construct matrix with single value
         public Matrix3(float m)

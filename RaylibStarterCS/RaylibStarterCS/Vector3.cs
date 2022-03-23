@@ -6,10 +6,16 @@ using System.Threading.Tasks;
 
 namespace MathClasses
 {
-    public struct Vector3
+    public class Vector3
     {
         // Initialise vector values
         public float x, y, z;
+
+        // Default Constructor
+        public Vector3()
+        {
+            x = y = z = 0;
+        }
 
         // Constructor
         public Vector3(float X, float Y, float Z)

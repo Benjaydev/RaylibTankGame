@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MathClasses
 {
-    public struct Vector4
+    public class Vector4
     {
         // Initialise vector values
         public float x, y, z, w;
