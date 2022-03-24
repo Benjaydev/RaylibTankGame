@@ -41,12 +41,16 @@ namespace RaylibStarterCS
             buttonHeight = height;
             Width = length;
             Height = height;
-
-            textSize = MeasureText(buttonText, fontSize);
             
+            MeasureFontText();
 
             hasCollision = false;
-            Game.UIObjects.Add(this);
+            Game.buttons.Add(this);
+        }
+
+        public void MeasureFontText()
+        {
+            textSize = MeasureText(buttonText, fontSize);
         }
 
 
@@ -69,7 +73,7 @@ namespace RaylibStarterCS
         }
 
 
-        public string ClickButton()
+        public virtual string ClickButton()
         {
             return buttonAction;
         }

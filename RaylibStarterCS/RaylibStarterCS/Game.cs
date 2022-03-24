@@ -28,7 +28,7 @@ namespace RaylibStarterCS
         SpriteObject menuBackground = new SpriteObject();
 
         public static List<SceneObject> sceneObjects;
-        public static List<SceneObject> UIObjects;
+        public static List<SceneObject> buttons;
 
         public List<Tank> enemies = new List<Tank>();
 
@@ -66,7 +66,7 @@ namespace RaylibStarterCS
 
             playerTank = new Tank("Player");
             sceneObjects = new List<SceneObject>();
-            UIObjects = new List<SceneObject>();
+            buttons = new List<SceneObject>();
 
 
             MainMenuScene();
@@ -82,6 +82,7 @@ namespace RaylibStarterCS
             int pbLength = 300;
             int pbHeight = 100;
             Button playButton = new Button( (GetScreenWidth()/2)-(pbLength/2), (GetScreenHeight() / 2) - (pbHeight / 2) - 50, pbLength, pbHeight, "Play Game", 22, Color.BLACK, "ExitMainMenu");
+            InputBox test = new InputBox( (GetScreenWidth()/2)-(pbLength/2), (GetScreenHeight() / 2) - (pbHeight / 2) + 100, pbLength, pbHeight, "Play Game", 22, Color.BLACK, "ExitMainMenu");
         }
 
 
@@ -162,41 +163,48 @@ namespace RaylibStarterCS
                     playerTank.RotateTurret(deltaTime * 2, 1);
                 }
 
-                // Find all scene objects that are waiting to destroy
-                List<SceneObject> waitingDetroy = new List<SceneObject>();
-                foreach (SceneObject obj in sceneObjects)
-                {
-                    if (obj.waitingDestroy)
-                    {
-                        if (obj.tag == "Enemy")
-                        {
-                            enemies.Remove((Tank)obj);
-                        }
-                        waitingDetroy.Add(obj);
-                    }
-                }
-                // Destroy each object
-                foreach (SceneObject obj in waitingDetroy)
-                {
-                    obj.RemoveSelfFromSceneObjects();
-                }
-
-
-                delegateUpdates = null;
-                // Update scene objects (Stored in a delegate to avoid an error if object is destroyed during it's update)
-                foreach (SceneObject obj in sceneObjects)
-                {
-                    delegateUpdates += (deltaTime) => obj.Update(deltaTime);
-                }
-                delegateUpdates?.Invoke(deltaTime);
+               
             }
+            // Find all scene objects that are waiting to destroy
+            List<SceneObject> waitingDetroy = new List<SceneObject>();
+            foreach (SceneObject obj in sceneObjects)
+            {
+                if (obj.waitingDestroy)
+                {
+                    if (obj.tag == "Enemy")
+                    {
+                        enemies.Remove((Tank)obj);
+                    }
+                    waitingDetroy.Add(obj);
+                }
+            }
+            // Destroy each object
+            foreach (SceneObject obj in waitingDetroy)
+            {
+                obj.RemoveSelfFromSceneObjects();
+            }
+
+
+            delegateUpdates = null;
+            // Update scene objects (Stored in a delegate to avoid an error if object is destroyed during it's update)
+            foreach (SceneObject obj in sceneObjects)
+            {
+                delegateUpdates += (deltaTime) => obj.Update(deltaTime);
+            }
+            foreach (Button button in buttons)
+            {
+                delegateUpdates += (deltaTime) => button.Update(deltaTime);
+            }
+            delegateUpdates?.Invoke(deltaTime);
+
+
 
 
             int mouseX = GetMouseX();
             int mouseY = GetMouseY();
             Button OverlappedButton = null;
 
-            foreach (Button button in UIObjects)
+            foreach (Button button in buttons)
             {
                 if (button.IsPointWithinButton(mouseX, mouseY))
                 {
@@ -240,7 +248,7 @@ namespace RaylibStarterCS
                 MainMenu = false;
                 GameActive = true;
                 sceneObjects = new List<SceneObject>();
-                UIObjects = new List<SceneObject>();
+                buttons = new List<SceneObject>();
             }
             else if(action == "Restart" || action == "Close")
             {
@@ -256,7 +264,7 @@ namespace RaylibStarterCS
         public void ShutDown()
         {
             sceneObjects.Clear();
-            UIObjects.Clear();
+            buttons.Clear();
         }
 
         public void EndGame()
@@ -267,7 +275,7 @@ namespace RaylibStarterCS
             int pbLength = 150;
             int pbHeight = 50;
             sceneObjects = new List<SceneObject>();
-            UIObjects = new List<SceneObject>();
+            buttons = new List<SceneObject>();
             Button restartButton = new Button((GetScreenWidth() / 2) - (pbLength / 2) - 100, (GetScreenHeight() / 2) - (pbHeight / 2) + 100, pbLength, pbHeight, "Restart", 22, Color.BLACK, "Restart");
             Button closeButton = new Button((GetScreenWidth() / 2) - (pbLength / 2) + 100, (GetScreenHeight() / 2) - (pbHeight / 2) + 100, pbLength, pbHeight, "Close", 22, Color.BLACK, "Close");
 
@@ -355,7 +363,7 @@ namespace RaylibStarterCS
             }
 
             // Draw ui objects
-            foreach (SceneObject ui in UIObjects)
+            foreach (SceneObject ui in buttons)
             {
                 ui.Draw();
             }
