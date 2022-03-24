@@ -10,16 +10,18 @@ namespace RaylibStarterCS
     {
         public Texture2D texture = new Texture2D();
         public Image image = new Image();
-        public float scale = 1f;
+        public float textureScale = 1f;
 
         public float Width
         {
             get { return texture.width; }
+            set { texture.width = (int)value; }
         }
 
         public float Height
         {
             get { return texture.height; }
+            set { texture.height = (int)value; }
         }
 
         public SpriteObject()
@@ -40,8 +42,14 @@ namespace RaylibStarterCS
             // Using local x and y axis
             float rotation = (float)Math.Atan2(globalTransform.m01, globalTransform.m00);
 
-            // Draw sprite to screen using raylib
-            DrawTextureEx(texture, new Vector2(globalTransform.m20, globalTransform.m21), rotation * (float)(180.0f / Math.PI), scale, Color.WHITE);
+            if (!Raylib.WindowShouldClose())
+            {
+                // Draw sprite to screen using raylib
+                DrawTextureEx(texture, new Vector2(globalTransform.m20, globalTransform.m21), rotation * (float)(180.0f / Math.PI), textureScale, Color.WHITE);
+            }
+           
+
+
         }
     }
 }

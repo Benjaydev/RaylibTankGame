@@ -14,12 +14,17 @@ namespace RaylibStarterCS
             while (!Raylib.WindowShouldClose())
             {
                 game.Update();
-                game.Draw();
+                if (game.GameEndOption == "Close")
+                {
+                    break;
+                }
                 if (game.GameEndOption == "Restart")
                 {
                     game = new Game();
                     game.Init();
                 }
+                game.Draw();
+                
             }
         }
 	}

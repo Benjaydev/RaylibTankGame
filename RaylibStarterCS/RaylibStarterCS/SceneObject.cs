@@ -163,39 +163,70 @@ namespace RaylibStarterCS
             }
         }
 
+
+        public string HasHitWorldBoundry(float x = 0, float y = 0)
+        {
+            Vector3[] WorldBoundries = { new Vector3(GetScreenWidth(), GetScreenHeight(), 0), new Vector3(0, 0, 0) };
+            // Right wall
+            if (globalTransform.m20 + x >= WorldBoundries[0].x)
+            {
+                return "Right";
+            }
+            // Left wall
+            else if (globalTransform.m20 + x <= WorldBoundries[1].x)
+            {
+                return "Left";
+            }
+            // Bottom wall
+            else if (globalTransform.m21 + y >= WorldBoundries[0].y)
+            {
+                return "Bottom";
+            }
+            // Top wall
+            else if (globalTransform.m21 + y <= WorldBoundries[1].y)
+            {
+                return "Top";
+            }
+
+            return "";
+        }
+
+
         public bool CheckCollision(float x, float y)
         {
             if (hasCollision)
             {
-                Vector3[] WorldBoundries = { new Vector3(GetScreenWidth(), GetScreenHeight(), 0), new Vector3(0, 0, 0) };
                 // Check edge of window collisions
-                if ((globalTransform.m20 + x >= WorldBoundries[0].x || globalTransform.m20 + x <= WorldBoundries[1].x || globalTransform.m21 + y >= WorldBoundries[0].y || globalTransform.m21 + y <= WorldBoundries[1].y))
-                {
+                string boundryHit = HasHitWorldBoundry(x, y);
+               
+                if(boundryHit != ""){
                     // Right wall
-                    if (globalTransform.m20 + x >= WorldBoundries[0].x)
+                    if (boundryHit == "Right")
                     {
                         CollideEvent(new Vector3(-1, 0, 0));
                     }
                     // Left wall
-                    else if (globalTransform.m20 + x <= WorldBoundries[1].x)
+                    else if (boundryHit == "Left")
                     {
                         CollideEvent(new Vector3(1, 0, 0));
                     }
                     // Bottom wall
-                    else if (globalTransform.m21 + y >= WorldBoundries[0].y)
+                    else if (boundryHit == "Bottom")
                     {
                         CollideEvent(new Vector3(0, 1, 0));
                     }
                     // Top wall
-                    else if (globalTransform.m21 + y <= WorldBoundries[1].y)
+                    else if (boundryHit == "Top")
                     {
                         CollideEvent(new Vector3(0, -1, 0));
                     }
                     return true;
                 }
-
+                
+                // Check collision with every scene object
                 foreach (SceneObject obj in Game.sceneObjects)
                 {
+                    // Has collision, not itself, and aren't both bullets
                     if (obj.hasCollision && obj != this && !(tag == "Bullet" && obj.tag == "Bullet"))
                     {
                         Vector3 sceneObjectPos = new Vector3(obj.GlobalTransform.m20, obj.GlobalTransform.m21, 0);
@@ -204,26 +235,26 @@ namespace RaylibStarterCS
                         // Check if collision distance is met
                         if (dist < HitRadius+obj.HitRadius)
                         {
-                            // If object is bullet
+                            // If bullet object has hit it's target
                             if (tag == "Bullet" && obj.tag == ((BulletObject)this).bulletTarget)
                             {
                                 obj.waitingDestroy = true;
                                 waitingDestroy = true;
 
+                                // Bullet hits enemy give points to player
                                 if(obj.tag == "Enemy")
                                 {
                                     Game.playerTank.AddDestroyedTankPoints();
-                                    Console.WriteLine(Game.playerTank.points);
                                 }
+
                                 return true;
                             }
 
+                            // Collide player and enemy tanks with eachother
                             if((tag == "Player" && obj.tag == "Enemy") || (obj.tag == "Player" && tag == "Enemy"))
                             {
                                 return true;
                             }
-
-
                         }
                     }
                 }

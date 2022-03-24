@@ -45,8 +45,7 @@ namespace RaylibStarterCS
                 bulletTexture = LoadTextureFromImage(LoadImage("./PNG/Bullets/bulletRedSilver_outline.png"));
             }
             else if(tag == "Enemy")
-            {
-                bulletTexture = LoadTextureFromImage(LoadImage("./PNG/Bullets/bulletBeigeSilver_outline.png"));
+            {  
                 EnemyRandomiseInit();
             }
             else
@@ -66,7 +65,7 @@ namespace RaylibStarterCS
             turretSprite.SetPosition(0, turretSprite.Width / 2.0f);
 
             firePoint.SetRotate(-90 * (float)(Math.PI));
-            firePoint.SetPosition(turretSprite.Height + 30, (turretSprite.Width / 2.0f) - 17.5f);
+            firePoint.SetPosition(turretSprite.Height + 15, (turretSprite.Width / 2.0f) - 22.5f);
 
             trackPoint.SetRotate(-90 * (float)(Math.PI));
             trackPoint.SetPosition(tankSprite.Height - 35, -(tankSprite.Width / 2));
@@ -120,6 +119,7 @@ namespace RaylibStarterCS
             {
                 tankSprite.Load("./PNG/Tanks/tankBlack_outline.png");
                 turretSprite.Load("./PNG/Tanks/barrelBlack_outline.png");
+                bulletTexture = LoadTextureFromImage(LoadImage("./PNG/Bullets/bulletSilverSilver_outline.png"));
 
                 shootCooldown = 5f;
                 shootSpeed = 2000f;
@@ -132,6 +132,7 @@ namespace RaylibStarterCS
             {
                 tankSprite.Load("./PNG/Tanks/tankBlue_outline.png");
                 turretSprite.Load("./PNG/Tanks/barrelBlue_outline.png");
+                bulletTexture = LoadTextureFromImage(LoadImage("./PNG/Bullets/bulletBlueSilver_outline.png"));
 
                 shootCooldown = 1f;
                 shootSpeed = 250f;
@@ -144,6 +145,7 @@ namespace RaylibStarterCS
             {
                 tankSprite.Load("./PNG/Tanks/tankGreen_outline.png");
                 turretSprite.Load("./PNG/Tanks/barrelGreen_outline.png");
+                bulletTexture = LoadTextureFromImage(LoadImage("./PNG/Bullets/bulletGreenSilver_outline.png"));
 
                 shootCooldown = 3f;
                 shootSpeed = 600f;
@@ -156,6 +158,7 @@ namespace RaylibStarterCS
             {
                 tankSprite.Load("./PNG/Tanks/tankBeige_outline.png");
                 turretSprite.Load("./PNG/Tanks/barrelBeige_outline.png");
+                bulletTexture = LoadTextureFromImage(LoadImage("./PNG/Bullets/bulletBeigeSilver_outline.png"));
 
                 AICanMove = false;
                 AITurretTracksPlayer = false;
@@ -287,8 +290,17 @@ namespace RaylibStarterCS
                 
                 // Create new bullet
                 BulletObject newbullet = new BulletObject(bulletTexture, turretFacing, shootSpeed, target);
+
                 // Set position of new bullet to the tank fire point
                 newbullet.SetPosition(firePoint.GlobalTransform.m20, firePoint.GlobalTransform.m21);
+
+                // Check if bullet has been shot outside the world border
+                if(newbullet.HasHitWorldBoundry(0, 0) != "")
+                {
+                    // Destroy if so
+                    newbullet.waitingDestroy = true;
+                }
+
                 // Add to bullet list to keep track of it
                 Game.sceneObjects.Add(newbullet);
 

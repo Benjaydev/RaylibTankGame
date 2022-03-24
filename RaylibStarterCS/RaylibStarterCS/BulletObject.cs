@@ -19,19 +19,13 @@ namespace RaylibStarterCS
         public string bulletTarget = "Enemy";
 
 
-        public BulletObject(Vector3 facing, float velocity = 1000f,string bt = "Enemy")
+        public BulletObject(Texture2D bulletTexture, Vector3 facing, float velocity = 1000f, string bt = "Enemy")
         {
             startVelocity = velocity;
             tag = "Bullet";
             bulletTarget = bt;
             ForwardVector = facing * startVelocity;
-            if(bulletTarget == "Enemy"){
-                Load("./PNG/Bullets/bulletRedSilver_outline.png");
-            }
-            else
-            {
-                Load("./PNG/Bullets/bulletBeigeSilver_outline.png");
-            }
+            texture = bulletTexture;
             
             SetRotate(90 * (float)(Math.PI / 180.0f));
             Rotate(MathF.Atan2(ForwardVector.y, ForwardVector.x));

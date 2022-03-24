@@ -60,7 +60,7 @@ namespace MathClasses
             temp.m01 = m10; temp.m11 = m11; temp.m21 = m12;
             temp.m02 = m20; temp.m12 = m21; temp.m22 = m22;
 
-            this = temp;
+            Set(temp);
         }
 
         // Get specific row of the matrix, this allows for cleaner code when trying to access individual rows

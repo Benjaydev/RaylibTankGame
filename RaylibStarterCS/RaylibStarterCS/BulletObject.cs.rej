@@ -1,0 +1,23 @@
+diff a/RaylibStarterCS/RaylibStarterCS/BulletObject.cs b/RaylibStarterCS/RaylibStarterCS/BulletObject.cs	(rejected hunks)
+@@ -19,18 +19,18 @@
+         public string bulletTarget = "Enemy";
+ 
+ 
+-        public BulletObject(Texture2D bulletTexture, Vector3 facing, float velocity = 1000f,string bt = "Enemy")
++        public BulletObject(Vector3 facing, float velocity = 1000f,string bt = "Enemy")
+         {
+             startVelocity = velocity;
+             tag = "Bullet";
+             bulletTarget = bt;
+             ForwardVector = facing * startVelocity;
+             if(bulletTarget == "Enemy"){
+-                texture = bulletTexture;
++                Load("./PNG/Bullets/bulletRedSilver_outline.png");
+             }
+             else
+             {
+-                texture = bulletTexture;
++                Load("./PNG/Bullets/bulletBeigeSilver_outline.png");
+             }
+             
+             SetRotate(90 * (float)(Math.PI / 180.0f));

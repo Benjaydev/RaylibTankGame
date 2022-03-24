@@ -31,8 +31,12 @@
     <None Remove="PNG\Bullets\bulletYellowSilver.png" />
     <None Remove="PNG\Bullets\bulletYellowSilver_outline.png" />
     <None Remove="PNG\Bullets\bulletYellow_outline.png" />
+    <None Remove="PNG\Buttons\ButtonDefault - Copy.png" />
+    <None Remove="PNG\Buttons\ButtonDefault.png" />
+    <None Remove="PNG\Buttons\ButtonHover.png" />
     <None Remove="PNG\Environment\dirt.png" />
     <None Remove="PNG\Environment\grass.png" />
+    <None Remove="PNG\Environment\rock.png" />
     <None Remove="PNG\Environment\sand.png" />
     <None Remove="PNG\Environment\TitleBackground.png" />
     <None Remove="PNG\Environment\treeLarge.png" />
@@ -161,10 +165,19 @@
     <Content Include="PNG\Bullets\bulletYellow_outline.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="PNG\Buttons\ButtonDefault.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PNG\Buttons\ButtonHover.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="PNG\Environment\dirt.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="PNG\Environment\grass.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PNG\Environment\rock.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="PNG\Environment\sand.png">
