@@ -52,6 +52,9 @@ namespace MathClasses
             z /= magnitude;
         }
 
+        
+
+
         // Calculate and return the cross product of this vector and another vector
         public Vector3 Cross(Vector3 v)
         {

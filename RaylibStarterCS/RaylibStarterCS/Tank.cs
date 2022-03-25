@@ -39,7 +39,7 @@ namespace RaylibStarterCS
         public void Init(float xPos = 0, float yPos = 0)
         {
             HitRadius = 5f;
-            if(tag == "Player"){
+            if(tag == "Player" || tag == "Menu"){
                 tankSprite.Load("./PNG/Tanks/tankRed_outline.png");
                 turretSprite.Load("./PNG/Tanks/barrelBlack_outline.png");
                 bulletTexture = LoadTextureFromImage(LoadImage("./PNG/Bullets/bulletRedSilver_outline.png"));
@@ -53,7 +53,8 @@ namespace RaylibStarterCS
                 tankSprite.Load("./PNG/Tanks/tankBlue_outline.png");
                 turretSprite.Load("./PNG/Tanks/barrelBlue_outline.png");
             }
-            
+
+
             // Setup the tank barrel starting rotation
             tankSprite.SetRotate(-90 * (float)(Math.PI / 180.0f));
             // Set position of turret to be centered in tank sprite
@@ -62,7 +63,7 @@ namespace RaylibStarterCS
             // Setup the tank base starting rotation
             turretSprite.SetRotate(-90 * (float)(Math.PI / 180.0f));
             // Set position of base to be centered in turret sprite
-            turretSprite.SetPosition(0, turretSprite.Width / 2.0f);
+            turretSprite.SetPosition(0, (tankSprite.Width / 4f) - (turretSprite.Width/2));
 
             firePoint.SetRotate(-90 * (float)(Math.PI));
             firePoint.SetPosition(turretSprite.Height + 15, (turretSprite.Width / 2.0f) - 22.5f);
@@ -79,6 +80,10 @@ namespace RaylibStarterCS
             AddChild(trackPoint);
 
             SetPosition(xPos, yPos);
+
+            Game.sceneObjects.Add(this);
+
+
         }
 
         // Call on update everytime tank scene object is updated
@@ -100,6 +105,10 @@ namespace RaylibStarterCS
             if(tag == "Enemy")
             {
                 ExecuteEnemyAI(deltaTime);
+            }
+            if(tag == "Menu")
+            {
+                UpdateMenuTank(deltaTime);
             }
         }
 
@@ -169,7 +178,7 @@ namespace RaylibStarterCS
                 turnSpeed = 20f;
                 shootingAccuracy = 0.8f;
             }
-
+            Game.enemies.Add(this);
         }
 
 
@@ -181,6 +190,42 @@ namespace RaylibStarterCS
         bool AImoving = true;
         float AImovingDirection = 1f;
         float AIturningDirection = 1f;
+
+
+        float lastAngle = 0f;
+        public void UpdateMenuTank(float deltaTime)
+        {
+            trackCooldownCount = 0;
+
+            float difX = GetMouseX() - GlobalTransform.m20;
+            float difY = GetMouseY() - GlobalTransform.m21;
+
+            Console.WriteLine(difX + " " + difY);
+
+            if (Math.Abs(difX) >= 20 || Math.Abs(difY) >= 20) {
+                MoveTank(deltaTime, 1);
+            }
+            else
+            {
+                MoveTank(deltaTime, -1);
+            }
+
+            // Calculate the angle to face mouse
+            float angle = MathF.Atan2(difY, difX);
+            // Reset
+            Rotate(-lastAngle);
+            // Rotate to face mouse
+            Rotate(angle);
+            // Store this angle for later reset
+            lastAngle = angle;
+
+
+            if (IsMouseButtonPressed(MouseButton.MOUSE_LEFT_BUTTON))
+            {
+                ShootBullet();
+            }
+
+        }
 
 
         // The enemy AI
@@ -298,7 +343,7 @@ namespace RaylibStarterCS
                 if(newbullet.HasHitWorldBoundry(0, 0) != "")
                 {
                     // Destroy if so
-                    newbullet.waitingDestroy = true;
+                    newbullet.isWaitingDestroy = true;
                 }
 
                 // Add to bullet list to keep track of it

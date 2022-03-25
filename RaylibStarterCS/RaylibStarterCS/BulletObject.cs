@@ -65,7 +65,7 @@ namespace RaylibStarterCS
             velocityMultiple *= 1 - (0.5f * deltaTime);
             if(bounces >= maxBounces || velocityMultiple < (0.05f * (1+deltaTime)))
             {
-                waitingDestroy = true;
+                isWaitingDestroy = true;
             }
             Translate(f.x* velocityMultiple, f.y* velocityMultiple);
         }

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -31,9 +31,9 @@
     <None Remove="PNG\Bullets\bulletYellowSilver.png" />
     <None Remove="PNG\Bullets\bulletYellowSilver_outline.png" />
     <None Remove="PNG\Bullets\bulletYellow_outline.png" />
-    <None Remove="PNG\Buttons\ButtonDefault - Copy.png" />
     <None Remove="PNG\Buttons\ButtonDefault.png" />
     <None Remove="PNG\Buttons\ButtonHover.png" />
+    <None Remove="PNG\Buttons\ButtonPressed.png" />
     <None Remove="PNG\Environment\dirt.png" />
     <None Remove="PNG\Environment\grass.png" />
     <None Remove="PNG\Environment\rock.png" />
@@ -87,6 +87,8 @@
     <None Remove="PNG\Tanks\tankRed_outline.png" />
     <None Remove="PNG\Tanks\tracksLarge.png" />
     <None Remove="PNG\Tanks\tracksSmall.png" />
+    <None Remove="Scores.txt" />
+    <None Remove="Scores\Scores.txt" />
   </ItemGroup>
 
   <ItemGroup>
@@ -163,6 +165,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="PNG\Bullets\bulletYellow_outline.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PNG\Buttons\ButtonPressed.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="PNG\Buttons\ButtonDefault.png">
@@ -330,6 +335,12 @@
     <Content Include="PNG\Tanks\tracksSmall.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Scores.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Resource Include="Scores\Scores.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
   <ItemGroup>

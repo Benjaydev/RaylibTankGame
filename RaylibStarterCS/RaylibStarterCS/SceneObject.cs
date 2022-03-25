@@ -24,7 +24,7 @@ namespace RaylibStarterCS
         public bool hasCollision = true;
         protected float HitRadius = 3.75f;
 
-        public bool waitingDestroy = false;
+        public bool isWaitingDestroy = false;
 
         public Random random = new Random();
 
@@ -65,7 +65,7 @@ namespace RaylibStarterCS
                 so.parent = null;
             }
         }
-        public void RemoveSelfFromSceneObjects()
+        public virtual void RemoveSelfFromSceneObjects()
         {
             Game.sceneObjects.Remove(this);
         }
@@ -109,7 +109,7 @@ namespace RaylibStarterCS
         }
 
         // Update the transform of this sceneObject. This is called everytime the sceneObjects transformation is changed
-        public void UpdateTransform()
+        public virtual void UpdateTransform()
         {
             // If this sceneObject has a parent, calculate the globalTransform
             if (parent != null)
@@ -146,11 +146,35 @@ namespace RaylibStarterCS
             UpdateTransform();
         }
 
+        // Rotate scene object
+        public void Rotate(float radians)
+        {
+            localTransform.RotateZ(radians);
+            UpdateTransform();
+        }
+
         // Set scale
         public void SetScale(float width, float height)
         {
             localTransform.SetScaled(width, height, 1);
             UpdateTransform();
+        }
+        
+
+        // Scale scene object
+        public virtual void Scale(float width, float height)
+        {
+            localTransform.Scale(width, height, 1);
+            UpdateTransform();
+        }
+
+        public Vector3 GetLocalScale()
+        {
+            return localTransform.GetScale();
+        }
+        public Vector3 GetGlobalScale()
+        {
+            return globalTransform.GetScale();
         }
 
         // Translate scene object
@@ -238,8 +262,8 @@ namespace RaylibStarterCS
                             // If bullet object has hit it's target
                             if (tag == "Bullet" && obj.tag == ((BulletObject)this).bulletTarget)
                             {
-                                obj.waitingDestroy = true;
-                                waitingDestroy = true;
+                                obj.isWaitingDestroy = true;
+                                isWaitingDestroy = true;
 
                                 // Bullet hits enemy give points to player
                                 if(obj.tag == "Enemy")
@@ -268,19 +292,6 @@ namespace RaylibStarterCS
 
         }
 
-        // Rotate scene object
-        public void Rotate(float radians)
-        {
-            localTransform.RotateZ(radians);
-            UpdateTransform();
-        }
-
-        // Scale scene object
-        public void Scale(float width, float height)
-        {
-            localTransform.Scale(width, height, 1);
-            UpdateTransform();
-        }
 
 
         // Return the amount of children

@@ -23,7 +23,7 @@ namespace RaylibStarterCS
             lifetime += deltaTime;
             if(lifetime > lifetimeMax)
             {
-                waitingDestroy = true;
+                isWaitingDestroy = true;
             }
         }
     }

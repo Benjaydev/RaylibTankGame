@@ -165,6 +165,25 @@ namespace MathClasses
             // Combine the rotations
             Set(z * y * x);
         }
+
+        // Rotate multiple axes at once
+        public void SetAddRotate(float pitchX, float yawY, float rollZ)
+        {
+            // Make new matrix for each axis
+            Matrix3 x = new Matrix3();
+            Matrix3 y = new Matrix3();
+            Matrix3 z = new Matrix3();
+
+            // Set rotate for each value
+            x.SetRotateX(pitchX);
+            y.SetRotateY(yawY);
+            z.SetRotateZ(rollZ);
+
+            // Combine the rotations
+            Set(z * y * x);
+        }
+
+
         // Set scale of matrix
         public void SetScaled(float x, float y, float z)
         {
@@ -178,6 +197,10 @@ namespace MathClasses
             m.SetScaled(x, y, z);
 
             Set(this * m);
+        }
+        public Vector3 GetScale()
+        {
+            return new Vector3(GetColumn(0).Magnitude(), GetColumn(1).Magnitude(), GetColumn(2).Magnitude());
         }
 
 
