@@ -22,7 +22,7 @@ namespace RaylibStarterCS
         // Right top and left bottom
         protected Vector3[] WorldBoundries = new Vector3[2];
         public bool hasCollision = true;
-        protected float HitRadius = 3.75f;
+        public float HitRadius = 3.75f;
 
         public bool isWaitingDestroy = false;
 
@@ -260,7 +260,7 @@ namespace RaylibStarterCS
                         if (dist < HitRadius+obj.HitRadius)
                         {
                             // If bullet object has hit it's target
-                            if (tag == "Bullet" && obj.tag == ((BulletObject)this).bulletTarget)
+                            if (tag == "Bullet" && (obj.tag == ((BulletObject)this).bulletTarget))
                             {
                                 obj.isWaitingDestroy = true;
                                 isWaitingDestroy = true;
@@ -273,9 +273,17 @@ namespace RaylibStarterCS
 
                                 return true;
                             }
+                            else if(tag == "Bullet" && obj.tag == "CollideAll")
+                            {
+                                isWaitingDestroy = true;
+                            }
 
                             // Collide player and enemy tanks with eachother
-                            if((tag == "Player" && obj.tag == "Enemy") || (obj.tag == "Player" && tag == "Enemy"))
+                            else if((tag == "Player" && obj.tag == "Enemy") || (obj.tag == "Player" && tag == "Enemy"))
+                            {
+                                return true;
+                            }
+                            else if(tag == "CollideAll" || obj.tag == "CollideAll")
                             {
                                 return true;
                             }

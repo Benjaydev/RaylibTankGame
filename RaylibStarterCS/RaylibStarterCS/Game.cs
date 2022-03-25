@@ -133,6 +133,29 @@ namespace RaylibStarterCS
                 if (!initiated)
                 {
                     playerTank.Init(GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f);
+
+                    for(int i = 0; i < 5; i++)
+                    {
+                        int randomX = random.Next(100, GetScreenWidth() - 100);
+                        int randomY = random.Next(100, GetScreenHeight() - 100);
+                        float dist = MathF.Sqrt(Math.Abs(randomY - randomX) + Math.Abs(playerTank.GlobalTransform.m21 - playerTank.GlobalTransform.m20));
+
+                        
+                        if (dist > 20)
+                        {
+                            SpriteObject barrelSprite = new SpriteObject();
+                            SceneObject barrel = new SceneObject();
+                            barrelSprite.Load("./PNG/Obstacles/barrelGreen_up.png");
+                            barrel.AddChild(barrelSprite);
+                            barrel.hasCollision = true;
+                            barrel.tag = "CollideAll";
+
+                            barrel.SetPosition(randomX, randomY);
+                            barrel.HitRadius = 3f;
+                            barrelSprite.SetPosition(-(barrelSprite.Width / 2), -(barrelSprite.Height / 2));
+                            sceneObjects.Add(barrel);
+                        }
+                    }
                     initiated = true;
                 }
                 if (playerTank.isWaitingDestroy)
@@ -277,7 +300,12 @@ namespace RaylibStarterCS
                 GameActive = true;
                 sceneObjects = new List<SceneObject>();
                 buttons = new List<SceneObject>();
+
+                
+
+
             }
+
             else if (action == "Save")
             {
                 // Setup the file reader

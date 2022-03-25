@@ -200,8 +200,6 @@ namespace RaylibStarterCS
             float difX = GetMouseX() - GlobalTransform.m20;
             float difY = GetMouseY() - GlobalTransform.m21;
 
-            Console.WriteLine(difX + " " + difY);
-
             if (Math.Abs(difX) >= 20 || Math.Abs(difY) >= 20) {
                 MoveTank(deltaTime, 1);
             }
