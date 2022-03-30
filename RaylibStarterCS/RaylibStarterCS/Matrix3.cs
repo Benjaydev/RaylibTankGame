@@ -37,6 +37,12 @@ namespace MathClasses
             m02 = M02; m12 = M12; m22 = M22;
         }
 
+        // Copy constructor
+        public Matrix3(Matrix3 m)
+        {
+            Set(m);
+        }
+
         // Set each value in the matrix
         public void Set(float M00, float M01, float M02, float M10, float M11, float M12, float M20, float M21, float M22)
         {
@@ -100,7 +106,6 @@ namespace MathClasses
             return new Vector3(0, 0, 0);
         }
 
-        // Set rotation of matrix (This will replace all values already in matrix)
         // Set rotation of X
         public void SetRotateX(double rad)
         {
@@ -149,7 +154,7 @@ namespace MathClasses
 
         }
 
-        // Rotate multiple axes at once
+        // Set rotation of multiple axes at once
         public void SetRotate(float pitchX, float yawY, float rollZ)
         {
             // Make new matrix for each axis
@@ -166,24 +171,6 @@ namespace MathClasses
             Set(z * y * x);
         }
 
-        // Rotate multiple axes at once
-        public void SetAddRotate(float pitchX, float yawY, float rollZ)
-        {
-            // Make new matrix for each axis
-            Matrix3 x = new Matrix3();
-            Matrix3 y = new Matrix3();
-            Matrix3 z = new Matrix3();
-
-            // Set rotate for each value
-            x.SetRotateX(pitchX);
-            y.SetRotateY(yawY);
-            z.SetRotateZ(rollZ);
-
-            // Combine the rotations
-            Set(z * y * x);
-        }
-
-
         // Set scale of matrix
         public void SetScaled(float x, float y, float z)
         {
@@ -191,6 +178,8 @@ namespace MathClasses
             m10 = 0; m11 = y; m12 = 0;
             m20 = 0; m21 = 0; m22 = z;
         }
+
+        // Scale the matrix
         public void Scale(float x, float y, float z)
         {
             Matrix3 m = new Matrix3();
@@ -198,12 +187,14 @@ namespace MathClasses
 
             Set(this * m);
         }
+
+        // Get the scale of matrix
         public Vector3 GetScale()
         {
             return new Vector3(GetColumn(0).Magnitude(), GetColumn(1).Magnitude(), GetColumn(2).Magnitude());
         }
 
-
+        // Translate matrix
         public void Translate(float x, float y)
         {
             m20 = m20 + x; m21 = m21 + y;

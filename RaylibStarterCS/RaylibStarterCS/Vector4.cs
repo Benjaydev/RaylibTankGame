@@ -19,6 +19,14 @@ namespace MathClasses
             z = Z;
             w = W;
         }
+        // Copy constructor
+        public Vector4(Vector4 v)
+        {
+            x = v.x;
+            y = v.y;
+            z = v.z;
+            w = v.w;
+        }
 
         // Calculate and return the dot product of this vector and another vector
         public float Dot(Vector4 v)
@@ -42,7 +50,8 @@ namespace MathClasses
             w /= magnitude;
         }
 
-        // Calculate and return the cross product of this vector and another vector
+
+        // Calculate and return the cross product of this vector and another vector (There is no mathematical operation for getting cross product of Vector4, thus w should be returned as 0)
         public Vector4 Cross(Vector4 v)
         {
             return new Vector4((y * v.z) - (z * v.y), (z * v.x) - (x * v.z), (x * v.y) - (y * v.x), 0);

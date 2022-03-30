@@ -39,8 +39,6 @@ namespace RaylibStarterCS
         InputBox saveInputBox;
         List<string> scores = new List<string>();
 
-        
-
         public delegate void DelegateUpdate(float deltaTime);
         public DelegateUpdate delegateUpdates;
 
@@ -154,12 +152,12 @@ namespace RaylibStarterCS
             playerTank.Init(GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f);
 
             // Setup barrel obstacles
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 10; i++)
             {
                 // Choose random point on screen
                 int randomX = random.Next(100, GetScreenWidth() - 100);
                 int randomY = random.Next(100, GetScreenHeight() - 100);
-                
+
                 // Calculate the distance between the player and randomised point to avoid objects spawing inside player
                 // Setup barrel sprite
                 SpriteObject barrelSprite = new SpriteObject();
@@ -172,7 +170,7 @@ namespace RaylibStarterCS
                 barrel.hasCollision = true;
                 barrel.tag = "CollideAll";
                 barrel.SetPosition(randomX, randomY);
-                   
+
                 // Add to scene
                 sceneObjects.Add(barrel);
                 
@@ -422,14 +420,14 @@ namespace RaylibStarterCS
                 DrawText("Made by Ben Wharton", 20, GetScreenHeight() - 30, 25, Color.ORANGE);
 
                 int leaderboardSize = MeasureText("Leaderboard:", 50);
-                DrawText("Leaderboard:", GetScreenWidth() - leaderboardSize - 50, 50, 50, Color.ORANGE);
+                DrawText("Leaderboard:", GetScreenWidth() - leaderboardSize - 120, 50, 50, Color.ORANGE);
                 
                 // Draw leaderboard scores
                 for(int i = 1; i < scores.Count+1; i++)
                 {
                     string score = scores[i-1];
                     int scoreSize = MeasureText($"{i} - {score}", 35);
-                    DrawText($"{i} - {score}", GetScreenWidth() - leaderboardSize, 50+(50*i), 35, Color.ORANGE);
+                    DrawText($"{i} - {score}", GetScreenWidth() - 120 - leaderboardSize , 50+(50*i), 35, Color.ORANGE);
                 }
             }
 

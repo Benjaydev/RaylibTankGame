@@ -65,7 +65,7 @@ namespace RaylibStarterCS
         public override void OnDraw()
         {
             base.OnDraw();
-            HitRadius = Width/2;
+            HitRadius = Width;
 
             // Using local x and y axis
             float rotation = (float)Math.Atan2(globalTransform.m01, globalTransform.m00);

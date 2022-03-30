@@ -26,8 +26,6 @@ namespace RaylibStarterCS
             bulletTarget = bt;
             ForwardVector = facing * startVelocity;
             texture = bulletTexture;
-
-            HitRadius = 5f;
             
             SetRotate(90 * (float)(Math.PI / 180.0f));
             Rotate(MathF.Atan2(ForwardVector.y, ForwardVector.x));
@@ -59,6 +57,11 @@ namespace RaylibStarterCS
         {
             base.OnUpdate(deltaTime);
             UpdateBullet(deltaTime);
+        }
+        public override void OnDraw()
+        {
+            base.OnDraw();
+            HitRadius = Height;
         }
 
         public void UpdateBullet(float deltaTime)
