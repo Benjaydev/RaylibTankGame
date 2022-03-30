@@ -22,7 +22,7 @@ namespace RaylibStarterCS
         // Right top and left bottom
         protected Vector3[] WorldBoundries = new Vector3[2];
         public bool hasCollision = true;
-        public float HitRadius = 3.75f;
+        public float HitRadius = 0f;
 
         public bool isWaitingDestroy = false;
 
@@ -78,8 +78,7 @@ namespace RaylibStarterCS
         
         // Called on every draw
         public virtual void OnDraw() 
-        { 
- 
+        {
         }
 
         public void Update(float deltaTime)
@@ -187,7 +186,7 @@ namespace RaylibStarterCS
             }
         }
 
-
+        // Check if this object has hit the world boundry after moving by x and y
         public string HasHitWorldBoundry(float x = 0, float y = 0)
         {
             Vector3[] WorldBoundries = { new Vector3(GetScreenWidth(), GetScreenHeight(), 0), new Vector3(0, 0, 0) };
@@ -215,82 +214,93 @@ namespace RaylibStarterCS
             return "";
         }
 
+        // Check if this object is currently colliding with object
+        public bool IsCollidingWithObject(SceneObject obj)
+        {
+            Vector3 sceneObjectPos1 = new Vector3(obj.GlobalTransform.m20, obj.GlobalTransform.m21, 0);
+            Vector3 sceneObjectPos2 = new Vector3(GlobalTransform.m20, GlobalTransform.m21, 0);
+            double dist = Math.Pow(sceneObjectPos1.x - sceneObjectPos2.x, 2) + Math.Pow(sceneObjectPos1.y - sceneObjectPos2.y, 2);
+            // Check if collision distance is met
+            return dist < Math.Pow(HitRadius + obj.HitRadius, 2);
+        }
 
+        // General check collision for this object
         public bool CheckCollision(float x, float y)
         {
-            if (hasCollision)
+            // Return if there is no collision on this object
+            if (!hasCollision)
             {
-                // Check edge of window collisions
-                string boundryHit = HasHitWorldBoundry(x, y);
+                return false;
+            }
+            // Check edge of window collisions
+            string boundryHit = HasHitWorldBoundry(x, y);
                
-                if(boundryHit != ""){
-                    // Right wall
-                    if (boundryHit == "Right")
-                    {
-                        CollideEvent(new Vector3(-1, 0, 0));
-                    }
-                    // Left wall
-                    else if (boundryHit == "Left")
-                    {
-                        CollideEvent(new Vector3(1, 0, 0));
-                    }
-                    // Bottom wall
-                    else if (boundryHit == "Bottom")
-                    {
-                        CollideEvent(new Vector3(0, 1, 0));
-                    }
-                    // Top wall
-                    else if (boundryHit == "Top")
-                    {
-                        CollideEvent(new Vector3(0, -1, 0));
-                    }
-                    return true;
-                }
-                
-                // Check collision with every scene object
-                foreach (SceneObject obj in Game.sceneObjects)
+            if(boundryHit != ""){
+                // Right wall
+                if (boundryHit == "Right")
                 {
-                    // Has collision, not itself, and aren't both bullets
-                    if (obj.hasCollision && obj != this && !(tag == "Bullet" && obj.tag == "Bullet"))
+                    CollideEvent(new Vector3(-1, 0, 0));
+                }
+                // Left wall
+                else if (boundryHit == "Left")
+                {
+                    CollideEvent(new Vector3(1, 0, 0));
+                }
+                // Bottom wall
+                else if (boundryHit == "Bottom")
+                {
+                    CollideEvent(new Vector3(0, 1, 0));
+                }
+                // Top wall
+                else if (boundryHit == "Top")
+                {
+                    CollideEvent(new Vector3(0, -1, 0));
+                }
+                return true;
+            }
+                
+            // Check collision with every scene object
+            foreach (SceneObject obj in Game.sceneObjects)
+            {
+                // Has collision, not itself, and aren't both bullets
+                if (obj.hasCollision && obj != this && !(tag == "Bullet" && obj.tag == "Bullet"))
+                {
+                    Vector3 sceneObjectPos = new Vector3(obj.GlobalTransform.m20, obj.GlobalTransform.m21, 0);
+                    Vector3 thisObjectPos = new Vector3(GlobalTransform.m20 + x, GlobalTransform.m21 + y, 0);
+                    double dist = Math.Pow(sceneObjectPos.x - thisObjectPos.x, 2) + Math.Pow(sceneObjectPos.y - thisObjectPos.y, 2);
+                    // Check if collision distance is met
+                    if (dist < Math.Pow(HitRadius+obj.HitRadius,2))
                     {
-                        Vector3 sceneObjectPos = new Vector3(obj.GlobalTransform.m20, obj.GlobalTransform.m21, 0);
-                        Vector3 thisObjectPos = new Vector3(GlobalTransform.m20 + x, GlobalTransform.m21 + y, 0);
-                        float dist = MathF.Sqrt(Math.Abs(sceneObjectPos.x - thisObjectPos.x) + Math.Abs(sceneObjectPos.y - thisObjectPos.y));
-                        // Check if collision distance is met
-                        if (dist < HitRadius+obj.HitRadius)
+                        // If bullet object has hit it's target
+                        if (tag == "Bullet" && (obj.tag == ((BulletObject)this).bulletTarget))
                         {
-                            // If bullet object has hit it's target
-                            if (tag == "Bullet" && (obj.tag == ((BulletObject)this).bulletTarget))
-                            {
-                                obj.isWaitingDestroy = true;
-                                isWaitingDestroy = true;
+                            obj.isWaitingDestroy = true;
+                            isWaitingDestroy = true;
 
-                                // Bullet hits enemy give points to player
-                                if(obj.tag == "Enemy")
-                                {
-                                    Game.playerTank.AddDestroyedTankPoints();
-                                }
-
-                                return true;
-                            }
-                            else if(tag == "Bullet" && obj.tag == "CollideAll")
+                            // Bullet hits enemy give points to player
+                            if(obj.tag == "Enemy")
                             {
-                                isWaitingDestroy = true;
+                                Game.playerTank.AddDestroyedTankPoints();
                             }
 
-                            // Collide player and enemy tanks with eachother
-                            else if((tag == "Player" && obj.tag == "Enemy") || (obj.tag == "Player" && tag == "Enemy"))
-                            {
-                                return true;
-                            }
-                            else if(tag == "CollideAll" || obj.tag == "CollideAll")
-                            {
-                                return true;
-                            }
+                            return true;
+                        }
+                        else if(tag == "Bullet" && obj.tag == "CollideAll")
+                        {
+                            isWaitingDestroy = true;
+                        }
+
+                        // Collide player and enemy tanks with eachother
+                        else if((tag == "Player" && obj.tag == "Enemy") || (obj.tag == "Player" && tag == "Enemy"))
+                        {
+                            return true;
+                        }
+                        else if(tag == "CollideAll" || obj.tag == "CollideAll")
+                        {
+                            return true;
                         }
                     }
                 }
-                return false;
             }
             return false;
         }

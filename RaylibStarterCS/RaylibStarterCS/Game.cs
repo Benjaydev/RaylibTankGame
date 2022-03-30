@@ -4,6 +4,7 @@ using Raylib_cs;
 using System.Collections.Generic;
 using System.IO;
 using MathClasses;
+using System.Linq;
 using static Raylib_cs.Raylib;
 
 namespace RaylibStarterCS
@@ -18,6 +19,9 @@ namespace RaylibStarterCS
         private int fps = 1;
         private int frames;
 
+        float enemyCooldown = 5f;
+        float enemyCooldownCount = 0f;
+
         private float deltaTime = 0.005f;
         public Vector3[] sceneBoundries = new Vector3[2] {new Vector3(GetScreenWidth() / 2, GetScreenHeight() / 2, 0), new Vector3(-GetScreenWidth() / 2, -GetScreenHeight() / 2, 0) };
 
@@ -25,20 +29,23 @@ namespace RaylibStarterCS
         public static Tank mainMenuTank;
 
         SpriteObject background = new SpriteObject();
-
         SpriteObject endGameBackground = new SpriteObject();
         SpriteObject menuBackground = new SpriteObject();
+
+        public static List<SceneObject> sceneObjects;
+        public static List<SceneObject> buttons;
+        public static List<Tank> enemies = new List<Tank>();
 
         InputBox saveInputBox;
         List<string> scores = new List<string>();
 
-        public static List<SceneObject> sceneObjects;
-        public static List<SceneObject> buttons;
-
-        public static List<Tank> enemies = new List<Tank>();
+        
 
         public delegate void DelegateUpdate(float deltaTime);
         public DelegateUpdate delegateUpdates;
+
+        public delegate void DelegateDestroy();
+        public DelegateDestroy delegateDestroy;
 
         Random random = new Random();
 
@@ -52,7 +59,6 @@ namespace RaylibStarterCS
         {
         }
 
-        bool initiated = false;
         public void Init()
         {
             SetWindowSize(900, 600);
@@ -93,9 +99,15 @@ namespace RaylibStarterCS
             // Read top ten scores
             for(int i = 0; i < 10; i++)
             {
-                scores.Add(reader.ReadLine());
+
+                string line = reader.ReadLine();
+                if(line != null)
+                {
+                    scores.Add(line);
+                }
             }
             reader.Close();
+            scores = scores.OrderByDescending(s => int.Parse(s.Split(": ", StringSplitOptions.None)[1])).ToList();
 
 
             mainMenuTank = new Tank("Menu");
@@ -105,10 +117,69 @@ namespace RaylibStarterCS
 
 
         }
+        public void EndGameScene()
+        {
+            GameOver = true;
+            GameActive = false;
 
+            int pbLength = 150;
+            int pbHeight = 50;
 
-        float enemyCooldown = 5f;
-        float enemyCooldownCount = 0f;
+            int ibLength = 200;
+            int ibHeight = 25;
+
+            int sbLength = 75;
+            int sbHeight = 25;
+
+            sceneObjects = new List<SceneObject>();
+            buttons = new List<SceneObject>();
+
+            
+            Button restartButton = new Button((GetScreenWidth() / 2) - (pbLength / 2) - 100, (GetScreenHeight() / 2) - (pbHeight / 2), pbLength, pbHeight, "Restart", 22, Color.BLACK, "Restart");
+            Button closeButton = new Button((GetScreenWidth() / 2) - (pbLength / 2) + 100, (GetScreenHeight() / 2) - (pbHeight / 2), pbLength, pbHeight, "Close", 22, Color.BLACK, "Close");
+
+            saveInputBox = new InputBox((GetScreenWidth() / 2) - (ibLength / 2), (GetScreenHeight() / 2) - (ibHeight / 2) + 100, ibLength, ibHeight, "Type Name", 20, Color.BLACK, "");
+
+            Button saveButton = new Button((GetScreenWidth() / 2) - (sbLength / 2), (GetScreenHeight() / 2) - (sbHeight / 2) + 150, sbLength, sbHeight, "Save", 16, Color.BLACK, "Save", true);
+        }
+
+        public void GameScene()
+        {
+            MainMenu = false;
+            GameActive = true;
+            sceneObjects = new List<SceneObject>();
+            buttons = new List<SceneObject>();
+
+            // Initiate player
+            playerTank.Init(GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f);
+
+            // Setup barrel obstacles
+            for (int i = 0; i < 1; i++)
+            {
+                // Choose random point on screen
+                int randomX = random.Next(100, GetScreenWidth() - 100);
+                int randomY = random.Next(100, GetScreenHeight() - 100);
+                
+                // Calculate the distance between the player and randomised point to avoid objects spawing inside player
+                // Setup barrel sprite
+                SpriteObject barrelSprite = new SpriteObject();
+                barrelSprite.Load("./PNG/Obstacles/barrelGreen_up.png");
+                barrelSprite.SetPosition(-(barrelSprite.Width / 2), -(barrelSprite.Height / 2));
+
+                // Setup barrel object
+                SceneObject barrel = new SceneObject();
+                barrel.AddChild(barrelSprite);
+                barrel.hasCollision = true;
+                barrel.tag = "CollideAll";
+                barrel.SetPosition(randomX, randomY);
+                   
+                // Add to scene
+                sceneObjects.Add(barrel);
+                
+            }
+        }
+
+        // Update game
         public void Update()
         {
             // Calculate the deltatime for update
@@ -130,41 +201,16 @@ namespace RaylibStarterCS
             // Main game active update
             if (GameActive && !MainMenu && !GameOver)
             { 
-                if (!initiated)
-                {
-                    playerTank.Init(GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f);
 
-                    for(int i = 0; i < 5; i++)
-                    {
-                        int randomX = random.Next(100, GetScreenWidth() - 100);
-                        int randomY = random.Next(100, GetScreenHeight() - 100);
-                        float dist = MathF.Sqrt(Math.Abs(randomY - randomX) + Math.Abs(playerTank.GlobalTransform.m21 - playerTank.GlobalTransform.m20));
 
-                        
-                        if (dist > 20)
-                        {
-                            SpriteObject barrelSprite = new SpriteObject();
-                            SceneObject barrel = new SceneObject();
-                            barrelSprite.Load("./PNG/Obstacles/barrelGreen_up.png");
-                            barrel.AddChild(barrelSprite);
-                            barrel.hasCollision = true;
-                            barrel.tag = "CollideAll";
-
-                            barrel.SetPosition(randomX, randomY);
-                            barrel.HitRadius = 3f;
-                            barrelSprite.SetPosition(-(barrelSprite.Width / 2), -(barrelSprite.Height / 2));
-                            sceneObjects.Add(barrel);
-                        }
-                    }
-                    initiated = true;
-                }
+                // End game if player has died
                 if (playerTank.isWaitingDestroy)
                 {
-                    EndGame();
+                    EndGameScene();
                 }
 
 
-
+                // Spawn new enemies after cooldown has completed
                 enemyCooldownCount += deltaTime;
                 if (enemyCooldownCount >= enemyCooldown)
                 {
@@ -172,37 +218,39 @@ namespace RaylibStarterCS
                     enemyCooldownCount = 0f;
                 }
 
-
-
                 // Shoot bullet
                 if (IsKeyDown(KeyboardKey.KEY_SPACE))
                 {
                     playerTank.ShootBullet();
                 }
 
-                // Move and rotate the tank
+                // Rotate the tank to the left
                 if (IsKeyDown(KeyboardKey.KEY_A))
                 {
                     playerTank.Rotate(-deltaTime * 2);
                 }
+                // Rotate the tank to the right
                 if (IsKeyDown(KeyboardKey.KEY_D))
                 {
                     playerTank.Rotate(deltaTime * 2);
                 }
+                // Move tank forward
                 if (IsKeyDown(KeyboardKey.KEY_W))
                 {
                     playerTank.MoveTank(deltaTime * 2, 1);
                 }
+                // Move tank backwards
                 if (IsKeyDown(KeyboardKey.KEY_S))
                 {
                     playerTank.MoveTank(deltaTime * 1.5f, -1);
                 }
 
-                // Move barrrel
+                // Rotate tank turret to the the left
                 if (IsKeyDown(KeyboardKey.KEY_Q))
                 {
                     playerTank.RotateTurret(deltaTime * 2, -1);
                 }
+                // Rotate tank turret to the left
                 if (IsKeyDown(KeyboardKey.KEY_E))
                 {
                     playerTank.RotateTurret(deltaTime * 2, 1);
@@ -211,16 +259,17 @@ namespace RaylibStarterCS
                
             }
             // Find all scene objects that are waiting to destroy
-            List<SceneObject> waitingDetroy = new List<SceneObject>();
+            delegateDestroy = null;  
             foreach (SceneObject obj in sceneObjects)
             {
                 if (obj.isWaitingDestroy)
                 {
+                    // If object is enemy, also remove it from enemies list
                     if (obj.tag == "Enemy")
                     {
                         enemies.Remove((Tank)obj);
                     }
-                    waitingDetroy.Add(obj);
+                    delegateDestroy += obj.RemoveSelfFromSceneObjects;
                 }
             }
             // Add each button awaiting destroy
@@ -228,17 +277,11 @@ namespace RaylibStarterCS
             {
                 if (button.isWaitingDestroy)
                 {
-                    waitingDetroy.Add(button);
+                    delegateDestroy += button.RemoveSelfFromSceneObjects;
                 }
             }
-
-            // Destroy each object
-            foreach (var obj in waitingDetroy)
-            {
-                obj.RemoveSelfFromSceneObjects();
-            }
-
-
+            delegateDestroy?.Invoke();
+           
 
             delegateUpdates = null;
             // Update scene objects (Stored in a delegate to avoid an error if object is destroyed during it's update)
@@ -258,15 +301,18 @@ namespace RaylibStarterCS
             int mouseX = GetMouseX();
             int mouseY = GetMouseY();
 
-
+            // check each button for interaction
             foreach (Button button in buttons)
             {
+                // Check for overlap
                 button.OverlapButton(button.IsPointWithinButton(mouseX, mouseY));
 
                 // If mouse click
                 if (IsMouseButtonPressed(MouseButton.MOUSE_LEFT_BUTTON))
                 {
                     string result = button.AttemptButtonClick(mouseX, mouseY);
+
+                    // Triger button action if it has one
                     if (result != "")
                     {
                         TriggerAction(result);
@@ -290,20 +336,13 @@ namespace RaylibStarterCS
             }
         }
 
-        // Trigger an action (Used by buttons)
+        // Trigger an action
         public void TriggerAction(string action)
         {
             // Exit main menu action
             if(action == "ExitMainMenu")
             {
-                MainMenu = false;
-                GameActive = true;
-                sceneObjects = new List<SceneObject>();
-                buttons = new List<SceneObject>();
-
-                
-
-
+                GameScene();
             }
 
             else if (action == "Save")
@@ -319,6 +358,7 @@ namespace RaylibStarterCS
             // Restart or close game action
             else if(action == "Restart" || action == "Close")
             {
+                // Option checked in outside loop (Inside program.cs)
                 GameEndOption = action;
             }
 
@@ -328,59 +368,32 @@ namespace RaylibStarterCS
                 Raylib.CloseWindow();
             }
         }
-
-
-        public void ShutDown()
-        {
-            sceneObjects.Clear();
-            buttons.Clear();
-        }
-
-        public void EndGame()
-        {
-            GameOver = true;
-            GameActive = false;
-
-            int pbLength = 150;
-            int pbHeight = 50;
-
-            int ibLength = 200;
-            int ibHeight = 25;
-
-            int sbLength = 75;
-            int sbHeight = 25;
-
-            sceneObjects = new List<SceneObject>();
-            buttons = new List<SceneObject>();
-
-            new Button((GetScreenWidth() / 2) - (pbLength / 2) - 100, (GetScreenHeight() / 2) - (pbHeight / 2), pbLength, pbHeight, "Restart", 22, Color.BLACK, "Restart");
-            new Button((GetScreenWidth() / 2) - (pbLength / 2) + 100, (GetScreenHeight() / 2) - (pbHeight / 2), pbLength, pbHeight, "Close", 22, Color.BLACK, "Close");
-            
-            saveInputBox = new InputBox((GetScreenWidth() / 2) - (ibLength / 2), (GetScreenHeight() / 2) - (ibHeight / 2) + 100, ibLength, ibHeight, "Type Name", 20, Color.BLACK, "");
-            
-            new Button((GetScreenWidth() / 2) - (sbLength / 2), (GetScreenHeight() / 2) - (sbHeight / 2) + 150, sbLength, sbHeight, "Save", 16, Color.BLACK, "Save", true);
-
-        }
+        
 
 
         // Create enemy tanks
         public void CreateNewEnemy()
         {
+            // Do not spawn if any of these conditions are met
             if(MainMenu || GameOver || !GameActive)
             {
                 return;
             }
-            if(enemies.Count < 5)
+
+            
+            if(enemies.Count < 100)
             {
+                // Create new enemy
                 Tank newEnemy = new Tank("Enemy");
 
+                // Attempt to spawn
                 for(int attempts = 0; attempts < 100; attempts++)
                 {
                     int randomX = random.Next(20, GetScreenWidth() - 20);
                     int randomY = random.Next(20, GetScreenHeight() - 20);
-                    float dist = MathF.Sqrt(Math.Abs(randomY - randomX) + Math.Abs(playerTank.GlobalTransform.m21 - playerTank.GlobalTransform.m20));
 
-                    if (dist > 30)
+                    
+                    if (!playerTank.IsCollidingWithObject(newEnemy))
                     {
                         newEnemy.Init(randomX, randomY);
                         return;
@@ -404,16 +417,14 @@ namespace RaylibStarterCS
             // Draw the main menu
             if (MainMenu)
             {
-                menuBackground.Draw();
-
-                
+                menuBackground.Draw();     
                 DrawText("Tank Game", 50 , 50, 50, Color.ORANGE);
-
                 DrawText("Made by Ben Wharton", 20, GetScreenHeight() - 30, 25, Color.ORANGE);
 
                 int leaderboardSize = MeasureText("Leaderboard:", 50);
                 DrawText("Leaderboard:", GetScreenWidth() - leaderboardSize - 50, 50, 50, Color.ORANGE);
                 
+                // Draw leaderboard scores
                 for(int i = 1; i < scores.Count+1; i++)
                 {
                     string score = scores[i-1];
@@ -422,7 +433,7 @@ namespace RaylibStarterCS
                 }
             }
 
-            // If game over
+            // Game over screen
             if (GameOver)
             {
                 endGameBackground.Draw();
@@ -433,11 +444,10 @@ namespace RaylibStarterCS
 
                 DrawText("Game Over!", (GetScreenWidth() / 2) - (gameOverSize / 2), (GetScreenHeight() / 2)-200, 50, Color.RED);
                 DrawText($"Points: {playerTank.points.ToString()}", (GetScreenWidth() / 2) - (pointsSize / 2), (GetScreenHeight() / 2)-100, 50, Color.RED);
-                DrawText($"Add to Leaderboard:", (GetScreenWidth() / 2) - (saveSize / 2), (GetScreenHeight() / 2)+35, 25, Color.RED);
-
-
+                DrawText($"Add to Leaderboard:", (GetScreenWidth() / 2) - (saveSize / 2), (GetScreenHeight() / 2)+55, 25, Color.RED);
             }
 
+            // Game screen
             if (!MainMenu && !GameOver)
             {
                 // Display fps

@@ -23,7 +23,7 @@ namespace RaylibStarterCS
         public float shootingAccuracy = .8f;
 
         public float shootCooldown = 1f;
-        public float shootCooldownCount = 1f;
+        public float shootCooldownCount = 0f;
 
         public float trackCooldown = 0.35f;
         public float trackCooldownCount = 0.35f;
@@ -38,7 +38,6 @@ namespace RaylibStarterCS
         // Initiate tank
         public void Init(float xPos = 0, float yPos = 0)
         {
-            HitRadius = 5f;
             if(tag == "Player" || tag == "Menu"){
                 tankSprite.Load("./PNG/Tanks/tankRed_outline.png");
                 turretSprite.Load("./PNG/Tanks/barrelBlack_outline.png");
@@ -281,8 +280,6 @@ namespace RaylibStarterCS
          
             ShootBullet("Player");
 
-
-            //MoveTank(deltaTime, 1);
         }
 
 
@@ -290,7 +287,8 @@ namespace RaylibStarterCS
         public override void OnDraw()
         {
             base.OnDraw();
-            
+            HitRadius = tankSprite.HitRadius;
+
         }
 
         // Function used to move tank in direction adjusted by delta time
