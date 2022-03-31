@@ -52,7 +52,31 @@ namespace MathClasses
             z /= magnitude;
         }
 
+        // Minimum function to find the minimum value between each Vector3
+        public static Vector3 Min(Vector3 p1, Vector3 p2)
+        {
+            float x = p1.x <= p2.x ? p1.x : p2.x;
+            float y = p1.y <= p2.y ? p1.y : p2.y;
+            float z = p1.z <= p2.z ? p1.z : p2.z;
+            return new Vector3(x, y, z);
+        }
         
+        // Minimum function to find the maximum value between each Vector3
+        public static Vector3 Max(Vector3 p1, Vector3 p2)
+        {
+            float x = p1.x >= p2.x ? p1.x : p2.x;
+            float y = p1.y >= p2.y ? p1.y : p2.y;
+            float z = p1.z >= p2.z ? p1.z : p2.z;
+            return new Vector3(x, y, z);
+        }
+
+        public static Vector3 Clamp(Vector3 p, Vector3 min, Vector3 max)
+        {
+            float x = p.x <= min.x ? min.x : p.x;
+            float y = p.y <= min.y ? min.y : p.y;
+            float z = p.z <= min.z ? min.z : p.z;
+            return new Vector3(x, y, z);
+        }
 
 
         // Calculate and return the cross product of this vector and another vector
