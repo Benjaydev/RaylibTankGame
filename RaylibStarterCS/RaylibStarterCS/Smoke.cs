@@ -13,15 +13,14 @@ namespace RaylibStarterCS
             Load("./PNG/Smoke/smokeOrange1.png");
         }
 
-        public bool Update(float deltaTime)
+        public override void OnUpdate(float deltaTime)
         {
             AliveTime+=deltaTime;
 
             if(AliveTime >= LifeLength)
             {
-                return true;
+                return;
             }
-            return false;
         }
     }
 }

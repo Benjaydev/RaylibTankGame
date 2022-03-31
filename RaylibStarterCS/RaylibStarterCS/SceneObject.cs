@@ -21,8 +21,9 @@ namespace RaylibStarterCS
 
         // Right top and left bottom
         protected Vector3[] WorldBoundries = new Vector3[2];
-        public bool hasCollision = true;
-        public float HitRadius = 0f;
+        public bool hasCollision = false;
+        public bool movable = false;
+        public float HitRadius = 5f;
 
         public bool isWaitingDestroy = false;
 
@@ -179,19 +180,26 @@ namespace RaylibStarterCS
         // Translate scene object
         public void Translate(float x, float y, bool overrideCollision = false)
         {
+
+            if (overrideCollision)
+            {
+                localTransform.Translate(x, y);
+                return;
+            }
             // Split the collision check between both the x and y axis 
             // This is done so that if one axes is colliding and the other is not, the object will still move along the axis that is not colliding
             // E.g. if the x-axis is currently colliding but the y-axis isn't, the tank should still be able to translate along that y-axis
             // This may impact performace, however it is untested.
 
             // Check collision on x axis change
-            if (!CheckCollision(x, 0) || overrideCollision)
+            if (!CheckCollision(x, 0))
             {
                 localTransform.Translate(x, 0);
- 
+            
             } 
+            
             // Check collision on y axis change
-            if (!CheckCollision(0, y) || overrideCollision)
+            if (!CheckCollision(0, y))
             {
                 localTransform.Translate(0, y);
                 
@@ -202,7 +210,7 @@ namespace RaylibStarterCS
         // Check if this object has hit the world boundry after moving by x and y
         public string HasHitWorldBoundry(float x = 0, float y = 0)
         {
-            Vector3[] WorldBoundries = { new Vector3(GetScreenWidth(), GetScreenHeight(), 0), new Vector3(0, 0, 0) };
+            WorldBoundries = new Vector3[] { new Vector3(GetScreenWidth(), GetScreenHeight(), 0), new Vector3(0, 0, 0) };
             // Right wall
             if (globalTransform.m20 + x >= WorldBoundries[0].x)
             {
@@ -236,20 +244,138 @@ namespace RaylibStarterCS
             // Check if collision distance is met
             return dist < Math.Pow(HitRadius + obj.HitRadius, 2);
         }
+        
+        // Check if this object is currently colliding with tag
+        public bool IsCollidingWithTag(string checkTag)
+        {
+            // Check collision with every scene object
+            foreach (SceneObject obj in Game.sceneObjects)
+            {
+                // Skip iteration if any of these are met
+                if (!obj.hasCollision || obj == this || obj.tag != checkTag)
+                {
+                    continue;
+                }
+                return IsCollidingWithObject(obj);
+            }
+            return false;
+        }
 
+        public void SeperateIntersectingObjects(List<string> checkTag)
+        {
+            foreach (SceneObject obj in Game.sceneObjects)
+            {
+                // Skip iteration if any of these are met
+                if (!obj.hasCollision || obj == this || !checkTag.Contains(obj.tag))
+                {
+                    continue;
+                }
+                if (IsCollidingWithObject(obj))
+                {
+                    SetPosition(obj.globalTransform.m20 + obj.HitRadius+HitRadius, obj.globalTransform.m21 + obj.HitRadius + HitRadius);
+                }
+               
+            }
+        }
+
+         
         // General check collision for this object
         public bool CheckCollision(float x, float y)
         {
-            bool collided = false;
             // Return if there is no collision on this object
             if (!hasCollision)
             {
                 return false;
             }
+         
+                
+            // Check collision with every scene object
+            foreach (SceneObject obj in Game.sceneObjects)
+            {
+                
+                // Has collision, not itself, and aren't both bullets
+                if (obj.hasCollision && obj != this)
+                {
+                    
+                    Vector3 sceneObjectPos = new Vector3(obj.GlobalTransform.m20, obj.GlobalTransform.m21, 0);
+                    Matrix3 thisMatrix = new Matrix3(globalTransform);
+                    thisMatrix.Translate(x, y);
+                    double dist = Math.Pow(sceneObjectPos.x - thisMatrix.m20, 2) + Math.Pow(sceneObjectPos.y - thisMatrix.m21, 2);
+
+                    // Check if collision distance is met
+                    if (dist < Math.Pow(HitRadius+obj.HitRadius,2))
+                    {
+                        if((tag == "Bullet" && obj.tag == "CollideAll") )
+                        {
+                           
+                            isWaitingDestroy = true;
+                            obj.Translate(x, y);
+                            return true;
+                        }
+
+                        else if((tag == "Bullet" && obj.tag == "Bullet")){
+                            // If bullets don't have the same target
+                            if(((BulletObject)this).bulletTarget != ((BulletObject)obj).bulletTarget)
+                            {
+                                obj.isWaitingDestroy = true;
+                                isWaitingDestroy = true;
+                                return true;
+                            }
+                        }
+
+                        // Collide player and enemy tanks with eachother
+                        else if((tag == "Player" && obj.tag == "Enemy") || (obj.tag == "Player" && tag == "Enemy"))
+                        {
+                            return true;
+                        }
+
+                        // Check for collison between movable objects
+                        else if ( (obj.movable && (tag == "Player" || tag == "Enemy")) || (movable && obj.movable))
+                        {
+                            // Find the angle between current object and other object in order to 
+                            Vector3 objvec = new Vector3(obj.globalTransform.m20 - globalTransform.m20, obj.globalTransform.m21 - globalTransform.m21, 0);
+                            Vector3 facing = new Vector3(globalTransform.m00, globalTransform.m01, 1);
+                            facing.Normalize();
+                            objvec.Normalize();
+                            double angle = Math.Acos(objvec.Dot(facing)) * RAD2DEG;
+
+                            //float angle = MathF.Atan2((obj.globalTransform.m21 - GlobalTransform.m21), (obj.globalTransform.m20 - GlobalTransform.m20));
+                            if(angle-45 < 15 || (movable && obj.movable))
+                            {
+                                // Offset hit object by the amount being forced onto it
+                                obj.Translate(x, y);
+                            }
+                            return true;
+                        }
+
+                        else if (tag == "Player" && obj.tag == "CollideAll")
+                        {
+                            return true;
+                        }
+
+                        // If bullet object has hit it's target
+                        else if (tag == "Bullet" && (obj.tag == ((BulletObject)this).bulletTarget))
+                        {
+                            obj.isWaitingDestroy = true;
+                            isWaitingDestroy = true;
+
+                            // Bullet hits enemy give points to player
+                            if (obj.tag == "Enemy")
+                            {
+                                Game.playerTank.AddDestroyedTankPoints();
+                            }
+
+                            return true;
+                        }
+                    }
+                }
+            }
+
             // Check edge of window collisions
             string boundryHit = HasHitWorldBoundry(x, y);
-               
-            if(boundryHit != ""){
+
+            if (boundryHit != "")
+            {
                 // Right wall
                 if (boundryHit == "Right")
                 {
@@ -270,79 +396,9 @@ namespace RaylibStarterCS
                 {
                     CollideEvent(new Vector3(0, -1, 0));
                 }
-                collided = true;
+                return true;
             }
-                
-            // Check collision with every scene object
-            foreach (SceneObject obj in Game.sceneObjects)
-            {
-                
-                // Has collision, not itself, and aren't both bullets
-                if (obj.hasCollision && obj != this)
-                {
-                    
-                    Vector3 sceneObjectPos = new Vector3(obj.GlobalTransform.m20, obj.GlobalTransform.m21, 0);
-                    Matrix3 thisMatrix = new Matrix3(globalTransform);
-                    thisMatrix.Translate(x, y);
-                    double dist = Math.Pow(sceneObjectPos.x - thisMatrix.m20, 2) + Math.Pow(sceneObjectPos.y - thisMatrix.m21, 2);
-                    // Check if collision distance is met
-                    if (dist < Math.Pow(HitRadius+obj.HitRadius,2))
-                    {
-                        // If bullet object has hit it's target
-                        if (tag == "Bullet" && (obj.tag == ((BulletObject)this).bulletTarget))
-                        {
-                            obj.isWaitingDestroy = true;
-                            isWaitingDestroy = true;
-
-                            // Bullet hits enemy give points to player
-                            if(obj.tag == "Enemy")
-                            {
-                                Game.playerTank.AddDestroyedTankPoints();
-                            }
-
-                            collided = true;
-                        }
-                        else if((tag == "Bullet" && obj.tag == "CollideAll") || (obj.tag == "Bullet" && tag == "CollideAll"))
-                        {
-                           
-                            isWaitingDestroy = true;
-                            collided = true;
-                        }
-                        else if((tag == "Bullet" && obj.tag == "Bullet")){
-                            // If bullets don't have the same target
-                            if(((BulletObject)this).bulletTarget != ((BulletObject)obj).bulletTarget)
-                            {
-                                obj.isWaitingDestroy = true;
-                                isWaitingDestroy = true;
-                                collided = true;
-                            }
-                        }
-
-                        // Collide player and enemy tanks with eachother
-                        else if((tag == "Player" && obj.tag == "Enemy") || (obj.tag == "Player" && tag == "Enemy"))
-                        {
-                            collided = true;
-                        }
-
-                        else if ( (obj.tag == "CollideAll" && tag == "Player"))
-                        {
-                            
-                            float angle = MathF.Atan2((obj.globalTransform.m21 - GlobalTransform.m21), (obj.globalTransform.m20 - GlobalTransform.m20));
-                            if(angle < 5)
-                            {
-                                obj.Translate(x, y);
-                                collided = true;
-                            }
-                        }
-                        
-                        else if(obj.tag == "CollideAll")
-                        {
-                            collided = true;
-                        }
-                    }
-                }
-            }
-            return collided;
+            return false;
         }
 
         public virtual void CollideEvent(Vector3 Normal)

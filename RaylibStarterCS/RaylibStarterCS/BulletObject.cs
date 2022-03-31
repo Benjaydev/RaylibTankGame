@@ -29,6 +29,7 @@ namespace RaylibStarterCS
             
             SetRotate(90 * (float)(Math.PI / 180.0f));
             Rotate(MathF.Atan2(ForwardVector.y, ForwardVector.x));
+            hasCollision = true;
         }
 
         public override void CollideEvent(Vector3 Normal)
@@ -61,7 +62,7 @@ namespace RaylibStarterCS
         public override void OnDraw()
         {
             base.OnDraw();
-            HitRadius = Height;
+            HitRadius = Width;
         }
 
         public void UpdateBullet(float deltaTime)

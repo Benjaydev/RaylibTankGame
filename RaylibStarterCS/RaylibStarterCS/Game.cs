@@ -19,7 +19,7 @@ namespace RaylibStarterCS
         private int fps = 1;
         private int frames;
 
-        float enemyCooldown = 5f;
+        float enemyCooldown = 50000f;
         float enemyCooldownCount = 0f;
 
         private float deltaTime = 0.005f;
@@ -57,9 +57,9 @@ namespace RaylibStarterCS
         {
         }
 
-        public void Init()
+        public void Init(int width, int height)
         {
-            SetWindowSize(900, 600);
+            SetWindowSize(width, height);
 
             stopwatch.Start();
             lastTime = stopwatch.ElapsedMilliseconds;
@@ -169,11 +169,13 @@ namespace RaylibStarterCS
                 barrel.AddChild(barrelSprite);
                 barrel.hasCollision = true;
                 barrel.tag = "CollideAll";
+                barrel.movable = true;
                 barrel.SetPosition(randomX, randomY);
+                barrel.HitRadius = 25;
 
+                barrel.SeperateIntersectingObjects(new List<string>() { "CollideAll", "Player" } );
                 // Add to scene
                 sceneObjects.Add(barrel);
-                
             }
         }
 
@@ -394,6 +396,7 @@ namespace RaylibStarterCS
                     if (!playerTank.IsCollidingWithObject(newEnemy))
                     {
                         newEnemy.Init(randomX, randomY);
+                        newEnemy.SeperateIntersectingObjects(new List<string> { "CollideAll", "Player" });
                         return;
                     }
                     

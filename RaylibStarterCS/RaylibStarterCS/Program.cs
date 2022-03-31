@@ -9,7 +9,7 @@ namespace RaylibStarterCS
         {
             Game game = new Game();
             Raylib.InitWindow(640, 480, "Tank Game - Ben Wharton");
-            game.Init();
+            game.Init(1200, 700);
 
             while (!Raylib.WindowShouldClose())
             {
@@ -21,7 +21,7 @@ namespace RaylibStarterCS
                 if (game.GameEndOption == "Restart")
                 {
                     game = new Game();
-                    game.Init();
+                    game.Init(1200, 700);
                 }
                 game.Draw();
                 

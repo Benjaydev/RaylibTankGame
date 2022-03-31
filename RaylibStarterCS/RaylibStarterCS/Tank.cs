@@ -79,7 +79,7 @@ namespace RaylibStarterCS
             AddChild(trackPoint);
 
             SetPosition(xPos, yPos);
-
+            hasCollision = true;
             Game.sceneObjects.Add(this);
 
 
@@ -121,7 +121,7 @@ namespace RaylibStarterCS
 
         public void EnemyRandomiseInit()
         {
-            int chosen = random.Next(0, 4);
+            int chosen = random.Next(0, 3);
 
             if(chosen == 0)
             {
@@ -287,7 +287,7 @@ namespace RaylibStarterCS
         public override void OnDraw()
         {
             base.OnDraw();
-            HitRadius = tankSprite.HitRadius;
+            HitRadius = tankSprite.HitRadius-turretSprite.HitRadius;
 
         }
 
@@ -316,7 +316,7 @@ namespace RaylibStarterCS
             // If the shooting cooldown is complete
             if(shootCooldownCount >= shootCooldown)
             {
-                Vector3 turretFacing = new Vector3(firePoint.GlobalTransform.m00, firePoint.GlobalTransform.m01, 1); ;
+                Vector3 turretFacing = new Vector3(firePoint.GlobalTransform.m00, firePoint.GlobalTransform.m01, 1);
                 switch (random.Next(0, 1))
                 {
                     case 0:
