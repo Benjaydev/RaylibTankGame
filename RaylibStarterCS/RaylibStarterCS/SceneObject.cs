@@ -23,6 +23,10 @@ namespace RaylibStarterCS
         public bool hasCollision = false;
         public bool movable = false;
         public float HitRadius = 5f;
+        public float HitWidth = 5f;
+        public float HitHeight = 5f;
+        public AABB collisionBoundary = new AABB();
+
 
         public bool isWaitingDestroy = false;
 
@@ -111,15 +115,18 @@ namespace RaylibStarterCS
         public virtual void OnUpdate(float deltaTime) 
         {
          
-        } 
+        }
+            
         
         // Called on every draw
         public virtual void OnDraw() 
         {
+           
         }
 
         public void Update(float deltaTime)
-        { 
+        {
+           
             // Call OnUpdate 
             OnUpdate(deltaTime);
 
@@ -134,6 +141,7 @@ namespace RaylibStarterCS
         // Draw SceneObject
         public void Draw()
         {
+            collisionBoundary.DrawDebug();
             // Call OnDraw 
             OnDraw();
 

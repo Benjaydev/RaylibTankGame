@@ -75,6 +75,10 @@ namespace MathClasses
             float x = p.x <= min.x ? min.x : p.x;
             float y = p.y <= min.y ? min.y : p.y;
             float z = p.z <= min.z ? min.z : p.z;
+
+            x = p.x >= max.x ? max.x : p.x;
+            y = p.y >= max.y ? max.y : p.y;
+            z = p.z >= max.z ? max.z : p.z;
             return new Vector3(x, y, z);
         }
 

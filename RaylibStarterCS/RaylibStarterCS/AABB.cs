@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 using MathClasses;
+using static Raylib_cs.Raylib;
+using Raylib_cs;
 
 namespace RaylibStarterCS
 {
@@ -52,6 +54,14 @@ namespace RaylibStarterCS
             max = copy.max;
         }
 
+        public void DrawDebug()
+        {
+            DrawLine((int)corners[0].x, (int)corners[0].y, (int)corners[1].x, (int)corners[1].y, Color.DARKPURPLE);
+            DrawLine((int)corners[1].x, (int)corners[1].y, (int)corners[2].x, (int)corners[2].y, Color.DARKPURPLE);
+            DrawLine((int)corners[2].x, (int)corners[2].y, (int)corners[3].x, (int)corners[3].y, Color.DARKPURPLE);
+            DrawLine((int)corners[3].x, (int)corners[3].y, (int)corners[0].x, (int)corners[0].y, Color.DARKPURPLE);
+        }
+
         public Vector3 Center()
         {
             return (min + max) * 0.5f;
@@ -97,6 +107,8 @@ namespace RaylibStarterCS
             // Reset the boundary box
             Empty();
 
+            min = points[0];
+            max = points[0];
             // Find min and max of the points 
             foreach (Vector3 p in points)
             {
@@ -139,44 +151,44 @@ namespace RaylibStarterCS
 
             // Row 1
             // Column 1
-            if (m.m00 > 0.0f)    
+            if (m.m00 > 0.0f)
             {
-                min.x += m.m00 * box.min.x; 
+                min.x += m.m00 * box.min.x;
                 max.x += m.m00 * box.max.x;
             }
             else
             {
-                min.x += m.m00 * box.max.x; 
+                min.x += m.m00 * box.max.x;
                 max.x += m.m00 * box.min.x;
             }
 
             // Column 2
-            if (m.m10 > 0.0f)   
+            if (m.m10 > 0.0f)
             {
                 min.y += m.m10 * box.min.x;
                 max.y += m.m10 * box.max.x;
             }
             else
             {
-                min.y += m.m10 * box.max.x; 
+                min.y += m.m10 * box.max.x;
                 max.y += m.m10 * box.min.x;
             }
 
             // Column 3
-            if (m.m20 > 0.0f)   
+            if (m.m20 > 0.0f)
             {
-                min.z += m.m20 * box.min.x; 
+                min.z += m.m20 * box.min.x;
                 max.z += m.m20 * box.max.x;
             }
             else
             {
-                min.z += m.m20 * box.max.x; 
+                min.z += m.m20 * box.max.x;
                 max.z += m.m20 * box.min.x;
             }
 
             // Row 2
             // Column 1
-            if (m.m01 > 0.0f)    
+            if (m.m01 > 0.0f)
             {
                 min.x += m.m01 * box.min.x;
                 max.x += m.m01 * box.max.x;
@@ -188,32 +200,32 @@ namespace RaylibStarterCS
             }
 
             // Column 2
-            if (m.m11 > 0.0f)   
+            if (m.m11 > 0.0f)
             {
-                min.y += m.m11 * box.min.x; 
+                min.y += m.m11 * box.min.x;
                 max.y += m.m11 * box.max.x;
             }
             else
             {
-                min.y += m.m11 * box.max.x; 
+                min.y += m.m11 * box.max.x;
                 max.y += m.m11 * box.min.x;
             }
 
             // Column 3
-            if (m.m21 > 0.0f)   
+            if (m.m21 > 0.0f)
             {
-                min.z += m.m21 * box.min.x; 
+                min.z += m.m21 * box.min.x;
                 max.z += m.m21 * box.max.x;
             }
             else
             {
-                min.z += m.m21 * box.max.x; 
+                min.z += m.m21 * box.max.x;
                 max.z += m.m21 * box.min.x;
             }
 
             // Row 3
             // Column 1
-            if (m.m02 > 0.0f)    
+            if (m.m02 > 0.0f)
             {
                 min.x += m.m02 * box.min.x;
                 max.x += m.m02 * box.max.x;
@@ -225,29 +237,30 @@ namespace RaylibStarterCS
             }
 
             // Column 2
-            if (m.m12 > 0.0f)   
+            if (m.m12 > 0.0f)
             {
-                min.y += m.m12 * box.min.x; 
+                min.y += m.m12 * box.min.x;
                 max.y += m.m12 * box.max.x;
             }
             else
             {
-                min.y += m.m12 * box.max.x; 
+                min.y += m.m12 * box.max.x;
                 max.y += m.m12 * box.min.x;
             }
 
             // Column 3
-            if (m.m22 > 0.0f)  
+            if (m.m22 > 0.0f)
             {
-                min.z += m.m22 * box.min.x; 
+                min.z += m.m22 * box.min.x;
                 max.z += m.m22 * box.max.x;
             }
             else
             {
-                min.z += m.m22 * box.max.x; 
+                min.z += m.m22 * box.max.x;
                 max.z += m.m22 * box.min.x;
             }
 
         }
+
     }
 }
