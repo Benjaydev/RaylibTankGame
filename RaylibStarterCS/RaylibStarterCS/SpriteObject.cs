@@ -32,6 +32,18 @@ namespace RaylibStarterCS
         {
         }
 
+        // Copy constructor
+        public SpriteObject(SpriteObject copy, SceneObject passParent = null) : base(copy, passParent)
+        {
+            
+            texture = copy.texture;
+            textureScale = copy.textureScale;
+            hasScaled = copy.hasScaled;
+            defaultWidth = copy.defaultWidth;
+            defaultHeight = copy.defaultHeight;
+        }
+
+
         public override void UpdateTransform()
         {
             base.UpdateTransform();

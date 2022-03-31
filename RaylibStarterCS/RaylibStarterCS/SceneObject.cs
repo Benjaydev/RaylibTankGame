@@ -20,7 +20,6 @@ namespace RaylibStarterCS
         protected Matrix3 globalTransform = new Matrix3(1);
 
         // Right top and left bottom
-        protected Vector3[] WorldBoundries = new Vector3[2];
         public bool hasCollision = false;
         public bool movable = false;
         public float HitRadius = 5f;
@@ -50,6 +49,43 @@ namespace RaylibStarterCS
         { 
        
         }
+
+        // Copy Constructor
+        public SceneObject(SceneObject copy, SceneObject passParent = null)
+        {
+            if(copy.parent != null && passParent == null)
+            {
+                parent = new SceneObject(copy.parent);
+            }
+            else
+            {
+                parent = passParent;
+            }
+
+
+            // Get each child
+            foreach (var child in copy.children)
+            {
+                // If child is a sprite object, cast to that
+                if (child.GetType() == typeof(SpriteObject))
+                {
+                    // Pass this as parent for the child class to avoid infinite recursion (Child -> Creates new parent in copy constructor -> That parent recreates the same child -> Then the loop continues)
+                    AddChild(new SpriteObject((SpriteObject)child, this));
+                    continue;
+                }
+                // Create a sceneobject
+                AddChild(new SceneObject(child, this));
+            }
+            hasCollision = copy.hasCollision;
+            movable = copy.movable;
+            tag = copy.tag;
+            HitRadius = copy.HitRadius;
+           
+
+            localTransform = new Matrix3(copy.localTransform);
+            globalTransform = new Matrix3(copy.globalTransform);
+        }
+
 
         // Deconstruct the sceneObject
         ~SceneObject()
@@ -210,24 +246,24 @@ namespace RaylibStarterCS
         // Check if this object has hit the world boundry after moving by x and y
         public string HasHitWorldBoundry(float x = 0, float y = 0)
         {
-            WorldBoundries = new Vector3[] { new Vector3(GetScreenWidth(), GetScreenHeight(), 0), new Vector3(0, 0, 0) };
+            
             // Right wall
-            if (globalTransform.m20 + x >= WorldBoundries[0].x)
+            if (globalTransform.m20 + x >= Game.WorldBoundries[0].x)
             {
                 return "Right";
             }
             // Left wall
-            else if (globalTransform.m20 + x <= WorldBoundries[1].x)
+            else if (globalTransform.m20 + x <= Game.WorldBoundries[1].x)
             {
                 return "Left";
             }
             // Bottom wall
-            else if (globalTransform.m21 + y >= WorldBoundries[0].y)
+            else if (globalTransform.m21 + y >= Game.WorldBoundries[0].y)
             {
                 return "Bottom";
             }
             // Top wall
-            else if (globalTransform.m21 + y <= WorldBoundries[1].y)
+            else if (globalTransform.m21 + y <= Game.WorldBoundries[1].y)
             {
                 return "Top";
             }
@@ -309,7 +345,11 @@ namespace RaylibStarterCS
                         {
                            
                             isWaitingDestroy = true;
-                            obj.Translate(x, y);
+                            if (obj.movable)
+                            {
+                                obj.Translate(x, y);
+                            }
+                                
                             return true;
                         }
 
@@ -348,7 +388,7 @@ namespace RaylibStarterCS
                             return true;
                         }
 
-                        else if (tag == "Player" && obj.tag == "CollideAll")
+                        else if (obj.tag == "CollideAll")
                         {
                             return true;
                         }

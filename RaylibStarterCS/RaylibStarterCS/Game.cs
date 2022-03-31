@@ -22,8 +22,8 @@ namespace RaylibStarterCS
         float enemyCooldown = 50000f;
         float enemyCooldownCount = 0f;
 
-        private float deltaTime = 0.005f;
-        public Vector3[] sceneBoundries = new Vector3[2] {new Vector3(GetScreenWidth() / 2, GetScreenHeight() / 2, 0), new Vector3(-GetScreenWidth() / 2, -GetScreenHeight() / 2, 0) };
+        public float deltaTime = 0.005f;
+        public static Vector3[] WorldBoundries = new Vector3[2];
 
         public static Tank playerTank;
         public static Tank mainMenuTank;
@@ -60,6 +60,8 @@ namespace RaylibStarterCS
         public void Init(int width, int height)
         {
             SetWindowSize(width, height);
+            WorldBoundries = new Vector3[] { new Vector3(GetScreenWidth(), GetScreenHeight(), 0), new Vector3(0, 0, 0) };
+
 
             stopwatch.Start();
             lastTime = stopwatch.ElapsedMilliseconds;
@@ -151,6 +153,28 @@ namespace RaylibStarterCS
             // Initiate player
             playerTank.Init(GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f);
 
+            int startX = 200;
+            int startY = 200;
+            SpriteObject sandbag1s = new SpriteObject();
+            sandbag1s.Load("./PNG/Obstacles/sandbagBeige.png");
+            sandbag1s.SetPosition(-(sandbag1s.Width / 2), -(sandbag1s.Height / 2));
+            sandbag1s.Scale(0.75f, 1);
+            SceneObject sandbag1 = new SceneObject();
+            sandbag1.AddChild(sandbag1s);
+            sandbag1.hasCollision = true;
+            sandbag1.tag = "CollideAll";
+            sandbag1.SetPosition(startX, startY);
+            sceneObjects.Add(sandbag1);
+
+            SceneObject sandbag2 = new SceneObject(sandbag1);
+            sandbag2.SetPosition(startX+sandbag1s.Width, startY);
+            sceneObjects.Add(sandbag2);
+            
+            SceneObject sandbag3 = new SceneObject(sandbag1);
+            sandbag3.SetPosition(startX+sandbag1s.Width*2, startY);
+            sceneObjects.Add(sandbag3);
+
+            
             // Setup barrel obstacles
             for (int i = 0; i < 10; i++)
             {
