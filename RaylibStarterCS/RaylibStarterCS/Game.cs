@@ -22,7 +22,7 @@ namespace RaylibStarterCS
         float enemyCooldown = 50000f;
         float enemyCooldownCount = 0f;
 
-        public float deltaTime = 0.005f;
+        public static float deltaTime = 0.005f;
         public static Vector3[] WorldBoundries = new Vector3[2];
 
         public static Tank playerTank;
@@ -195,9 +195,11 @@ namespace RaylibStarterCS
                 barrel.tag = "CollideAll";
                 barrel.movable = true;
                 barrel.SetPosition(randomX, randomY);
-                barrel.HitRadius = 25;
+                barrel.HitWidth = barrelSprite.Width;
+                barrel.HitHeight = barrelSprite.Height;
+                barrel.HitRadius = 25f;
 
-                barrel.SeperateIntersectingObjects(new List<string>() { "CollideAll", "Player" } );
+                barrel.SeperateIntersectingObject(new List<string>() { "Player", "CollideAll" } );
                 // Add to scene
                 sceneObjects.Add(barrel);
             }
@@ -420,7 +422,7 @@ namespace RaylibStarterCS
                     if (!playerTank.IsCollidingWithObject(newEnemy))
                     {
                         newEnemy.Init(randomX, randomY);
-                        newEnemy.SeperateIntersectingObjects(new List<string> { "CollideAll", "Player" });
+                        newEnemy.SeperateIntersectingObject(new List<string> { "CollideAll", "Player" });
                         return;
                     }
                     

@@ -288,6 +288,8 @@ namespace RaylibStarterCS
         {
             base.OnDraw();
             HitRadius = tankSprite.HitRadius-turretSprite.HitRadius;
+            HitHeight = tankSprite.HitHeight;
+            HitWidth = tankSprite.HitWidth;
 
         }
 

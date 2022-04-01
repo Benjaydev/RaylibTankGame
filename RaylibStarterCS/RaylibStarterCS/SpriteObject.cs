@@ -79,21 +79,13 @@ namespace RaylibStarterCS
             base.OnDraw();
 
             HitRadius = Width;
-            float rotation = (float)Math.Atan2(globalTransform.m01, globalTransform.m00);
-            Vector3 facing = new Vector3(LocalTransform.m00, LocalTransform.m01, 1);
-            Vector3 scale = GetGlobalScale();
-            Console.WriteLine(scale.x);
-            Matrix3 copy = new Matrix3(globalTransform);
-            
-
             HitWidth = Width;
             HitHeight = Height;
-            copy.Translate(((Width/2) *facing.x), ((Height/2) * facing.y) );
-            DrawCircle((int)copy.m20, (int)copy.m21, 5, Color.WHITE);
+            float rotation = (float)Math.Atan2(globalTransform.m01, globalTransform.m00);
 
-            collisionBoundary.Fit(new Vector3[2] {new Vector3(copy.m20, copy.m21, 0), new Vector3(copy.m20 + HitWidth/2, copy.m21 + HitHeight/2, 0) });
-           
-            
+       
+
+
 
             if (!Raylib.WindowShouldClose())
             {

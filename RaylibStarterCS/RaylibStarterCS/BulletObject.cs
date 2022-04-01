@@ -35,22 +35,16 @@ namespace RaylibStarterCS
         public override void CollideEvent(Vector3 Normal)
         {
             base.CollideEvent(Normal);
+            Normal.Normalize();
+            Vector3 prevpos = new Vector3(globalTransform.m20, globalTransform.m21, 0);
+            ForwardVector = ForwardVector - ((2 * (ForwardVector * Normal)) * Normal);
 
-            if (!(bounces >= maxBounces))
-            {
-                Normal.Normalize();
-                Vector3 prevpos = new Vector3(globalTransform.m20, globalTransform.m21, 0);
-                ForwardVector = ForwardVector - ((2 * (ForwardVector * Normal)) * Normal);
+            // Calculate new rotation 
+            SetRotate(90 * (float)(Math.PI / 180.0f));
+            Rotate(MathF.Atan2(ForwardVector.y, ForwardVector.x));
 
-                // Calculate new rotation 
-                SetRotate(90 * (float)(Math.PI / 180.0f));
-                Rotate(MathF.Atan2(ForwardVector.y, ForwardVector.x));
-
-                // Reset position to where it's meant to be
-                SetPosition(prevpos.x, prevpos.y);
-                //bounces++;
-                //ForwardVector = ForwardVector * velocityMultiple;
-            }
+            // Reset position to where it's meant to be
+            SetPosition(prevpos.x, prevpos.y);
                 
         }
 
