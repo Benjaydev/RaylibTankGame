@@ -12,6 +12,7 @@ namespace RaylibStarterCS
     {
 
         public string tag = "";
+        public int id = 0;
 
         protected SceneObject parent = null;
         protected List<SceneObject> children = new List<SceneObject>();
@@ -26,7 +27,7 @@ namespace RaylibStarterCS
         public float HitWidth = 5f;
         public float HitHeight = 5f;
         public AABB collisionBoundary = new AABB();
-        public SceneObject lastCollide = null;
+        public int lastCollide = -1;
 
 
         public bool isWaitingDestroy = false;
@@ -51,8 +52,10 @@ namespace RaylibStarterCS
 
         // Constructor
         public SceneObject()
-        { 
-       
+        {
+            Game.gameLifetimeObjectCount++;
+            id = Game.gameLifetimeObjectCount;
+            Console.WriteLine(Game.gameLifetimeObjectCount);
         }
 
         // Copy Constructor
@@ -157,38 +160,6 @@ namespace RaylibStarterCS
 
         public void UpdateBoundingBox()
         {
-            /*// The rotation of object
-            float rotation = (float)Math.Atan2(globalTransform.m01, globalTransform.m00);
-
-            // Get non-transformed  corners of object
-            Vector3 corner1 = new Vector3(HitWidth / 2, HitHeight / 2, 0);
-            Vector3 corner2 = new Vector3(HitWidth / 2, HitHeight / 2, 0);
-                
-            float sinNum = MathF.Sin(rotation);
-            float cosNum = MathF.Cos(rotation);
-
-            // Keep the bases of cos and sin opposite
-            if(sinNum < 0 && cosNum < 0)
-            {
-                sinNum = Math.Abs(sinNum);
-            }
-            if(sinNum > 0 && cosNum > 0)
-            {
-                sinNum = -sinNum;
-            }
-
-            // Calculate the transformed corners using the cos and sin of the rotation
-            Vector3 corner1t = new Vector3(corner1.x * cosNum - corner1.y * sinNum, corner1.x * sinNum - corner1.y * cosNum, 0);
-            Vector3 corner2t = new Vector3(corner2.x * cosNum - corner2.y * sinNum, corner2.x * sinNum - corner2.y * cosNum, 0);
-
-            // Get the extents of the aabb
-            float ex = MathF.Max(Math.Abs(corner1t.x), Math.Abs(corner2t.x));
-            float ey = MathF.Max(Math.Abs(corner1t.y), Math.Abs(corner2t.y));
-
-            DrawCircle((int)(globalTransform.m20 - ex), (int)(globalTransform.m21 - ey), 50, Color.WHITE);
-            DrawCircle((int)(globalTransform.m20 + ex), (int)(globalTransform.m21 + ey), 50, Color.WHITE);*/
-
-
             // Get non-transformed  corners of object
             Vector3 corner = new Vector3((HitWidth / 2) + (HitWidth * 0.05f), (HitHeight / 2) + (HitHeight * 0.05f), 0);
             collisionBoundary.Fit(new Vector3[2] { new Vector3(globalTransform.m20 - corner.x, globalTransform.m21 - corner.y, 0), new Vector3(globalTransform.m20 + corner.x, globalTransform.m21 + corner.y, 0) });
@@ -323,9 +294,6 @@ namespace RaylibStarterCS
         // Check if this object is currently colliding with object
         public bool IsCollidingWithObject(SceneObject obj)
         {
-            Vector3 sceneObjectPos1 = new Vector3(obj.GlobalTransform.m20, obj.GlobalTransform.m21, 0);
-            Vector3 sceneObjectPos2 = new Vector3(GlobalTransform.m20, GlobalTransform.m21, 0);
-            double dist = Math.Pow(sceneObjectPos1.x - sceneObjectPos2.x, 2) + Math.Pow(sceneObjectPos1.y - sceneObjectPos2.y, 2);
             // Check if collision distance is met
             return collisionBoundary.Overlaps(obj.collisionBoundary);
         }
@@ -393,8 +361,6 @@ namespace RaylibStarterCS
             }
          
             List<SceneObject> objects = new List<SceneObject>(Game.sceneObjects);
-            // Remove the last collision (Used for chain reaction collisions, such as movable objects hitting other movable objects)
-            objects.Remove(lastCollide);
             // Check collision with every scene object
             foreach (SceneObject obj in objects)
             {
@@ -415,7 +381,7 @@ namespace RaylibStarterCS
                         if((tag == "Bullet" && obj.tag == "CollideAll"))
                         {
                             // Save the bullets last collide in order to implement "invunerable" period for collisions
-                            lastCollide = obj;
+                            lastCollide = obj.id;
 
                             ((BulletObject)this).CollideEvent(norm);
                                 
@@ -448,15 +414,18 @@ namespace RaylibStarterCS
                             objvec.Normalize();
                             double angle = Math.Acos(objvec.Dot(facing)) * RAD2DEG;
 
-                            if(angle-45 < 25 || (movable && obj.movable))
+                            if(angle-45 < 25 || (movable && obj.movable) && lastCollide != obj.id)
                             {
+
                                 // Store this object inside the collided object to avoid this object being collided again while translating the collided object 
-                                obj.lastCollide = this;
+                                obj.lastCollide = id;
 
                                 // Offset hit object by the amount being forced onto it
                                 obj.Translate(-norm.x, -norm.y);
+                                
                                 // Reset the objects last collide
-                                obj.lastCollide = null;
+                                obj.lastCollide = -1;
+                                //lastCollide = null;
                             }
                             return true;
                         }

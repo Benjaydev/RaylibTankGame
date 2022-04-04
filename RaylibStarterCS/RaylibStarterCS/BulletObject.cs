@@ -41,7 +41,7 @@ namespace RaylibStarterCS
             base.CollideEvent(Normal);
 
             // Reset last collide
-            lastCollide = null;
+            lastCollide = -1;
 
             // Make sure normal is normalised
             Normal.Normalize();

@@ -32,6 +32,8 @@ namespace RaylibStarterCS
         SpriteObject endGameBackground = new SpriteObject();
         SpriteObject menuBackground = new SpriteObject();
 
+
+        public static int gameLifetimeObjectCount;
         public static List<SceneObject> sceneObjects;
         public static List<SceneObject> buttons;
         public static List<Tank> enemies = new List<Tank>();

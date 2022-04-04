@@ -30,7 +30,7 @@ namespace RaylibStarterCS
 
         public int points = 0;
 
-        public Tank(string t)
+        public Tank(string t) : base()
         {
             tag = t;
         }
@@ -64,8 +64,8 @@ namespace RaylibStarterCS
             // Set position of base to be centered in turret sprite
             turretSprite.SetPosition(0, (tankSprite.Width / 4f) - (turretSprite.Width/2));
 
-            firePoint.SetRotate(-90 * (float)(Math.PI));
-            firePoint.SetPosition(turretSprite.Height + 15, (turretSprite.Width / 2.0f) - 22.5f);
+            //firePoint.SetRotate(-90 * (float)(Math.PI));
+            firePoint.SetPosition(turretSprite.Height + 15, 0);
             firePoint.HitWidth = 25;
             firePoint.HitHeight = 25;
             firePoint.hasCollision = true;

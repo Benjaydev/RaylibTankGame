@@ -28,7 +28,7 @@ namespace RaylibStarterCS
         public float defaultWidth;
         public float defaultHeight;
 
-        public SpriteObject()
+        public SpriteObject() : base()
         {
         }
 
