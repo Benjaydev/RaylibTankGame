@@ -82,6 +82,12 @@ namespace MathClasses
             return new Vector3(x, y, z);
         }
 
+        // Return if vector has values all equal to 0
+        public bool IsEmpty()
+        {
+            return (x == 0 && y == 0 && z == 0);
+        }
+
 
         // Calculate and return the cross product of this vector and another vector
         public Vector3 Cross(Vector3 v)

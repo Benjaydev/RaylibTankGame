@@ -197,7 +197,6 @@ namespace RaylibStarterCS
                 barrel.SetPosition(randomX, randomY);
                 barrel.HitWidth = barrelSprite.Width;
                 barrel.HitHeight = barrelSprite.Height;
-                barrel.HitRadius = 25f;
 
                 barrel.SeperateIntersectingObject(new List<string>() { "Player", "CollideAll" } );
                 // Add to scene

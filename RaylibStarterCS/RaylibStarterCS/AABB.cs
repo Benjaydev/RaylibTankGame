@@ -131,44 +131,46 @@ namespace RaylibStarterCS
         }
 
         // Check if a point overlaps this boundry box 
-        public bool Overlaps(Vector3 p)
+        // Optional: xChange and yChange represent whether this box is moving and an overlap needs to be checked before applying and translations
+        public bool Overlaps(Vector3 p, float xChange = 0, float yChange = 0)
         {
-            // test for not overlapped as it exits faster 
-            return !(p.x < min.x || p.y < min.y ||
-                p.x > max.x || p.y > max.y);
+            // Test for not overlapping
+            return !(p.x + xChange < min.x || p.y + yChange < min.y || p.x + xChange > max.x || p.y + yChange > max.y);
         }
 
         // Check if another boundry box overlaps this boundry box 
-        public bool Overlaps(AABB other)
+        // Optional: xChange and yChange represent whether this box is moving and an overlap needs to be checked before applying and translations
+        public bool Overlaps(AABB other, float xChange = 0, float yChange = 0)
         {
-            // test for not overlapped as it exits faster 
-            return !(max.x < other.min.x || max.y < other.min.y ||
-                    min.x > other.max.x || min.y > other.max.y);
+            // Test for not overlapping
+            return !(max.x + xChange < other.min.x || max.y + yChange < other.min.y || min.x + xChange > other.max.x || min.y + yChange > other.max.y);
         }
 
-        // Check if a point overlaps this boundry box 
-        public Vector3 CalculateNorm(Vector3 p)
+        // Check the normals of point against to this box
+        // Optional: xChange and yChange represent whether this box is moving and must correct it's max and min positions
+        // in order to calculate normals (As box and point must not be overlapping to calculate)
+        public Vector3 CalculateNorm(Vector3 p, float xChange = 0, float yChange = 0)
         {
             //      Top
             // Left [ ] Right
             //     Bottom
             Vector3 Norm = new Vector3();
-            if (p.x > min.x)
+            if (p.x - xChange > min.x)
             {
                 // Right
-                Norm.x = -1f;
+                Norm.x = 1f;
             }
-            if (p.y > min.y)
+            if (p.y - yChange > min.y)
             {
                 // Bottom
                 Norm.y = -1f;
             }
-            if (p.x < max.x)
+            if (p.x - xChange < max.x)
             {
                 // Left
-                Norm.x = 1f;
+                Norm.x = -1f;
             }
-            if (p.y < max.y)
+            if (p.y - yChange < max.y)
             {
                 // Top
                 Norm.y = 1f;
@@ -177,31 +179,33 @@ namespace RaylibStarterCS
 
         }
 
-        // Check if another boundry box overlaps this boundry box 
-        public Vector3 CalculateNorm(AABB other)
+        // Check the normals of another box against to this box
+        // Optional: xChange and yChange represent whether this box is moving and must correct it's max and min positions
+        // in order to calculate normals (As boxes must not be overlapping to calculate)
+        public Vector3 CalculateNorm(AABB other, float xChange = 0, float yChange = 0)
         {
             //      Top
             // Left [ ] Right
             //     Bottom
             Vector3 Norm = new Vector3();
-            if (max.x < other.min.x)
+            if (max.x - xChange < other.min.x)
             {
-                // Right
+                // Other object is on right of this
                 Norm.x = -1f;
             }
-            if (max.y < other.min.y)
+            if (max.y - yChange < other.min.y)
             {
-                // Bottom
+                // Other object is on bottom of this
                 Norm.y = -1f;
             }
-            if (min.x > other.max.x)
+            if (min.x - xChange > other.max.x)
             {
-                // Left
+                // Other object is on left of this
                 Norm.x = 1f;
             }
-            if (min.y > other.max.y)
+            if (min.y - yChange > other.max.y)
             {
-                // Top
+                // // Other object is on top of this
                 Norm.y = 1f;
             }
             return Norm;

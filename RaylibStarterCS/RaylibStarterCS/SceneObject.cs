@@ -117,41 +117,7 @@ namespace RaylibStarterCS
         {
             if (hasCollision)
             {
-                /*// The rotation of object
-                float rotation = (float)Math.Atan2(globalTransform.m01, globalTransform.m00);
-
-                // Get non-transformed  corners of object
-                Vector3 corner1 = new Vector3(HitWidth / 2, HitHeight / 2, 0);
-                Vector3 corner2 = new Vector3(HitWidth / 2, HitHeight / 2, 0);
-                
-                float sinNum = MathF.Sin(rotation);
-                float cosNum = MathF.Cos(rotation);
-
-                // Keep the bases of cos and sin opposite
-                if(sinNum < 0 && cosNum < 0)
-                {
-                    sinNum = Math.Abs(sinNum);
-                }
-                if(sinNum > 0 && cosNum > 0)
-                {
-                    sinNum = -sinNum;
-                }
-
-                // Calculate the transformed corners using the cos and sin of the rotation
-                Vector3 corner1t = new Vector3(corner1.x * cosNum - corner1.y * sinNum, corner1.x * sinNum - corner1.y * cosNum, 0);
-                Vector3 corner2t = new Vector3(corner2.x * cosNum - corner2.y * sinNum, corner2.x * sinNum - corner2.y * cosNum, 0);
-
-                // Get the extents of the aabb
-                float ex = MathF.Max(Math.Abs(corner1t.x), Math.Abs(corner2t.x));
-                float ey = MathF.Max(Math.Abs(corner1t.y), Math.Abs(corner2t.y));
-
-                DrawCircle((int)(globalTransform.m20 - ex), (int)(globalTransform.m21 - ey), 50, Color.WHITE);
-                DrawCircle((int)(globalTransform.m20 + ex), (int)(globalTransform.m21 + ey), 50, Color.WHITE);*/
-
-
-                // Get non-transformed  corners of object
-                Vector3 corner = new Vector3((HitWidth / 2) + (HitWidth * 0.05f), (HitHeight / 2)+(HitHeight*0.05f), 0);
-                collisionBoundary.Fit(new Vector3[2] { new Vector3(globalTransform.m20 - corner.x, globalTransform.m21 - corner.y, 0), new Vector3(globalTransform.m20 + corner.x, globalTransform.m21 + corner.y, 0) });
+                UpdateBoundingBox();
             }
         }
             
@@ -159,20 +125,13 @@ namespace RaylibStarterCS
         // Called on every draw
         public virtual void OnDraw() 
         {
-            if (hasCollision)
-            {
-                collisionBoundary.DrawDebug();
-            }
+            collisionBoundary.DrawDebug();
         }
 
         public void Update(float deltaTime)
         { 
             // Call OnUpdate 
             OnUpdate(deltaTime);
-
-            
-            
-
 
             // Update all children of this sceneObject
             foreach (SceneObject child in children)
@@ -195,9 +154,49 @@ namespace RaylibStarterCS
             }
         }
 
+
+        public void UpdateBoundingBox()
+        {
+            /*// The rotation of object
+            float rotation = (float)Math.Atan2(globalTransform.m01, globalTransform.m00);
+
+            // Get non-transformed  corners of object
+            Vector3 corner1 = new Vector3(HitWidth / 2, HitHeight / 2, 0);
+            Vector3 corner2 = new Vector3(HitWidth / 2, HitHeight / 2, 0);
+                
+            float sinNum = MathF.Sin(rotation);
+            float cosNum = MathF.Cos(rotation);
+
+            // Keep the bases of cos and sin opposite
+            if(sinNum < 0 && cosNum < 0)
+            {
+                sinNum = Math.Abs(sinNum);
+            }
+            if(sinNum > 0 && cosNum > 0)
+            {
+                sinNum = -sinNum;
+            }
+
+            // Calculate the transformed corners using the cos and sin of the rotation
+            Vector3 corner1t = new Vector3(corner1.x * cosNum - corner1.y * sinNum, corner1.x * sinNum - corner1.y * cosNum, 0);
+            Vector3 corner2t = new Vector3(corner2.x * cosNum - corner2.y * sinNum, corner2.x * sinNum - corner2.y * cosNum, 0);
+
+            // Get the extents of the aabb
+            float ex = MathF.Max(Math.Abs(corner1t.x), Math.Abs(corner2t.x));
+            float ey = MathF.Max(Math.Abs(corner1t.y), Math.Abs(corner2t.y));
+
+            DrawCircle((int)(globalTransform.m20 - ex), (int)(globalTransform.m21 - ey), 50, Color.WHITE);
+            DrawCircle((int)(globalTransform.m20 + ex), (int)(globalTransform.m21 + ey), 50, Color.WHITE);*/
+
+
+            // Get non-transformed  corners of object
+            Vector3 corner = new Vector3((HitWidth / 2) + (HitWidth * 0.05f), (HitHeight / 2) + (HitHeight * 0.05f), 0);
+            collisionBoundary.Fit(new Vector3[2] { new Vector3(globalTransform.m20 - corner.x, globalTransform.m21 - corner.y, 0), new Vector3(globalTransform.m20 + corner.x, globalTransform.m21 + corner.y, 0) });
+        }
         // Update the transform of this sceneObject. This is called everytime the sceneObjects transformation is changed
         public virtual void UpdateTransform()
         {
+
             // If this sceneObject has a parent, calculate the globalTransform
             if (parent != null)
             {
@@ -403,18 +402,22 @@ namespace RaylibStarterCS
                 if (obj.hasCollision && obj != this)
                 {
                     // Get the side that will be colliding
-                    Vector3 norm = collisionBoundary.CalculateNorm(obj.collisionBoundary);
-                    // Translate to the desired location
-                    collisionBoundary.TranslateAABB(x, y);
+                    Vector3 norm = collisionBoundary.CalculateNorm(obj.collisionBoundary, x, y);
+                    if (norm.IsEmpty())
+                    {
+                        norm = new Vector3(x, y, 0);
+                        norm.Normalize();
+                    }
 
                     // Check if that location is colliding
-                    if (collisionBoundary.Overlaps(obj.collisionBoundary))
+                    if (collisionBoundary.Overlaps(obj.collisionBoundary, x, y))
                     {
-                        collisionBoundary.TranslateAABB(-x, -y);
-                        if((tag == "Bullet" && obj.tag == "CollideAll") )
+                        if((tag == "Bullet" && obj.tag == "CollideAll"))
                         {
+                            // Save the bullets last collide in order to implement "invunerable" period for collisions
+                            lastCollide = obj;
+
                             ((BulletObject)this).CollideEvent(norm);
-                            //isWaitingDestroy = true;
                                 
                             return true;
                         }
@@ -451,8 +454,7 @@ namespace RaylibStarterCS
                                 obj.lastCollide = this;
 
                                 // Offset hit object by the amount being forced onto it
-                                obj.Translate(x, y);
-
+                                obj.Translate(-norm.x, -norm.y);
                                 // Reset the objects last collide
                                 obj.lastCollide = null;
                             }

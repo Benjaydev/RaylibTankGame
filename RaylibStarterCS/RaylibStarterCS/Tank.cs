@@ -66,6 +66,9 @@ namespace RaylibStarterCS
 
             firePoint.SetRotate(-90 * (float)(Math.PI));
             firePoint.SetPosition(turretSprite.Height + 15, (turretSprite.Width / 2.0f) - 22.5f);
+            firePoint.HitWidth = 25;
+            firePoint.HitHeight = 25;
+            firePoint.hasCollision = true;
 
             trackPoint.SetRotate(-90 * (float)(Math.PI));
             trackPoint.SetPosition(tankSprite.Height - 35, -(tankSprite.Width / 2));
@@ -318,15 +321,21 @@ namespace RaylibStarterCS
             // If the shooting cooldown is complete
             if(shootCooldownCount >= shootCooldown)
             {
+
+                if (firePoint.CheckCollision(0, 0))
+                {
+                    return;
+                }
+                // Find the direction that the turret is facing
                 Vector3 turretFacing = new Vector3(firePoint.GlobalTransform.m00, firePoint.GlobalTransform.m01, 1);
+                // Alter shooting accuracy randomly
                 switch (random.Next(0, 1))
                 {
                     case 0:
-                        // Find the direction that the turret is facing
+                        
                         turretFacing.x *= shootingAccuracy;
                         break;
                     case 1:
-                        // Find the direction that the turret is facing
                         turretFacing.y *= shootingAccuracy;
                         break;
                 }
@@ -336,13 +345,6 @@ namespace RaylibStarterCS
 
                 // Set position of new bullet to the tank fire point
                 newbullet.SetPosition(firePoint.GlobalTransform.m20, firePoint.GlobalTransform.m21);
-
-                // Check if bullet has been shot outside the world border
-                if(newbullet.HasHitWorldBoundry(0, 0) != "")
-                {
-                    // Destroy if so
-                    newbullet.isWaitingDestroy = true;
-                }
 
                 // Add to bullet list to keep track of it
                 Game.sceneObjects.Add(newbullet);
