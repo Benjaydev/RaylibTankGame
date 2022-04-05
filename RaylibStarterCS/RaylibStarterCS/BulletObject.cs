@@ -18,7 +18,10 @@ namespace RaylibStarterCS
         public string bulletTarget = "Enemy";
 
 
-        public BulletObject(Texture2D bulletTexture, Vector3 facing, float velocity = 1000f, string bt = "Enemy")
+ 
+
+        // Constructor
+        public BulletObject(Texture2D bulletTexture, Vector3 facing, float velocity = 1000f, string bt = "Enemy") : base()
         {
             startVelocity = velocity;
             tag = "Bullet";

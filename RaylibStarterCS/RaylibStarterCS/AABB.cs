@@ -135,7 +135,7 @@ namespace RaylibStarterCS
         public bool Overlaps(Vector3 p, float xChange = 0, float yChange = 0)
         {
             // Test for not overlapping
-            return !(p.x + xChange < min.x || p.y + yChange < min.y || p.x + xChange > max.x || p.y + yChange > max.y);
+            return !(p.x + xChange < min.x || p.y + yChange < min.y || p.x + xChange > max.x || p.y + yChange > max.y) ;
         }
 
         // Check if another boundry box overlaps this boundry box 

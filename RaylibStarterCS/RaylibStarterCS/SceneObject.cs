@@ -27,6 +27,7 @@ namespace RaylibStarterCS
         public float HitWidth = 5f;
         public float HitHeight = 5f;
         public AABB collisionBoundary = new AABB();
+        // Default (Empty value) is -1
         public int lastCollide = -1;
 
 
@@ -335,7 +336,7 @@ namespace RaylibStarterCS
         }
         public void SeperateIntersectingObject(SceneObject obj, float normx = 1, float normy = 1)
         {
-                // Skip iteration if any of these are met
+                // Skip if any of these are met
                 if (!obj.hasCollision || obj == this)
                 {
                     return;
@@ -364,14 +365,14 @@ namespace RaylibStarterCS
             // Check collision with every scene object
             foreach (SceneObject obj in objects)
             {
-                // Has collision, not itself, and aren't both bullets
-                if (obj.hasCollision && obj != this)
+                // Has collision, not itself, aren't both bullets, and the collision boundries aren't empty
+                if (obj.hasCollision && obj != this && (!obj.collisionBoundary.IsEmpty() && !collisionBoundary.IsEmpty()))
                 {
                     // Get the side that will be colliding
                     Vector3 norm = collisionBoundary.CalculateNorm(obj.collisionBoundary, x, y);
                     if (norm.IsEmpty())
                     {
-                        norm = new Vector3(x, y, 0);
+                        norm = new Vector3(x == 0 ? 1 : x, y == 0 ? 1 : y, 0);
                         norm.Normalize();
                     }
 
@@ -388,15 +389,7 @@ namespace RaylibStarterCS
                             return true;
                         }
 
-                        else if((tag == "Bullet" && obj.tag == "Bullet")){
-                            // If bullets don't have the same target
-                            if(((BulletObject)this).bulletTarget != ((BulletObject)obj).bulletTarget)
-                            {
-                                obj.isWaitingDestroy = true;
-                                isWaitingDestroy = true;
-                                return true;
-                            }
-                        }
+                        
 
                         // Collide player and enemy tanks with eachother
                         else if((tag == "Player" && obj.tag == "Enemy") || (obj.tag == "Player" && tag == "Enemy"))
@@ -425,7 +418,6 @@ namespace RaylibStarterCS
                                 
                                 // Reset the objects last collide
                                 obj.lastCollide = -1;
-                                //lastCollide = null;
                             }
                             return true;
                         }
@@ -438,6 +430,7 @@ namespace RaylibStarterCS
                         // If bullet object has hit it's target
                         else if (tag == "Bullet" && (obj.tag == ((BulletObject)this).bulletTarget))
                         {
+                            Console.WriteLine("sf");
                             obj.isWaitingDestroy = true;
                             isWaitingDestroy = true;
 

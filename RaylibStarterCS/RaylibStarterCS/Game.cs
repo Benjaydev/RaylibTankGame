@@ -19,7 +19,7 @@ namespace RaylibStarterCS
         private int fps = 1;
         private int frames;
 
-        float enemyCooldown = 50000f;
+        float enemyCooldown = 5f;
         float enemyCooldownCount = 0f;
 
         public static float deltaTime = 0.005f;
