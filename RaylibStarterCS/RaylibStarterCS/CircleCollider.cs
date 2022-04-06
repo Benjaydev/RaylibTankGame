@@ -85,8 +85,8 @@ namespace RaylibStarterCS
         /// </summary>
         public override bool Overlaps(Vector3 p, float xChange = 0, float yChange = 0)
         {
-            Vector3 point = new Vector3(p.x + xChange, p.y + yChange, 0);
-            Vector3 toPoint = point - center;
+            Vector3 point = new Vector3(center.x + xChange, center.y + yChange, 0);
+            Vector3 toPoint = p - point;
             return toPoint.MagnitudeSqr() <= (radius * radius);
         }
 
@@ -97,8 +97,8 @@ namespace RaylibStarterCS
         public override bool Overlaps(CircleCollider other, float xChange = 0, float yChange = 0)
         {
             
-            Vector3 point = new Vector3(other.center.x + xChange, other.center.y + yChange, 0);
-            Vector3 diff = point - center;
+            Vector3 point = new Vector3(center.x + xChange, center.y + yChange, 0);
+            Vector3 diff = other.center - point;
             // compare distance between spheres to combined radii 
             float r = radius + other.radius;
             return diff.MagnitudeSqr() <= (r * r);
@@ -110,11 +110,10 @@ namespace RaylibStarterCS
         /// </summary>
         public override bool Overlaps(AABB aabb, float xChange = 0, float yChange = 0)
         {
-            Vector3 point = new Vector3(center.x + xChange, center.y + yChange, 0);
-            DrawCircleLines((int)point.x, (int)point.y, radius, Color.BLACK);
+            Vector3 point = new Vector3(center.x+xChange, center.y + yChange, 0);
             Vector3 closest = aabb.ClosestPoint(point);
             
-            return Overlaps(closest);
+            return Overlaps(closest, xChange, yChange);
         }
 
 
