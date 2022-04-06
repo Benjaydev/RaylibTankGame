@@ -19,8 +19,14 @@ namespace RaylibStarterCS
         private int fps = 1;
         private int frames;
 
-        float enemyCooldown = 5f;
+        float enemyCooldown = 500000f;
         float enemyCooldownCount = 0f;
+
+        float debugCooldown = 0.5f;
+        float debugCooldownCount = 0f;
+        public static bool IsDebugActive = false;
+
+
 
         public static float deltaTime = 0.005f;
         public static Vector3[] WorldBoundries = new Vector3[2];
@@ -95,7 +101,6 @@ namespace RaylibStarterCS
             int pbLength = 150;
             int pbHeight = 50;
             Button playButton = new Button( (pbLength/2)+25, 150, pbLength, pbHeight, "Play Game", 22, Color.BLACK, "ExitMainMenu");
-           
             // Setup the file reader
             StreamReader reader = new StreamReader("Scores.txt");
             // Read top ten scores
@@ -166,6 +171,8 @@ namespace RaylibStarterCS
             sandbag1.hasCollision = true;
             sandbag1.tag = "CollideAll";
             sandbag1.SetPosition(startX, startY);
+            sandbag1.HitWidth = sandbag1s.Width;
+            sandbag1.HitHeight = sandbag1s.Height;
             sceneObjects.Add(sandbag1);
 
             SceneObject sandbag2 = new SceneObject(sandbag1);
@@ -180,6 +187,7 @@ namespace RaylibStarterCS
             // Setup barrel obstacles
             for (int i = 0; i < 10; i++)
             {
+                Console.WriteLine("barrel" + i);
                 // Choose random point on screen
                 int randomX = random.Next(100, GetScreenWidth() - 100);
                 int randomY = random.Next(100, GetScreenHeight() - 100);
@@ -199,6 +207,7 @@ namespace RaylibStarterCS
                 barrel.SetPosition(randomX, randomY);
                 barrel.HitWidth = barrelSprite.Width;
                 barrel.HitHeight = barrelSprite.Height;
+                barrel.SetCollisionType(new CircleCollider(new Vector3(0,0,0), barrel.HitWidth));
 
                 barrel.SeperateIntersectingObject(new List<string>() { "Player", "CollideAll" } );
                 // Add to scene
@@ -283,7 +292,19 @@ namespace RaylibStarterCS
                     playerTank.RotateTurret(deltaTime * 2, 1);
                 }
 
-               
+                debugCooldownCount += deltaTime;
+                // Toggle debug
+                if(debugCooldownCount >= debugCooldown)
+                {
+                    if (IsKeyDown(KeyboardKey.KEY_F1))
+                    {
+                        IsDebugActive = IsDebugActive ? false : true;
+                        debugCooldownCount = 0;
+                    }
+                }
+                
+
+
             }
             // Find all scene objects that are waiting to destroy
             delegateDestroy = null;  
@@ -407,28 +428,19 @@ namespace RaylibStarterCS
                 return;
             }
 
-            
-            if(enemies.Count < 100)
+            if(enemies.Count < 5)
             {
                 // Create new enemy
                 Tank newEnemy = new Tank("Enemy");
 
                 // Attempt to spawn
-                for(int attempts = 0; attempts < 100; attempts++)
-                {
-                    int randomX = random.Next(20, GetScreenWidth() - 20);
-                    int randomY = random.Next(20, GetScreenHeight() - 20);
+                int randomX = random.Next(20, GetScreenWidth() - 20);
+                int randomY = random.Next(20, GetScreenHeight() - 20);
 
-                    
-                    if (!playerTank.IsCollidingWithObject(newEnemy))
-                    {
-                        newEnemy.Init(randomX, randomY);
-                        newEnemy.SeperateIntersectingObject(new List<string> { "CollideAll", "Player" });
-                        return;
-                    }
-                    
-                }
-                newEnemy.Init(20, 20);
+                newEnemy.Init(randomX, randomY);
+
+                newEnemy.SeperateIntersectingObject(new List<string> { "Player", "CollideAll" });
+                return;
             }
             
         }
@@ -481,8 +493,8 @@ namespace RaylibStarterCS
                 // Display fps
                 DrawText(fps.ToString(), 10, 10, 24, Color.RED);
                 DrawText($"Points: {playerTank.points.ToString()}", GetScreenWidth() - 200, 20, 24, Color.BLUE);
-                int keyShowSize = MeasureText("Move: W,S | Rotate Tank: A,D | Rotate Turret: Q,E | Shoot: Space", 20);
-                DrawText("Move: W,S | Rotate Tank: A,D | Rotate Turret: Q,E | Shoot: Space", (GetScreenWidth() / 2) - (keyShowSize / 2), GetScreenHeight() - 30, 20, Color.BLUE);
+                int keyShowSize = MeasureText("Move: W,S | Rotate Tank: A,D | Rotate Turret: Q,E | Shoot: Space | Debug: F1", 20);
+                DrawText("Move: W,S | Rotate Tank: A,D | Rotate Turret: Q,E | Shoot: Space | Debug: F1", (GetScreenWidth() / 2) - (keyShowSize / 2), GetScreenHeight() - 30, 20, Color.BLUE);
 
             }
 

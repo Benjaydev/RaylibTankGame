@@ -7,7 +7,7 @@ using Raylib_cs;
 
 namespace RaylibStarterCS
 {
-    public class AABB
+    public class AABB : Collider2D
     {
         protected Vector3[] boundries = new Vector3[2] { new Vector3(float.NegativeInfinity, float.NegativeInfinity, float.NegativeInfinity), new Vector3(float.PositiveInfinity, float.PositiveInfinity, float.PositiveInfinity) };
 
@@ -54,14 +54,12 @@ namespace RaylibStarterCS
             max = copy.max;
         }
 
-        public void DrawDebug()
+        public override void DrawDebug()
         {
-            DrawLine((int)corners[0].x, (int)corners[0].y, (int)corners[1].x, (int)corners[1].y, Color.DARKPURPLE);
-            DrawLine((int)corners[1].x, (int)corners[1].y, (int)corners[2].x, (int)corners[2].y, Color.DARKPURPLE);
-            DrawLine((int)corners[2].x, (int)corners[2].y, (int)corners[3].x, (int)corners[3].y, Color.DARKPURPLE);
-            DrawLine((int)corners[3].x, (int)corners[3].y, (int)corners[0].x, (int)corners[0].y, Color.DARKPURPLE);
-
-
+            DrawLine((int)corners[0].x, (int)corners[0].y, (int)corners[1].x, (int)corners[1].y, Color.RED);
+            DrawLine((int)corners[1].x, (int)corners[1].y, (int)corners[2].x, (int)corners[2].y, Color.RED);
+            DrawLine((int)corners[2].x, (int)corners[2].y, (int)corners[3].x, (int)corners[3].y, Color.RED);
+            DrawLine((int)corners[3].x, (int)corners[3].y, (int)corners[0].x, (int)corners[0].y, Color.RED);
         }
 
         public void TranslateAABB(float x, float y)
@@ -82,7 +80,7 @@ namespace RaylibStarterCS
             return new Vector3(Math.Abs(max.x - min.x) * 0.5f, Math.Abs(max.y - min.y) * 0.5f, Math.Abs(max.z - min.z) * 0.5f);
         }
 
-        public bool IsEmpty()
+        public override bool IsEmpty()
         {
             // Check if each value is at it's "Empty" state (Infinity)
             if (float.IsNegativeInfinity(min.x) && float.IsNegativeInfinity(min.y) && float.IsNegativeInfinity(min.z) && float.IsInfinity(max.x) && float.IsInfinity(max.y) && float.IsInfinity(max.z))
@@ -132,7 +130,7 @@ namespace RaylibStarterCS
 
         // Check if a point overlaps this boundry box 
         // Optional: xChange and yChange represent whether this box is moving and an overlap needs to be checked before applying and translations
-        public bool Overlaps(Vector3 p, float xChange = 0, float yChange = 0)
+        public override bool Overlaps(Vector3 p, float xChange = 0, float yChange = 0)
         {
             // Test for not overlapping
             return !(p.x + xChange < min.x || p.y + yChange < min.y || p.x + xChange > max.x || p.y + yChange > max.y) ;
@@ -140,16 +138,24 @@ namespace RaylibStarterCS
 
         // Check if another boundry box overlaps this boundry box 
         // Optional: xChange and yChange represent whether this box is moving and an overlap needs to be checked before applying and translations
-        public bool Overlaps(AABB other, float xChange = 0, float yChange = 0)
+        public override bool Overlaps(AABB other, float xChange = 0, float yChange = 0)
         {
             // Test for not overlapping
             return !(max.x + xChange < other.min.x || max.y + yChange < other.min.y || min.x + xChange > other.max.x || min.y + yChange > other.max.y);
         }
 
+        // Check if a circle collider overlaps this boundry box 
+        // Optional: xChange and yChange represent whether this box is moving and an overlap needs to be checked before applying and translations
+        public override bool Overlaps(CircleCollider cc, float xChange = 0, float yChange = 0)
+        {
+            
+            return cc.Overlaps(this, xChange, yChange);
+        }
+
         // Check the normals of point against to this box
         // Optional: xChange and yChange represent whether this box is moving and must correct it's max and min positions
         // in order to calculate normals (As box and point must not be overlapping to calculate)
-        public Vector3 CalculateNorm(Vector3 p, float xChange = 0, float yChange = 0)
+        public override Vector3 CalculateNorm(Vector3 p, float xChange = 0, float yChange = 0)
         {
             //      Top
             // Left [ ] Right
@@ -182,7 +188,7 @@ namespace RaylibStarterCS
         // Check the normals of another box against to this box
         // Optional: xChange and yChange represent whether this box is moving and must correct it's max and min positions
         // in order to calculate normals (As boxes must not be overlapping to calculate)
-        public Vector3 CalculateNorm(AABB other, float xChange = 0, float yChange = 0)
+        public override Vector3 CalculateNorm(AABB other, float xChange = 0, float yChange = 0)
         {
             //      Top
             // Left [ ] Right
@@ -211,6 +217,13 @@ namespace RaylibStarterCS
             return Norm;
         }
 
+        // Check the normals of an AABB against this circle collider
+        // Optional: xChange and yChange represent whether this circle is moving and must correct it's max and min positions
+        // in order to calculate normals (As boxes must not be overlapping to calculate)
+        public override Vector3 CalculateNorm(CircleCollider cc, float xChange = 0, float yChange = 0)
+        {
+            return cc.CalculateNorm(this, xChange, yChange);
+        }
 
 
 

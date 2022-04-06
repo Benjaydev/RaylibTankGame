@@ -83,6 +83,7 @@ namespace RaylibStarterCS
 
             SetPosition(xPos, yPos);
             hasCollision = true;
+            SetCollisionType(new CircleCollider(new Vector3(0, 0, 0), HitWidth));
             Game.sceneObjects.Add(this);
 
 

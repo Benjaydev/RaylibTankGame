@@ -83,11 +83,7 @@ namespace RaylibStarterCS
             HitHeight = Height;
             float rotation = (float)Math.Atan2(globalTransform.m01, globalTransform.m00);
 
-       
-
-
-
-            if (!Raylib.WindowShouldClose())
+            if (!Raylib.WindowShouldClose() && !Game.IsDebugActive)
             {
                 // Draw sprite to screen using raylib
                 DrawTextureEx(texture, new System.Numerics.Vector2(globalTransform.m20, globalTransform.m21), rotation * (float)(180.0f / Math.PI), textureScale, Color.WHITE);

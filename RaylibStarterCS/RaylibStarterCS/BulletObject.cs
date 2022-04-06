@@ -33,7 +33,7 @@ namespace RaylibStarterCS
 
             SetRotate(90 * (float)(Math.PI / 180.0f));
             Rotate(MathF.Atan2(ForwardVector.y, ForwardVector.x));
-            
+            SetCollisionType(new CircleCollider(new Vector3(0, 0, 0), HitWidth));
             AddChild(bulletSprite);
 
   
@@ -62,7 +62,6 @@ namespace RaylibStarterCS
 
             // Reset position to where it's meant to be
             SetPosition(prevpos.x, prevpos.y);
-           
         }
 
         public override void OnUpdate(float deltaTime)

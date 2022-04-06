@@ -38,6 +38,12 @@ namespace MathClasses
         }
 
         // Calculate the maginitude of vector (Length)
+        public float MagnitudeSqr()
+        {
+            return (float)this.Dot(this);
+        }
+
+        // Calculate the maginitude of vector (Length)
         public float Magnitude()
         {
             return (float) Math.Sqrt(this.Dot(this));
@@ -76,11 +82,17 @@ namespace MathClasses
             float y = p.y <= min.y ? min.y : p.y;
             float z = p.z <= min.z ? min.z : p.z;
 
-            x = p.x >= max.x ? max.x : p.x;
-            y = p.y >= max.y ? max.y : p.y;
-            z = p.z >= max.z ? max.z : p.z;
+            x = x >= max.x ? max.x : x;
+            y = y >= max.y ? max.y : y;
+            z = z >= max.z ? max.z : z;
             return new Vector3(x, y, z);
         }
+
+        public float Distance(Vector3 v)
+        {
+            return (float)Math.Sqrt(Math.Pow(v.x - x, 2f) + Math.Pow(v.y - y, 2f) + Math.Pow(v.z - z, 2f));
+        }
+
 
         // Return if vector has values all equal to 0
         public bool IsEmpty()
