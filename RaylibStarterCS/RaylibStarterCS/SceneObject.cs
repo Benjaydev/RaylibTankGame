@@ -14,8 +14,8 @@ namespace RaylibStarterCS
         public string tag = "";
         public int id = 0;
 
-        protected SceneObject parent = null;
-        protected List<SceneObject> children = new List<SceneObject>();
+        public SceneObject parent = null;
+        public List<SceneObject> children = new List<SceneObject>();
 
         protected Matrix3 localTransform = new Matrix3(1);
         protected Matrix3 globalTransform = new Matrix3(1);
@@ -57,7 +57,6 @@ namespace RaylibStarterCS
         { 
             Game.gameLifetimeObjectCount++;
             id = Game.gameLifetimeObjectCount;
-            Console.WriteLine(Game.gameLifetimeObjectCount);
         }
 
         // Copy Constructor
@@ -92,7 +91,11 @@ namespace RaylibStarterCS
             HitRadius = copy.HitRadius;
             HitWidth = copy.HitWidth;
             HitHeight = copy.HitHeight;
-           
+
+            // Create new id
+            Game.gameLifetimeObjectCount++;
+            id = Game.gameLifetimeObjectCount;
+
 
             localTransform = new Matrix3(copy.localTransform);
             globalTransform = new Matrix3(copy.globalTransform);
@@ -116,7 +119,33 @@ namespace RaylibStarterCS
         }
         public virtual void RemoveSelfFromSceneObjects()
         {
+            // Remove self from parent
+            if (parent != null)
+            {
+                parent.RemoveChild(this);
+            }
+
+            // Remove each child from this sceneObject
+            foreach (SceneObject so in children)
+            {
+                so.isWaitingDestroy = true;
+            }
+
             Game.sceneObjects.Remove(this);
+        }
+
+        public virtual void AddSelfToSceneObjects()
+        {
+            // Remove each child from this sceneObject
+            foreach (SceneObject so in children)
+            {
+                so.AddSelfToSceneObjects();
+            }
+            if(this.GetType() != typeof(SpriteObject))
+            {
+                Game.sceneObjects.Add(this);
+            }
+            
         }
 
         // Called on every update
@@ -255,7 +284,6 @@ namespace RaylibStarterCS
         // Translate scene object
         public void Translate(float x, float y, bool overrideCollision = false)
         {
-
             if (overrideCollision)
             {
                 localTransform.Translate(x, y);
@@ -264,23 +292,22 @@ namespace RaylibStarterCS
             // Split the collision check between both the x and y axis 
             // This is done so that if one axes is colliding and the other is not, the object will still move along the axis that is not colliding
             // E.g. if the x-axis is currently colliding but the y-axis isn't, the tank should still be able to translate along that y-axis
-            // This may impact performace, however it is untested.
+            // This may impact performace in some scenarios, but it has been tested to make negligable difference
 
             // Check collision on x axis change
-            if (!CheckCollision(x, y))
+            if (!CheckCollision(x, 0))
             {
-                localTransform.Translate(x, y);
-            
+                
+                localTransform.Translate(x, 0);
+                UpdateTransform();
             } 
-            
-            /*
             // Check collision on y axis change
             if (!CheckCollision(0, y))
             {
                 localTransform.Translate(0, y);
-                
-            }*/
-            UpdateTransform();
+                UpdateTransform();
+            }
+           
         }
 
         // Check if this object has hit the world boundry after moving by x and y
@@ -394,13 +421,6 @@ namespace RaylibStarterCS
                         norm = collisionBoundary.CalculateNorm((AABB)obj.collisionBoundary, x, y);
                     }
 
-
-                    if (norm.IsEmpty())
-                    {
-                        norm = new Vector3(x == 0 ? 1 : x, y == 0 ? 1 : y, 0);
-                        norm.Normalize();
-                    }
-
                     
                     // Check if that location is colliding
                     if (IsCollidingWithObject(obj, x, y))
@@ -426,25 +446,14 @@ namespace RaylibStarterCS
                         // Check for collison between movable objects
                         else if ( (obj.movable && (tag == "Player" || tag == "Enemy")) || (movable && obj.movable))
                         {
-                            // Find the angle between current object and other object in order to 
-                            Vector3 objvec = new Vector3(obj.globalTransform.m20 - globalTransform.m20, obj.globalTransform.m21 - globalTransform.m21, 0);
-                            Vector3 facing = new Vector3(globalTransform.m00, globalTransform.m01, 1);
-                            facing.Normalize();
-                            objvec.Normalize();
-                            double angle = Math.Acos(objvec.Dot(facing)) * RAD2DEG;
+                            // Store this object inside the collided object to avoid this object being collided again while translating the collided object 
+                            obj.lastCollide = id;
 
-                            if(angle-45 < 100 || (movable && obj.movable) && lastCollide != obj.id)
-                            {
-
-                                // Store this object inside the collided object to avoid this object being collided again while translating the collided object 
-                                obj.lastCollide = id;
-
-                                // Offset hit object by the amount being forced onto it
-                                obj.Translate(norm.x, norm.y);
+                            // Offset hit object by the amount being forced onto it
+                            obj.Translate(norm.x, norm.y);
                                 
-                                // Reset the objects last collide
-                                obj.lastCollide = -1;
-                            }
+                            // Reset the objects last collide
+                            obj.lastCollide = -1;
                             return true;
                         }
 
@@ -529,6 +538,7 @@ namespace RaylibStarterCS
             child.parent = this;
             // Add the child to children list
             children.Add(child);
+           
         }
 
         // Remove child from this sceneObject
@@ -538,7 +548,9 @@ namespace RaylibStarterCS
             if (children.Remove(child) == true)
             {
                 child.parent = null;
+                Game.sceneObjects.Remove(child);
             }
+
         }
     }
 }

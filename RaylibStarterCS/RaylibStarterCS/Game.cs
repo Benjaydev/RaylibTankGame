@@ -18,13 +18,16 @@ namespace RaylibStarterCS
         private float timer = 0;
         private int fps = 1;
         private int frames;
+        public static bool ShowFPS = false;
+        public static bool FPSCapped = true;
 
-        float enemyCooldown = 500000f;
+        float enemyCooldown = 5000f;
         float enemyCooldownCount = 0f;
 
         float debugCooldown = 0.5f;
         float debugCooldownCount = 0f;
         public static bool IsDebugActive = false;
+        
 
 
 
@@ -53,7 +56,7 @@ namespace RaylibStarterCS
         public delegate void DelegateDestroy();
         public DelegateDestroy delegateDestroy;
 
-        Random random = new Random();
+        public static Random gameRandom = new Random();
 
         public bool GameActive = false;
         public bool MainMenu = true;
@@ -160,59 +163,8 @@ namespace RaylibStarterCS
             // Initiate player
             playerTank.Init(GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f);
 
-            int startX = 200;
-            int startY = 200;
-            SpriteObject sandbag1s = new SpriteObject();
-            sandbag1s.Load("./PNG/Obstacles/sandbagBeige.png");
-            sandbag1s.SetPosition(-(sandbag1s.Width / 2), -(sandbag1s.Height / 2));
-            sandbag1s.Scale(0.75f, 1);
-            SceneObject sandbag1 = new SceneObject();
-            sandbag1.AddChild(sandbag1s);
-            sandbag1.hasCollision = true;
-            sandbag1.tag = "CollideAll";
-            sandbag1.SetPosition(startX, startY);
-            sandbag1.HitWidth = sandbag1s.Width;
-            sandbag1.HitHeight = sandbag1s.Height;
-            sceneObjects.Add(sandbag1);
-
-            SceneObject sandbag2 = new SceneObject(sandbag1);
-            sandbag2.SetPosition(startX+sandbag1s.Width, startY);
-            sceneObjects.Add(sandbag2);
-            
-            SceneObject sandbag3 = new SceneObject(sandbag1);
-            sandbag3.SetPosition(startX+sandbag1s.Width*2, startY);
-            sceneObjects.Add(sandbag3);
-
-            
-            // Setup barrel obstacles
-            for (int i = 0; i < 10; i++)
-            {
-                Console.WriteLine("barrel" + i);
-                // Choose random point on screen
-                int randomX = random.Next(100, GetScreenWidth() - 100);
-                int randomY = random.Next(100, GetScreenHeight() - 100);
-
-                // Calculate the distance between the player and randomised point to avoid objects spawing inside player
-                // Setup barrel sprite
-                SpriteObject barrelSprite = new SpriteObject();
-                barrelSprite.Load("./PNG/Obstacles/barrelGreen_up.png");
-                barrelSprite.SetPosition(-(barrelSprite.Width / 2), -(barrelSprite.Height / 2));
-
-                // Setup barrel object
-                SceneObject barrel = new SceneObject();
-                barrel.AddChild(barrelSprite);
-                barrel.hasCollision = true;
-                barrel.tag = "CollideAll";
-                barrel.movable = true;
-                barrel.SetPosition(randomX, randomY);
-                barrel.HitWidth = barrelSprite.Width;
-                barrel.HitHeight = barrelSprite.Height;
-                barrel.SetCollisionType(new CircleCollider(new Vector3(0,0,0), barrel.HitWidth));
-
-                barrel.SeperateIntersectingObject(new List<string>() { "Player", "CollideAll" } );
-                // Add to scene
-                sceneObjects.Add(barrel);
-            }
+            new GameMap();
+         
         }
 
         // Update game
@@ -249,7 +201,7 @@ namespace RaylibStarterCS
                 // Spawn new enemies after cooldown has completed
                 enemyCooldownCount += deltaTime;
                 if (enemyCooldownCount >= enemyCooldown)
-                {
+                { 
                     CreateNewEnemy();
                     enemyCooldownCount = 0f;
                 }
@@ -299,6 +251,25 @@ namespace RaylibStarterCS
                     if (IsKeyDown(KeyboardKey.KEY_F1))
                     {
                         IsDebugActive = IsDebugActive ? false : true;
+                        debugCooldownCount = 0;
+                    }
+                    if (IsKeyDown(KeyboardKey.KEY_F2))
+                    {
+                        ShowFPS = ShowFPS ? false : true;
+                        debugCooldownCount = 0;
+                    }
+                    if (IsKeyDown(KeyboardKey.KEY_F3))
+                    {
+                        if (FPSCapped)
+                        {
+                            FPSCapped = false;
+                            SetTargetFPS(0);
+                        }
+                        else
+                        {
+                            FPSCapped = true;
+                            SetTargetFPS(520);
+                        }
                         debugCooldownCount = 0;
                     }
                 }
@@ -434,8 +405,8 @@ namespace RaylibStarterCS
                 Tank newEnemy = new Tank("Enemy");
 
                 // Attempt to spawn
-                int randomX = random.Next(20, GetScreenWidth() - 20);
-                int randomY = random.Next(20, GetScreenHeight() - 20);
+                int randomX = Game.gameRandom.Next(100, GetScreenWidth() - 100);
+                int randomY = Game.gameRandom.Next(100, GetScreenHeight() - 100);
 
                 newEnemy.Init(randomX, randomY);
 
@@ -445,6 +416,8 @@ namespace RaylibStarterCS
             
         }
 
+
+        // Draw function
         public void Draw()
         {
             BeginDrawing();
@@ -454,6 +427,20 @@ namespace RaylibStarterCS
             
             background.Draw();
 
+            // Draw scene objects
+            foreach (SceneObject obj in sceneObjects)
+            {
+                if (obj.parent == null)
+                {
+                    obj.Draw();
+                }
+            }
+
+
+            if (ShowFPS)
+            {
+                DrawText(fps.ToString() + $" ({(FPSCapped ? "Capped 520" : "Uncapped")}, F3 to {(FPSCapped ? "Uncap" : "Cap")})", 10, 10, 24, Color.RED);
+            }
             // Draw the main menu
             if (MainMenu)
             {
@@ -491,18 +478,10 @@ namespace RaylibStarterCS
             if (!MainMenu && !GameOver)
             {
                 // Display fps
-                DrawText(fps.ToString(), 10, 10, 24, Color.RED);
                 DrawText($"Points: {playerTank.points.ToString()}", GetScreenWidth() - 200, 20, 24, Color.BLUE);
-                int keyShowSize = MeasureText("Move: W,S | Rotate Tank: A,D | Rotate Turret: Q,E | Shoot: Space | Debug: F1", 20);
-                DrawText("Move: W,S | Rotate Tank: A,D | Rotate Turret: Q,E | Shoot: Space | Debug: F1", (GetScreenWidth() / 2) - (keyShowSize / 2), GetScreenHeight() - 30, 20, Color.BLUE);
+                int keyShowSize = MeasureText("Move: W,S | Rotate Tank: A,D | Rotate Turret: Q,E | Shoot: Space | Debug: F1, F2", 20);
+                DrawText("Move: W,S | Rotate Tank: A,D | Rotate Turret: Q,E | Shoot: Space | Debug: F1, F2", (GetScreenWidth() / 2) - (keyShowSize / 2), GetScreenHeight() - 30, 20, Color.BLUE);
 
-            }
-
-
-            // Draw scene objects
-            foreach (SceneObject obj in sceneObjects)
-            {
-                obj.Draw();
             }
 
             // Draw ui objects
@@ -510,6 +489,7 @@ namespace RaylibStarterCS
             {
                 ui.Draw();
             }
+
 
             EndDrawing();
         }

@@ -9,7 +9,7 @@ namespace RaylibStarterCS
     public class Track : SpriteObject
     {
         float lifetime = 0f;
-        float lifetimeMax = 5f;
+        float lifetimeMax = 2.5f;
         public static Texture2D trackTexture = LoadTextureFromImage(LoadImage("./PNG/Tanks/tracksSmall.png"));
 
         public Track()

@@ -116,6 +116,7 @@ namespace MathClasses
         public static Vector3 operator -(Vector3 v1, Vector3 v2)
         {
             return new Vector3(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z);
+            return new Vector3(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z);
         }
         // Overload negative base operator to set vector values to negative
         public static Vector3 operator -(Vector3 v)

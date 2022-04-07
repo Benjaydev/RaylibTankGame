@@ -27,6 +27,8 @@ namespace RaylibStarterCS
 
         public float trackCooldown = 0.35f;
         public float trackCooldownCount = 0.35f;
+        public Vector3 lastTrackPoint = new Vector3(0, 0, 0);
+        public float newTrackRadius = 100f;
 
         public int points = 0;
 
@@ -83,8 +85,10 @@ namespace RaylibStarterCS
 
             SetPosition(xPos, yPos);
             hasCollision = true;
+            newTrackRadius = tankSprite.Width*1.25f;
+
             SetCollisionType(new CircleCollider(new Vector3(0, 0, 0), HitWidth));
-            Game.sceneObjects.Add(this);
+            AddSelfToSceneObjects();
 
 
         }
@@ -302,12 +306,15 @@ namespace RaylibStarterCS
         {
             // Find the facing direction of tank
             Vector3 facing = new Vector3(LocalTransform.m00, LocalTransform.m01, 1);
-            // Create a new track
-            MakeTrack(facing);
+            
             // Calculate the direction and time adjusted movement vector
             Vector3 f = facing * (direction*moveSpeed) * deltaTime;
+
             // Translate position
             Translate(f.x, f.y);
+
+            // Create a new track
+            MakeTrack(facing);
         }
 
         // Rotate tank turret adjusted by delta time
@@ -348,7 +355,7 @@ namespace RaylibStarterCS
                 newbullet.SetPosition(firePoint.GlobalTransform.m20, firePoint.GlobalTransform.m21);
 
                 // Add to bullet list to keep track of it
-                Game.sceneObjects.Add(newbullet);
+                newbullet.AddSelfToSceneObjects();
 
                 // Reset cooldown
                 shootCooldownCount = 0f;
@@ -360,9 +367,17 @@ namespace RaylibStarterCS
         // Make tank track
         public void MakeTrack(Vector3 facing)
         {
-            // If track cooldown is complete
-            if (trackCooldownCount >= trackCooldown)
+            
+            // If track cooldown is complete (Scale cooldown by the speed of the tank)
+            if (trackCooldownCount >= trackCooldown * (100/moveSpeed))
             {
+                Vector3 diff = lastTrackPoint - new Vector3(globalTransform.m20, globalTransform.m21, 0);
+                float dist = diff.MagnitudeSqr();
+                if( !(dist >= newTrackRadius * newTrackRadius))
+                {
+                    return;
+                }
+
                 // Create new track sprite
                 Track track = new Track();
 
@@ -373,6 +388,7 @@ namespace RaylibStarterCS
                 // Set position of track to track spawn point
                 track.SetPosition(trackPoint.GlobalTransform.m20, trackPoint.GlobalTransform.m21);
 
+                lastTrackPoint = new Vector3(globalTransform.m20, globalTransform.m21, 0);
                 // Reset cooldown
                 trackCooldownCount = 0f;
             }

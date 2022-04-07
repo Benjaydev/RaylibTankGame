@@ -10,6 +10,7 @@ namespace RaylibStarterCS
             Game game = new Game();
             Raylib.InitWindow(640, 480, "Tank Game - Ben Wharton");
             game.Init(1200, 700);
+            Raylib.SetTargetFPS(520);
 
             while (!Raylib.WindowShouldClose())
             {
