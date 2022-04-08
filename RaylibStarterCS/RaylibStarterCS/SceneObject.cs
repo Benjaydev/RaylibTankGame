@@ -282,12 +282,13 @@ namespace RaylibStarterCS
         }
 
         // Translate scene object
-        public void Translate(float x, float y, bool overrideCollision = false)
+        public bool Translate(float x, float y, bool overrideCollision = false)
         {
+            bool result = false;
             if (overrideCollision)
             {
                 localTransform.Translate(x, y);
-                return;
+                return true;
             }
             // Split the collision check between both the x and y axis 
             // This is done so that if one axes is colliding and the other is not, the object will still move along the axis that is not colliding
@@ -296,18 +297,21 @@ namespace RaylibStarterCS
 
             // Check collision on x axis change
             if (!CheckCollision(x, 0))
-            {
-                
+            { 
                 localTransform.Translate(x, 0);
                 UpdateTransform();
+                result = true;
             } 
             // Check collision on y axis change
             if (!CheckCollision(0, y))
             {
                 localTransform.Translate(0, y);
                 UpdateTransform();
+                result = true;
             }
-           
+
+            return result;
+
         }
 
         // Check if this object has hit the world boundry after moving by x and y

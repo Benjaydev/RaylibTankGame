@@ -21,7 +21,7 @@ namespace RaylibStarterCS
         public static bool ShowFPS = false;
         public static bool FPSCapped = true;
 
-        float enemyCooldown = 5000f;
+        float enemyCooldown = 5f;
         float enemyCooldownCount = 0f;
 
         float debugCooldown = 0.5f;
@@ -225,12 +225,12 @@ namespace RaylibStarterCS
                 // Move tank forward
                 if (IsKeyDown(KeyboardKey.KEY_W))
                 {
-                    playerTank.MoveTank(deltaTime * 2, 1);
+                    playerTank.Accelerate(deltaTime * 2, 1);
                 }
                 // Move tank backwards
                 if (IsKeyDown(KeyboardKey.KEY_S))
                 {
-                    playerTank.MoveTank(deltaTime * 1.5f, -1);
+                    playerTank.Accelerate(deltaTime * 1.5f, -1);
                 }
 
                 // Rotate tank turret to the the left

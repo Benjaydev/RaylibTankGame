@@ -36,7 +36,7 @@ namespace RaylibStarterCS
             CornerSandbagStructure(2, GetScreenWidth()-200, GetScreenHeight()-150, 180);
 
             SpawnRandomBarrels(10, 400, 50, GetScreenWidth()-250, GetScreenHeight()-250);
-            SpawnRandomBarrels(10, 50, 50, 350, 200);
+            SpawnRandomBarrels(3, 50, 50, 350, 200);
             SpawnRandomBarrels(3, 50, GetScreenHeight() - 100, 200, GetScreenHeight() - 50);
         }
 

@@ -16,6 +16,12 @@ namespace RaylibStarterCS
         public SpriteObject turretSprite = new SpriteObject();
         public Texture2D bulletTexture;
 
+        public float maxVelocity = 200f;
+        public float velocity = 0f;
+        public float movingDirection = 0f;
+        public float acceleration = 100f;
+        public float deceleration = 200f;
+
         public float moveSpeed = 100f;
         public float turretMoveSpeed = 1f;
         public float turnSpeed = 1f;
@@ -98,6 +104,14 @@ namespace RaylibStarterCS
         {
             base.OnUpdate(deltaTime);
 
+
+            MoveTank(deltaTime);
+            if (movingDirection == 0)
+            {
+                Decelerate(deltaTime);
+            }
+
+
             // Check if shooting cooldown is not complete
             if (shootCooldownCount <= shootCooldown)
             {
@@ -117,6 +131,8 @@ namespace RaylibStarterCS
             {
                 UpdateMenuTank(deltaTime);
             }
+
+            movingDirection = 0f;
         }
 
         int totalDestroyedTanks = 0;
@@ -140,7 +156,10 @@ namespace RaylibStarterCS
                 shootCooldown = 5f;
                 shootSpeed = 2000f;
 
-                moveSpeed = 25f;
+                maxVelocity = 100f;
+                acceleration = 25f;
+                deceleration = 50f;
+
                 turnSpeed = 0.25f;
                 shootingAccuracy = 0.4f;
             }
@@ -153,7 +172,10 @@ namespace RaylibStarterCS
                 shootCooldown = 1f;
                 shootSpeed = 250f;
 
-                moveSpeed = 250f;
+                maxVelocity = 250f;
+                acceleration = 150f;
+                deceleration = 100f;
+
                 turnSpeed = 2f;
                 shootingAccuracy = 0.9f;
             }
@@ -166,7 +188,10 @@ namespace RaylibStarterCS
                 shootCooldown = 3f;
                 shootSpeed = 600f;
 
-                moveSpeed = 100f;
+                maxVelocity = 200f;
+                acceleration = 100f;
+                deceleration = 100f;
+
                 turnSpeed = 0.9f;
                 shootingAccuracy = 0.8f;
             }
@@ -208,11 +233,11 @@ namespace RaylibStarterCS
             float difY = GetMouseY() - GlobalTransform.m21;
 
             if (Math.Abs(difX) >= 20 || Math.Abs(difY) >= 20) {
-                MoveTank(deltaTime, 1);
+                Accelerate(deltaTime, 1);
             }
             else
             {
-                MoveTank(deltaTime, -1);
+                Accelerate(deltaTime, -1);
             }
 
             // Calculate the angle to face mouse
@@ -271,7 +296,7 @@ namespace RaylibStarterCS
                 }
                 if (AImoving)
                 {
-                    MoveTank(deltaTime, AImovingDirection);
+                    Accelerate(deltaTime, AImovingDirection);
                 }
             }
 
@@ -301,14 +326,31 @@ namespace RaylibStarterCS
 
         }
 
+        public void Accelerate(float deltaTime, float direction = 1f)
+        {
+            movingDirection = direction;
+            velocity = Math.Clamp(velocity + (movingDirection*(acceleration * deltaTime)), -maxVelocity, maxVelocity);
+        }
+        public void Decelerate(float deltaTime)
+        {
+            if(velocity == 0f)
+            {
+                return;
+            }
+            float direction = velocity / Math.Abs(velocity);
+
+            // If the tank is trying to move forward and velocity is negative, clamp between lowest possible velocity and 0
+            velocity = Math.Clamp(velocity - (direction * (deceleration * deltaTime)), -maxVelocity, maxVelocity);
+        }
+
         // Function used to move tank in direction adjusted by delta time
-        public void MoveTank(float deltaTime, float direction = 1f)
+        public void MoveTank(float deltaTime)
         {
             // Find the facing direction of tank
             Vector3 facing = new Vector3(LocalTransform.m00, LocalTransform.m01, 1);
             
             // Calculate the direction and time adjusted movement vector
-            Vector3 f = facing * (direction*moveSpeed) * deltaTime;
+            Vector3 f = facing * (velocity) * deltaTime;
 
             // Translate position
             Translate(f.x, f.y);
