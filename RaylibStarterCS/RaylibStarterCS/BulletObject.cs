@@ -17,9 +17,6 @@ namespace RaylibStarterCS
         SpriteObject bulletSprite = new SpriteObject();
         public string bulletTarget = "Enemy";
 
-
- 
-
         // Constructor
         public BulletObject(Texture2D bulletTexture, Vector3 facing, float velocity = 1000f, string bt = "Enemy") : base()
         {
@@ -30,13 +27,16 @@ namespace RaylibStarterCS
             hasCollision = true;
             bulletSprite.texture = bulletTexture;
             bulletSprite.SetPosition(-(bulletSprite.Width / 2), -(bulletSprite.Height / 2));
+            HitWidth = bulletSprite.Width;
 
             SetRotate(90 * (float)(Math.PI / 180.0f));
             Rotate(MathF.Atan2(ForwardVector.y, ForwardVector.x));
             SetCollisionType(new CircleCollider(new Vector3(0, 0, 0), HitWidth));
             AddChild(bulletSprite);
 
-  
+            //Light BulletLight = new Light(200, 0.5f, .15f, new Color(255, 150, 0, 255));
+            //AddChild(BulletLight);
+            //Game.lights.Add(BulletLight);
         }
 
         public override void CollideEvent(Vector3 Normal)
@@ -80,6 +80,7 @@ namespace RaylibStarterCS
             velocityMultiple *= 1 - (0.5f * deltaTime);
             if(velocityMultiple < (0.05f * (1+deltaTime)))
             {
+   
                 isWaitingDestroy = true;
             }
             Translate(f.x* velocityMultiple, f.y* velocityMultiple);

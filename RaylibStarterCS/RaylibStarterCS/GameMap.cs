@@ -38,8 +38,64 @@ namespace RaylibStarterCS
             SpawnRandomBarrels(10, 400, 50, GetScreenWidth()-250, GetScreenHeight()-250);
             SpawnRandomBarrels(3, 50, 50, 350, 200);
             SpawnRandomBarrels(3, 50, GetScreenHeight() - 100, 200, GetScreenHeight() - 50);
+
+            CreateLamp(250, 320, new Light(200, 0.5f, .1f, new Color(255, 255, 200, 255)));
+
+            CreateFirePit(30, 30, new Light(200, 0.5f, .15f, new Color(255, 150, 0, 255)));
+            CreateFirePit(1070, 80, new Light(200, 0.5f, .15f, new Color(255, 150, 0, 255)));
+            CreateFirePit(940, 480, new Light(200, 0.5f, .15f, new Color(255, 150, 0, 255)));
         }
 
+        // Create lamp object which has custom light
+        public void CreateLamp(int x, int y, Light light)
+        {
+            SceneObject lightObject = new SceneObject();
+            // Create sprite
+            SpriteObject lightSprite = new SpriteObject();
+            lightSprite.Load("./PNG/Obstacles/light.png");
+            lightSprite.SetPosition(-lightSprite.Width / 2, -lightSprite.Height / 2);
+            lightObject.AddChild(lightSprite);
+
+            // Add light to object
+            lightObject.AddChild(light);
+            
+            // Setup object
+            lightObject.SetPosition(x, y);
+            lightObject.hasCollision = true;
+            lightObject.movable = true;
+            lightObject.HitWidth = lightSprite.Width;
+            lightObject.SetCollisionType(new CircleCollider(new Vector3(0, 0, 0), lightObject.HitWidth));
+            lightObject.tag = "CollideAll";
+
+            // Add to scene
+            lightObject.AddSelfToSceneObjects();
+            Game.lights.Add(light);
+        }
+
+        // Create lamp object which has custom light
+        public void CreateFirePit(int x, int y, Light light)
+        {
+            SceneObject lightObject = new SceneObject();
+            // Create sprite
+            SpriteObject lightSprite = new SpriteObject();
+            lightSprite.Load("./PNG/Obstacles/firePit.png");
+            lightSprite.SetPosition(-lightSprite.Width / 2, -lightSprite.Height / 2);
+            lightObject.AddChild(lightSprite);
+
+            // Add light to object
+            lightObject.AddChild(light);
+
+            // Setup object
+            lightObject.SetPosition(x, y);
+            lightObject.hasCollision = true;
+            lightObject.HitWidth = lightSprite.Width;
+            lightObject.SetCollisionType(new CircleCollider(new Vector3(0, 0, 0), lightObject.HitWidth));
+            lightObject.tag = "CollidePlayer";
+
+            // Add to scene
+            lightObject.AddSelfToSceneObjects();
+            Game.lights.Add(light);
+        }
 
 
 
@@ -211,7 +267,6 @@ namespace RaylibStarterCS
                 barrel.HitHeight = spriteCopy.Height;
                 barrel.SetCollisionType(new CircleCollider(new Vector3(0, 0, 0), barrel.HitWidth));
 
-                barrel.SeperateIntersectingObject(new List<string>() { "Player", "CollideAll" });
                 // Add to scene
                 Game.sceneObjects.Add(barrel);
             }

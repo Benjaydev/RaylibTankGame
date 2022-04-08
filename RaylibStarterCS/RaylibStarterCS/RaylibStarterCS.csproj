@@ -34,6 +34,7 @@
     <None Remove="PNG\Buttons\ButtonDefault.png" />
     <None Remove="PNG\Buttons\ButtonHover.png" />
     <None Remove="PNG\Buttons\ButtonPressed.png" />
+    <None Remove="PNG\Environment\black.png" />
     <None Remove="PNG\Environment\dirt.png" />
     <None Remove="PNG\Environment\grass.png" />
     <None Remove="PNG\Environment\rock.png" />
@@ -49,6 +50,8 @@
     <None Remove="PNG\Obstacles\barrelGrey_up.png" />
     <None Remove="PNG\Obstacles\barrelRed_side.png" />
     <None Remove="PNG\Obstacles\barrelRed_up.png" />
+    <None Remove="PNG\Obstacles\firePit.png" />
+    <None Remove="PNG\Obstacles\light.png" />
     <None Remove="PNG\Obstacles\oil.png" />
     <None Remove="PNG\Obstacles\sandbagBeige.png" />
     <None Remove="PNG\Obstacles\sandbagBrown.png" />
@@ -187,6 +190,9 @@
     <Content Include="PNG\Buttons\ButtonHover.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="PNG\Environment\black.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="PNG\Environment\dirt.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -230,6 +236,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="PNG\Obstacles\barrelRed_up.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PNG\Obstacles\firePit.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PNG\Obstacles\light.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="PNG\Obstacles\oil.png">

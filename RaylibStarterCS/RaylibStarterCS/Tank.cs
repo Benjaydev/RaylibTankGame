@@ -20,7 +20,7 @@ namespace RaylibStarterCS
         public float velocity = 0f;
         public float movingDirection = 0f;
         public float acceleration = 100f;
-        public float deceleration = 200f;
+        public float deceleration = 300;
 
         public float moveSpeed = 100f;
         public float turretMoveSpeed = 1f;
@@ -157,7 +157,7 @@ namespace RaylibStarterCS
                 shootSpeed = 2000f;
 
                 maxVelocity = 100f;
-                acceleration = 25f;
+                acceleration = 75f;
                 deceleration = 50f;
 
                 turnSpeed = 0.25f;
@@ -189,7 +189,7 @@ namespace RaylibStarterCS
                 shootSpeed = 600f;
 
                 maxVelocity = 200f;
-                acceleration = 100f;
+                acceleration = 200f;
                 deceleration = 100f;
 
                 turnSpeed = 0.9f;
@@ -233,11 +233,13 @@ namespace RaylibStarterCS
             float difY = GetMouseY() - GlobalTransform.m21;
 
             if (Math.Abs(difX) >= 20 || Math.Abs(difY) >= 20) {
-                Accelerate(deltaTime, 1);
+                velocity = 100f;
+                MoveTank(deltaTime);
             }
             else
             {
-                Accelerate(deltaTime, -1);
+                velocity = -100f;
+                MoveTank(deltaTime);
             }
 
             // Calculate the angle to face mouse

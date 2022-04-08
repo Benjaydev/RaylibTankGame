@@ -21,7 +21,7 @@ namespace RaylibStarterCS
         public static bool ShowFPS = false;
         public static bool FPSCapped = true;
 
-        float enemyCooldown = 5f;
+        float enemyCooldown = 50000f;
         float enemyCooldownCount = 0f;
 
         float debugCooldown = 0.5f;
@@ -40,12 +40,14 @@ namespace RaylibStarterCS
         SpriteObject background = new SpriteObject();
         SpriteObject endGameBackground = new SpriteObject();
         SpriteObject menuBackground = new SpriteObject();
+        SpriteObject lightFilter = new SpriteObject();
 
 
         public static int gameLifetimeObjectCount;
         public static List<SceneObject> sceneObjects;
         public static List<SceneObject> buttons;
         public static List<Tank> enemies = new List<Tank>();
+        public static List<Light> lights = new List<Light>();
 
         InputBox saveInputBox;
         List<string> scores = new List<string>();
@@ -86,11 +88,14 @@ namespace RaylibStarterCS
             menuBackground.Load("./PNG/Environment/rock.png");
             menuBackground.textureScale = 10;
 
+            lightFilter.Load("./PNG/Environment/black.png");
+            lightFilter.colour = ColorAlpha(Color.BLACK, .5f);
+            lightFilter.textureScale = 10;
+
             playerTank = new Tank("Player");
             sceneObjects = new List<SceneObject>();
             buttons = new List<SceneObject>();
-
-
+            lights = new List<Light>();
             MainMenuScene();
 
         }
@@ -143,8 +148,9 @@ namespace RaylibStarterCS
 
             sceneObjects = new List<SceneObject>();
             buttons = new List<SceneObject>();
+            lights = new List<Light>();
 
-            
+
             Button restartButton = new Button((GetScreenWidth() / 2) - (pbLength / 2) - 100, (GetScreenHeight() / 2) - (pbHeight / 2), pbLength, pbHeight, "Restart", 22, Color.BLACK, "Restart");
             Button closeButton = new Button((GetScreenWidth() / 2) - (pbLength / 2) + 100, (GetScreenHeight() / 2) - (pbHeight / 2), pbLength, pbHeight, "Close", 22, Color.BLACK, "Close");
 
@@ -404,13 +410,11 @@ namespace RaylibStarterCS
                 // Create new enemy
                 Tank newEnemy = new Tank("Enemy");
 
-                // Attempt to spawn
-                int randomX = Game.gameRandom.Next(100, GetScreenWidth() - 100);
-                int randomY = Game.gameRandom.Next(100, GetScreenHeight() - 100);
+                Vector3[] spawnPoints = new Vector3[] { new Vector3(180, 380, 0), new Vector3(710, 615, 0), new Vector3(1050, 100, 0), new Vector3(1050, 280, 0) };
+                int randomSelection = gameRandom.Next(spawnPoints.Length);
+                Vector3 randomSpawnPoint = spawnPoints[randomSelection];
+                newEnemy.Init(randomSpawnPoint.x, randomSpawnPoint.y);
 
-                newEnemy.Init(randomX, randomY);
-
-                newEnemy.SeperateIntersectingObject(new List<string> { "Player", "CollideAll" });
                 return;
             }
             
@@ -422,10 +426,29 @@ namespace RaylibStarterCS
         {
             BeginDrawing();
 
-            ClearBackground(Color.WHITE);
+            ClearBackground(Color.BLACK);
 
             
             background.Draw();
+
+            // Draw the main menu
+            if (MainMenu)
+            {
+                menuBackground.Draw();
+                DrawText("Tank Game", 50, 50, 50, Color.ORANGE);
+                DrawText("Made by Ben Wharton", 20, GetScreenHeight() - 30, 25, Color.ORANGE);
+
+                int leaderboardSize = MeasureText("Leaderboard:", 50);
+                DrawText("Leaderboard:", GetScreenWidth() - leaderboardSize - 120, 50, 50, Color.ORANGE);
+
+                // Draw leaderboard scores
+                for (int i = 1; i < scores.Count + 1; i++)
+                {
+                    string score = scores[i - 1];
+                    int scoreSize = MeasureText($"{i} - {score}", 35);
+                    DrawText($"{i} - {score}", GetScreenWidth() - 120 - leaderboardSize, 50 + (50 * i), 35, Color.ORANGE);
+                }
+            }
 
             // Draw scene objects
             foreach (SceneObject obj in sceneObjects)
@@ -441,24 +464,11 @@ namespace RaylibStarterCS
             {
                 DrawText(fps.ToString() + $" ({(FPSCapped ? "Capped 520" : "Uncapped")}, F3 to {(FPSCapped ? "Uncap" : "Cap")})", 10, 10, 24, Color.RED);
             }
-            // Draw the main menu
-            if (MainMenu)
+            if (IsDebugActive)
             {
-                menuBackground.Draw();     
-                DrawText("Tank Game", 50 , 50, 50, Color.ORANGE);
-                DrawText("Made by Ben Wharton", 20, GetScreenHeight() - 30, 25, Color.ORANGE);
-
-                int leaderboardSize = MeasureText("Leaderboard:", 50);
-                DrawText("Leaderboard:", GetScreenWidth() - leaderboardSize - 120, 50, 50, Color.ORANGE);
-                
-                // Draw leaderboard scores
-                for(int i = 1; i < scores.Count+1; i++)
-                {
-                    string score = scores[i-1];
-                    int scoreSize = MeasureText($"{i} - {score}", 35);
-                    DrawText($"{i} - {score}", GetScreenWidth() - 120 - leaderboardSize , 50+(50*i), 35, Color.ORANGE);
-                }
+                DrawText($"MouseX: {GetMouseX()}, MouseY: {GetMouseY()}", 10, 45, 24, Color.RED);
             }
+            
 
             // Game over screen
             if (GameOver)
@@ -490,7 +500,19 @@ namespace RaylibStarterCS
                 ui.Draw();
             }
 
+            lightFilter.Draw();
 
+            // Draw lights
+            BeginBlendMode(BlendMode.BLEND_MULTIPLIED);
+            foreach(Light light in lights)
+            {
+                light.DrawLighting();
+            }
+            EndBlendMode();
+            foreach (Light light in lights)
+            {
+                light.ApplyColour();
+            }
             EndDrawing();
         }
 

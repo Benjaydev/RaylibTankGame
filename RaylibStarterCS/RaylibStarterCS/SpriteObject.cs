@@ -12,7 +12,7 @@ namespace RaylibStarterCS
         public Image image = new Image();
         public float textureScale = 1f;
         public bool hasScaled = false;
-
+        public Color colour = Color.WHITE;
         public float Width
         {
             get { return texture.width; }
@@ -85,7 +85,7 @@ namespace RaylibStarterCS
             if (!Raylib.WindowShouldClose() && !Game.IsDebugActive)
             {
                 // Draw sprite to screen using raylib
-                DrawTextureEx(texture, new System.Numerics.Vector2(globalTransform.m20, globalTransform.m21), rotation * (float)(180.0f / Math.PI), textureScale, Color.WHITE);
+                DrawTextureEx(texture, new System.Numerics.Vector2(globalTransform.m20, globalTransform.m21), rotation * (float)(180.0f / Math.PI), textureScale, colour);
             }
            
 

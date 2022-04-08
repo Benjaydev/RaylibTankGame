@@ -377,10 +377,15 @@ namespace RaylibStarterCS
                 {
                     continue;
                 }
-                if (IsCollidingWithObject(obj))
+                while (true)
                 {
-                    obj.Translate(100, 100);
-                    break;
+                    if (IsCollidingWithObject(obj))
+                    {
+                        obj.Translate(100, 100);
+                        Translate(-100, -100);
+                        continue;
+                    }
+                    break; 
                 }
             }
         }
@@ -433,16 +438,17 @@ namespace RaylibStarterCS
                         {
                             ((BulletObject)this).CollideEvent(norm);
 
-                            obj.Translate(norm.x, norm.y);
+                            if (obj.movable)
+                            {
+                                obj.Translate(norm.x, norm.y);
+                            }
                             // Save the bullets last collide in order to implement "invunerable" period for collisions
                             lastCollide = obj.id;
                             return true;
                         }
 
-                        
-
                         // Collide player and enemy tanks with eachother
-                        else if((tag == "Player" && obj.tag == "Enemy") || (obj.tag == "Player" && tag == "Enemy"))
+                        else if((tag == "Player" && obj.tag == "Enemy") || (obj.tag == "Player" && tag == "Enemy") || (tag == "Player" && obj.tag == "CollidePlayer"))
                         {
                             return true;
                         }
