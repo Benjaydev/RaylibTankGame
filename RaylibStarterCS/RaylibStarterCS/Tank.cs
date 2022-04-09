@@ -99,6 +99,16 @@ namespace RaylibStarterCS
 
         }
 
+        public override void RemoveSelfFromSceneObjects()
+        {
+            base.RemoveSelfFromSceneObjects();
+
+            if(tag == "Enemy")
+            {
+                Game.enemies.Remove(this);
+            }
+        }
+
         // Call on update everytime tank scene object is updated
         public override void OnUpdate(float deltaTime)
         {

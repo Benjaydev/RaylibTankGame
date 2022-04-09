@@ -44,6 +44,14 @@ namespace RaylibStarterCS
             hasNoColour = copy.hasNoColour;
         }
 
+        public override void RemoveSelfFromSceneObjects()
+        {
+            base.RemoveSelfFromSceneObjects();
+
+            Game.lights.Remove(this);
+        }
+
+
         /// <summary>
         /// Draws the colour of the light (This function should be called after DrawLighting)
         /// </summary>

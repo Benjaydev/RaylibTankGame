@@ -131,6 +131,12 @@ namespace RaylibStarterCS
             mainMenuTank.Scale(0.5f, 0.5f);
 
 
+            Light menuLight = new Light(1000, 1f, 1f, new Color(255, 255, 255, 255), true);
+            menuLight.SetPosition(GetScreenWidth() / 2, GetScreenHeight() / 2);
+            lights.Add(menuLight);
+
+
+
         }
         public void EndGameScene()
         {
@@ -165,6 +171,7 @@ namespace RaylibStarterCS
             GameActive = true;
             sceneObjects = new List<SceneObject>();
             buttons = new List<SceneObject>();
+            lights = new List<Light>();
 
             // Initiate player
             playerTank.Init(GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f);
@@ -290,21 +297,10 @@ namespace RaylibStarterCS
                 if (obj.isWaitingDestroy)
                 {
                     // If object is enemy, also remove it from enemies list
-                    if (obj.tag == "Enemy")
-                    {
-                        enemies.Remove((Tank)obj);
-                    }
                     delegateDestroy += obj.RemoveSelfFromSceneObjects;
                 }
             }
-            // Add each button awaiting destroy
-            foreach (Button button in buttons)
-            {
-                if (button.isWaitingDestroy)
-                {
-                    delegateDestroy += button.RemoveSelfFromSceneObjects;
-                }
-            }
+
             delegateDestroy?.Invoke();
            
 

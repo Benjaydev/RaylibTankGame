@@ -55,6 +55,8 @@ namespace RaylibStarterCS
 
         public override void RemoveSelfFromSceneObjects()
         {
+            base.RemoveSelfFromSceneObjects();
+
             Game.buttons.Remove(this);
         }
 
