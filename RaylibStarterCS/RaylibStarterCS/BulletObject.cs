@@ -34,7 +34,8 @@ namespace RaylibStarterCS
             SetCollisionType(new CircleCollider(new Vector3(0, 0, 0), HitWidth));
             AddChild(bulletSprite);
 
-            Light BulletLight = new Light(200, 0.5f, .15f, new Color(255, 150, 0, 255));
+            Light BulletLight = new Light(15, 1f, .15f, new Color(255, 100, 0, 255));
+            BulletLight.SetPosition(0, bulletSprite.Height/2);
             AddChild(BulletLight);
             Game.lights.Add(BulletLight);
         }

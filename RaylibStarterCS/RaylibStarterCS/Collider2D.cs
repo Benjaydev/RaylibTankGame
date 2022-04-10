@@ -51,6 +51,11 @@ namespace RaylibStarterCS
         public abstract bool IsEmpty();
 
         public abstract void DrawDebug();
-        
+
+
+        public abstract void Fit(Vector3[] points);
+        public abstract void Fit(List<Vector3> points);
+
+
     }
 }

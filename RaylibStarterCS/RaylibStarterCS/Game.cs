@@ -21,7 +21,7 @@ namespace RaylibStarterCS
         public static bool ShowFPS = false;
         public static bool FPSCapped = true;
 
-        float enemyCooldown = 50000f;
+        float enemyCooldown = 5f;
         float enemyCooldownCount = 0f;
 
         float debugCooldown = 0.5f;
@@ -52,11 +52,11 @@ namespace RaylibStarterCS
         InputBox saveInputBox;
         List<string> scores = new List<string>();
 
-        public delegate void DelegateUpdate(float deltaTime);
-        public DelegateUpdate delegateUpdates;
+        public delegate void DelegateUpdate(float deltaTime = 0f);
+        public DelegateUpdate delegateUpdateStore;
 
         public delegate void DelegateDestroy();
-        public DelegateDestroy delegateDestroy;
+        public DelegateDestroy delegateDestroyStore;
 
         public static Random gameRandom = new Random();
 
@@ -135,8 +135,6 @@ namespace RaylibStarterCS
             menuLight.SetPosition(GetScreenWidth() / 2, GetScreenHeight() / 2);
             lights.Add(menuLight);
 
-
-
         }
         public void EndGameScene()
         {
@@ -163,6 +161,10 @@ namespace RaylibStarterCS
             saveInputBox = new InputBox((GetScreenWidth() / 2) - (ibLength / 2), (GetScreenHeight() / 2) - (ibHeight / 2) + 100, ibLength, ibHeight, "Type Name", 20, Color.BLACK, "");
 
             Button saveButton = new Button((GetScreenWidth() / 2) - (sbLength / 2), (GetScreenHeight() / 2) - (sbHeight / 2) + 150, sbLength, sbHeight, "Save", 16, Color.BLACK, "Save", true);
+
+            Light endMenuLight = new Light(1000, 0.1f, 1f, new Color(255, 0, 0, 255));
+            endMenuLight.SetPosition(GetScreenWidth() / 2, GetScreenHeight() / 2);
+            lights.Add(endMenuLight);
         }
 
         public void GameScene()
@@ -177,8 +179,24 @@ namespace RaylibStarterCS
             playerTank.Init(GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f);
 
             new GameMap();
-         
         }
+
+
+        public void CreateStoreUpdateDelegate()
+        {
+            delegateUpdateStore = null;
+            // Update scene objects (Stored in a delegate to avoid an error if object is destroyed during it's update)
+            foreach (SceneObject obj in sceneObjects)
+            {
+                delegateUpdateStore += (deltaTime) => obj.Update(deltaTime);
+                if (obj.isWaitingDestroy)
+                {
+                    delegateDestroyStore += obj.RemoveSelfFromSceneObjects;
+                }
+            }
+            
+        }
+
 
         // Update game
         public void Update()
@@ -286,43 +304,19 @@ namespace RaylibStarterCS
                         debugCooldownCount = 0;
                     }
                 }
-                
-
 
             }
-            // Find all scene objects that are waiting to destroy
-            delegateDestroy = null;  
-            foreach (SceneObject obj in sceneObjects)
-            {
-                if (obj.isWaitingDestroy)
-                {
-                    // If object is enemy, also remove it from enemies list
-                    delegateDestroy += obj.RemoveSelfFromSceneObjects;
-                }
-            }
 
-            delegateDestroy?.Invoke();
-           
-
-            delegateUpdates = null;
-            // Update scene objects (Stored in a delegate to avoid an error if object is destroyed during it's update)
-            foreach (SceneObject obj in sceneObjects)
-            {
-                delegateUpdates += (deltaTime) => obj.Update(deltaTime);
-            }
-            foreach (Button button in buttons)
-            {
-                delegateUpdates += (deltaTime) => button.Update(deltaTime);
-            }
-            delegateUpdates?.Invoke(deltaTime);
-
-
+            CreateStoreUpdateDelegate();
+            delegateUpdateStore?.Invoke(deltaTime);
+            delegateDestroyStore?.Invoke();
+            delegateDestroyStore = null;
 
             // Test for mouse click and position
             int mouseX = GetMouseX();
             int mouseY = GetMouseY();
 
-            // check each button for interaction
+            // Check each button for interaction
             foreach (Button button in buttons)
             {
                 // Check for overlap
@@ -339,8 +333,8 @@ namespace RaylibStarterCS
                         TriggerAction(result);
                     }
                 }
-
-                
+                // Update button
+                button.Update(deltaTime);
             }
 
          

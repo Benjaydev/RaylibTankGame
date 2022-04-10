@@ -117,6 +117,8 @@ namespace RaylibStarterCS
                 so.parent = null;
             }
         }
+
+
         public virtual void RemoveSelfFromSceneObjects()
         {
             // Remove self from parent

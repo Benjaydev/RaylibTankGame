@@ -39,7 +39,9 @@ namespace RaylibStarterCS
             SpawnRandomBarrels(3, 50, 50, 350, 200);
             SpawnRandomBarrels(3, 50, GetScreenHeight() - 100, 200, GetScreenHeight() - 50);
 
-            CreateLamp(250, 320, new Light(200, 0.5f, .1f, new Color(255, 255, 200, 255)));
+            CreateLamp(250, 320, new Light(200, 0.6f, .3f, new Color(150, 150, 255, 255)));
+            CreateLamp(430, 650, new Light(200, 0.6f, .3f, new Color(150, 150, 255, 255)));
+            CreateLamp(35, 500, new Light(150, 0.6f, .3f, new Color(150, 150, 255, 255)));
 
             CreateFirePit(30, 30, new Light(200, 0.5f, .15f, new Color(255, 150, 0, 255)));
             CreateFirePit(1070, 80, new Light(200, 0.5f, .15f, new Color(255, 150, 0, 255)));

@@ -51,6 +51,7 @@ namespace RaylibStarterCS
             isSingleUse = SingleUse;
             hasCollision = false;
             Game.buttons.Add(this);
+            Game.sceneObjects.Add(this);
         }
 
         public override void RemoveSelfFromSceneObjects()
@@ -65,7 +66,7 @@ namespace RaylibStarterCS
             textSize = MeasureText(buttonText, fontSize);
         }
 
-
+        // Check if point is overlapping the button
         public bool IsPointWithinButton(float x, float y)
         {
             if( (x >= corners.x && x <= corners.z) && (y >= corners.y && y <= corners.w))
@@ -75,10 +76,13 @@ namespace RaylibStarterCS
             return false;
         }
 
+        // Attempt a button click at point
         public virtual string AttemptButtonClick(float x, float y)
         {
+            // If point is overlapping button
             if(IsPointWithinButton(x, y))
             {
+                // Focus button
                 isFocused = true;
                 return ClickButton();
             }
@@ -86,7 +90,7 @@ namespace RaylibStarterCS
             return "";
         }
 
-
+        // Click button
         public string ClickButton()
         {
             if (isSingleUse)

@@ -97,7 +97,7 @@ namespace RaylibStarterCS
         }
 
         // Fit the boundary box around a list of points
-        public void Fit(List<Vector3> points)
+        public override void Fit(List<Vector3> points)
         {
             // Reset the boundary box
             Empty();
@@ -113,7 +113,7 @@ namespace RaylibStarterCS
 
         }
         // Fit the boundary box around an array of points
-        public void Fit(Vector3[] points)
+        public override void Fit(Vector3[] points)
         {
             // Reset the boundary box
             Empty();

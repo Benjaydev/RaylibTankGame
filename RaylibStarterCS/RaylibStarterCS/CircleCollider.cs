@@ -35,7 +35,7 @@ namespace RaylibStarterCS
         /// <summary>
         /// Fit the collider to an array of points
         /// </summary>
-        public void Fit(Vector3[] points)
+        public override void Fit(Vector3[] points)
         {
             // invalidate extents 
             Vector3 min = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
@@ -56,7 +56,7 @@ namespace RaylibStarterCS
         /// <summary>
         /// Fit the collider to a list of points
         /// </summary>
-        public void Fit(List<Vector3> points)
+        public override void Fit(List<Vector3> points)
         {
             // invalidate extents 
             Vector3 min = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);

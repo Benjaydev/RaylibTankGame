@@ -50,6 +50,9 @@ namespace RaylibStarterCS
                 tankSprite.Load("./PNG/Tanks/tankRed_outline.png");
                 turretSprite.Load("./PNG/Tanks/barrelBlack_outline.png");
                 bulletTexture = LoadTextureFromImage(LoadImage("./PNG/Bullets/bulletRedSilver_outline.png"));
+                Light TankLight = new Light(400, 0.5f, 0f, new Color(255, 100, 0, 255), true);
+                AddChild(TankLight);
+                Game.lights.Add(TankLight);
             }
             else if(tag == "Enemy")
             {  
@@ -95,8 +98,6 @@ namespace RaylibStarterCS
 
             SetCollisionType(new CircleCollider(new Vector3(0, 0, 0), HitWidth));
             AddSelfToSceneObjects();
-
-
         }
 
         public override void RemoveSelfFromSceneObjects()
