@@ -11,17 +11,20 @@ namespace RaylibStarterCS
     {
         protected Vector3[] boundries = new Vector3[2] { new Vector3(float.NegativeInfinity, float.NegativeInfinity, float.NegativeInfinity), new Vector3(float.PositiveInfinity, float.PositiveInfinity, float.PositiveInfinity) };
 
+        // Property to get min values of bouundry
         public Vector3 min
         {
             get { return boundries[0]; }
             set { boundries[0] = value; }
         }
+        // Property to get max values of bouundry
         public Vector3 max
         {
             get { return boundries[1]; }
             set { boundries[1] = value; }
         }
 
+        // Get corners of AABB
         public List<Vector3> corners
         {
             get {
@@ -54,6 +57,7 @@ namespace RaylibStarterCS
             max = copy.max;
         }
 
+        // Draw the debug wireframe of AABB
         public override void DrawDebug()
         {
             DrawLine((int)corners[0].x, (int)corners[0].y, (int)corners[1].x, (int)corners[1].y, Color.RED);
@@ -62,6 +66,7 @@ namespace RaylibStarterCS
             DrawLine((int)corners[3].x, (int)corners[3].y, (int)corners[0].x, (int)corners[0].y, Color.RED);
         }
 
+        // Translate AABB by x and y
         public void TranslateAABB(float x, float y)
         {
             min.x += x;
@@ -71,15 +76,19 @@ namespace RaylibStarterCS
         }
 
 
+        // Find the center of the AABB
         public Vector3 Center()
         {
             return (min + max) * 0.5f;
         }
+
+        // Get the extents of the AABB
         public Vector3 Extents()
         {
             return new Vector3(Math.Abs(max.x - min.x) * 0.5f, Math.Abs(max.y - min.y) * 0.5f, Math.Abs(max.z - min.z) * 0.5f);
         }
 
+        // Check if this AABB is invalid or unassigned
         public override bool IsEmpty()
         {
             // Check if each value is at it's "Empty" state (Infinity)
@@ -90,6 +99,7 @@ namespace RaylibStarterCS
             return false;
         }
 
+        // Set the AABB to empty
         public void Empty()
         {
             min = new Vector3(float.NegativeInfinity, float.NegativeInfinity, float.NegativeInfinity);
@@ -148,14 +158,13 @@ namespace RaylibStarterCS
         // Optional: xChange and yChange represent whether this box is moving and an overlap needs to be checked before applying and translations
         public override bool Overlaps(CircleCollider cc, float xChange = 0, float yChange = 0)
         {
-            
+            // Call the overlap method inside the circle collider
             return cc.Overlaps(this, xChange, yChange);
         }
 
         // Check the normals of point against to this box
         // Optional: xChange and yChange represent whether this box is moving and must correct it's max and min positions
-        // in order to calculate normals (As box and point must not be overlapping to calculate)
-        public override Vector3 CalculateNorm(Vector3 p, float xChange = 0, float yChange = 0)
+        public override Vector3 CalculateNormal(Vector3 p, float xChange = 0, float yChange = 0)
         {
             //      Top
             // Left [ ] Right
@@ -187,8 +196,7 @@ namespace RaylibStarterCS
 
         // Check the normals of another box against to this box
         // Optional: xChange and yChange represent whether this box is moving and must correct it's max and min positions
-        // in order to calculate normals (As boxes must not be overlapping to calculate)
-        public override Vector3 CalculateNorm(AABB other, float xChange = 0, float yChange = 0)
+        public override Vector3 CalculateNormal(AABB other, float xChange = 0, float yChange = 0)
         {
             //      Top
             // Left [ ] Right
@@ -219,144 +227,18 @@ namespace RaylibStarterCS
 
         // Check the normals of an AABB against this circle collider
         // Optional: xChange and yChange represent whether this circle is moving and must correct it's max and min positions
-        // in order to calculate normals (As boxes must not be overlapping to calculate)
-        public override Vector3 CalculateNorm(CircleCollider cc, float xChange = 0, float yChange = 0)
+        public override Vector3 CalculateNormal(CircleCollider cc, float xChange = 0, float yChange = 0)
         {
-            return cc.CalculateNorm(this, xChange, yChange);
+            // Call the normal calculation inside circle collider
+            return cc.CalculateNormal(this, xChange, yChange);
         }
 
 
 
-        // Find the closest
+        // Find the closest point on AABB to another point 
         public Vector3 ClosestPoint(Vector3 p)
         {
             return Vector3.Clamp(p, min, max);
-        }
-
-
-
-
-
-        public void SetToTransformedBox(AABB box, Matrix3 m)
-        {
-            // If box is empty, then exit
-            if (box.IsEmpty())
-            {
-                Empty();
-                return;
-            }
-
-            // Row 1
-            // Column 1
-            if (m.m00 > 0.0f)
-            {
-                min.x += m.m00 * box.min.x;
-                max.x += m.m00 * box.max.x;
-            }
-            else
-            {
-                min.x += m.m00 * box.max.x;
-                max.x += m.m00 * box.min.x;
-            }
-
-            // Column 2
-            if (m.m01 > 0.0f)
-            {
-                min.y += m.m01 * box.min.x;
-                max.y += m.m01 * box.max.x;
-            }
-            else
-            {
-                min.y += m.m01 * box.max.x;
-                max.y += m.m01 * box.min.x;
-            }
-
-            // Column 3
-            if (m.m02 > 0.0f)
-            {
-                min.z += m.m02 * box.min.x;
-                max.z += m.m02 * box.max.x;
-            }
-            else
-            {
-                min.z += m.m02 * box.max.x;
-                max.z += m.m02 * box.min.x;
-            }
-
-            // Row 2
-            // Column 1
-            if (m.m10 > 0.0f)
-            {
-                min.x += m.m10 * box.min.y;
-                max.x += m.m10 * box.max.y;
-            }
-            else
-            {
-                min.x += m.m10 * box.max.y;
-                max.x += m.m10 * box.min.y;
-            }
-
-            // Column 2
-            if (m.m11 > 0.0f)
-            {
-                min.y += m.m11 * box.min.y;
-                max.y += m.m11 * box.max.y;
-            }
-            else
-            {
-                min.y += m.m11 * box.max.y;
-                max.y += m.m11 * box.min.y;
-            }
-
-            // Column 3
-            if (m.m12 > 0.0f)
-            {
-                min.z += m.m12 * box.min.y;
-                max.z += m.m12 * box.max.y;
-            }
-            else
-            {
-                min.z += m.m12 * box.max.y;
-                max.z += m.m12 * box.min.y;
-            }
-
-            // Row 3
-            // Column 1
-            if (m.m20 > 0.0f)
-            {
-                min.x += m.m20 * box.min.z;
-                max.x += m.m20 * box.max.z;
-            }
-            else
-            {
-                min.x += m.m20 * box.max.z;
-                max.x += m.m20 * box.min.z;
-            }
-
-            // Column 2
-            if (m.m21 > 0.0f)
-            {
-                min.y += m.m21 * box.min.z;
-                max.y += m.m21 * box.max.z;
-            }
-            else
-            {
-                min.y += m.m21 * box.max.z;
-                max.y += m.m21 * box.min.z;
-            }
-
-            // Column 3
-            if (m.m22 > 0.0f)
-            {
-                min.z += m.m22 * box.min.z;
-                max.z += m.m22 * box.max.z;
-            }
-            else
-            {
-                min.z += m.m22 * box.max.z;
-                max.z += m.m22 * box.min.z;
-            }
-
         }
 
     }

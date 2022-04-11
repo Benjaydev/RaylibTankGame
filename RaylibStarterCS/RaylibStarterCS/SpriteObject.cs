@@ -43,7 +43,7 @@ namespace RaylibStarterCS
             defaultHeight = copy.defaultHeight;
         }
 
-
+        // Update transform of sprite
         public override void UpdateTransform()
         {
             base.UpdateTransform();
@@ -54,6 +54,7 @@ namespace RaylibStarterCS
 
             if (!hasScaled)
             {
+                // Set default dimensions
                 defaultWidth = Width;
                 defaultHeight = Height;
                 hasScaled = true;
@@ -69,6 +70,8 @@ namespace RaylibStarterCS
         {
             Image img = LoadImage(filename);
             texture = LoadTextureFromImage(img);
+
+            // Set default dimensions
             defaultWidth = Width;
             defaultHeight = Height;
         }
@@ -77,9 +80,11 @@ namespace RaylibStarterCS
         {
             base.OnDraw();
 
-            HitRadius = Width;
+            // Set collisions dimensions
             HitWidth = Width;
             HitHeight = Height;
+
+            // Get the rotation of the sprite
             float rotation = (float)Math.Atan2(globalTransform.m01, globalTransform.m00);
 
             if (!Raylib.WindowShouldClose() && !Game.IsDebugActive)

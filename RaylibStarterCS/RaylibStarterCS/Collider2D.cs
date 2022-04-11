@@ -7,52 +7,26 @@ using Raylib_cs;
 
 namespace RaylibStarterCS
 {
+    // Parent class for all 2D colliders
     public abstract class Collider2D
     {
-        
-        public Type ColliderType;
-
-        /*
-        public bool Overlaps(Collider2D other, float xChange = 0, float yChange = 0)
-        {
-            if (other.ColliderType.Equals(typeof(CircleCollider)))
-            { 
-                return Overlaps((CircleCollider)other, xChange, yChange);
-            }
-
-            return Overlaps((AABB)other, xChange, yChange);
-        }*/
-
-
+        // Overlap methods
         public abstract bool Overlaps(AABB other, float xChange = 0, float yChange = 0);
         public abstract bool Overlaps(CircleCollider other, float xChange = 0, float yChange = 0);
         public abstract bool Overlaps(Vector3 p, float xChange = 0, float yChange = 0);
 
-        //public abstract void Fit(Vector3[] points);
-        //public abstract void Fit(List<Vector3> points);
+        // Normal calculations
+        public abstract Vector3 CalculateNormal(Vector3 p, float xChange = 0, float yChange = 0);
+        public abstract Vector3 CalculateNormal(AABB other, float xChange = 0, float yChange = 0);
+        public abstract Vector3 CalculateNormal(CircleCollider other, float xChange = 0, float yChange = 0);
 
-        /*
-        public Vector3 CalculateNorm(Collider2D other, float xChange = 0, float yChange = 0)
-        {
-            if (other.ColliderType.Equals(typeof(AABB)))
-            {
-                return CalculateNorm((AABB)other, xChange, yChange);
-            }
-
-            return new Vector3(0, 0, 0);
-
-        }*/
-
-        public abstract Vector3 CalculateNorm(Vector3 p, float xChange = 0, float yChange = 0);
-        public abstract Vector3 CalculateNorm(AABB other, float xChange = 0, float yChange = 0);
-
-        public abstract Vector3 CalculateNorm(CircleCollider other, float xChange = 0, float yChange = 0);
-
+        // Empty check
         public abstract bool IsEmpty();
 
+        // Debug method
         public abstract void DrawDebug();
 
-
+        // Fit collider to points
         public abstract void Fit(Vector3[] points);
         public abstract void Fit(List<Vector3> points);
 

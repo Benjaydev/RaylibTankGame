@@ -17,24 +17,23 @@ namespace RaylibStarterCS
         public SceneObject parent = null;
         public List<SceneObject> children = new List<SceneObject>();
 
+        // Transforms of object
         protected Matrix3 localTransform = new Matrix3(1);
         protected Matrix3 globalTransform = new Matrix3(1);
 
         // Right top and left bottom
+        // Collision
         public bool hasCollision = false;
         public bool movable = false;
-        public float HitRadius = 5f;
         public float HitWidth = 5f;
         public float HitHeight = 5f;
         public Collider2D collisionBoundary = new AABB();
-        public Type collisionType;
-        // Default (Empty value) is -1
-        public int lastCollide = -1;
-
 
         public bool isWaitingDestroy = false;
 
-        public Random random = new Random();
+        // Keep track of the id of the object that was last collided with. Default (Empty value) is -1
+        public int lastCollide = -1;
+
 
         public Matrix3 LocalTransform
         {
@@ -59,7 +58,7 @@ namespace RaylibStarterCS
             id = Game.gameLifetimeObjectCount;
         }
 
-        // Copy Constructor
+        // Copy Constructor (Pass parent is the parent to give this object)
         public SceneObject(SceneObject copy, SceneObject passParent = null)
         {
             if(copy.parent != null && passParent == null)
@@ -85,20 +84,21 @@ namespace RaylibStarterCS
                 // Create a sceneobject
                 AddChild(new SceneObject(child, this));
             }
+
+            // Copy values 
             hasCollision = copy.hasCollision;
             movable = copy.movable;
             tag = copy.tag;
-            HitRadius = copy.HitRadius;
             HitWidth = copy.HitWidth;
             HitHeight = copy.HitHeight;
 
-            // Create new id
-            Game.gameLifetimeObjectCount++;
-            id = Game.gameLifetimeObjectCount;
-
-
+            // Copy transform
             localTransform = new Matrix3(copy.localTransform);
             globalTransform = new Matrix3(copy.globalTransform);
+
+            // Create new id
+            Game.gameLifetimeObjectCount++;
+            id = Game.gameLifetimeObjectCount;     
         }
 
 
@@ -119,6 +119,7 @@ namespace RaylibStarterCS
         }
 
 
+        // Remove this scene object and all children from game scene
         public virtual void RemoveSelfFromSceneObjects()
         {
             // Remove self from parent
@@ -136,6 +137,7 @@ namespace RaylibStarterCS
             Game.sceneObjects.Remove(this);
         }
 
+        // Add this scene object and all children to game scene
         public virtual void AddSelfToSceneObjects()
         {
             // Remove each child from this sceneObject
@@ -169,6 +171,7 @@ namespace RaylibStarterCS
             }
         }
 
+        // Update scene object
         public void Update(float deltaTime)
         { 
             // Call OnUpdate 
@@ -196,24 +199,30 @@ namespace RaylibStarterCS
         }
 
 
-
+        // Set the collision type of the collision boundry
         public void SetCollisionType(Collider2D newCollider)
         {
             collisionBoundary = newCollider;
         }
+
+        // Update the collision boundry
         public void UpdateBoundingBox()
         {
+            // If scene object is using circle collider
             if (collisionBoundary.GetType() == typeof(CircleCollider))
             {
                 float radius = (float) (HitWidth/Math.PI);
                 ((CircleCollider)collisionBoundary).Fit(new Vector3[2] { new Vector3(globalTransform.m20 - radius, globalTransform.m21 - radius, 0), new Vector3(globalTransform.m20 + radius, globalTransform.m21 + radius, 0) });
                 return;
             }
-           
+
+            // If using AABB
             // Get non-transformed  corners of object
             Vector3 corner = new Vector3((HitWidth / 2) + (HitWidth * 0.05f), (HitHeight / 2) + (HitHeight * 0.05f), 0);
             ((AABB)collisionBoundary).Fit(new Vector3[2] { new Vector3(globalTransform.m20 - corner.x, globalTransform.m21 - corner.y, 0), new Vector3(globalTransform.m20 + corner.x, globalTransform.m21 + corner.y, 0) });
         }
+
+
         // Update the transform of this sceneObject. This is called everytime the sceneObjects transformation is changed
         public virtual void UpdateTransform()
         {
@@ -295,7 +304,7 @@ namespace RaylibStarterCS
             // Split the collision check between both the x and y axis 
             // This is done so that if one axes is colliding and the other is not, the object will still move along the axis that is not colliding
             // E.g. if the x-axis is currently colliding but the y-axis isn't, the tank should still be able to translate along that y-axis
-            // This may impact performace in some scenarios, but it has been tested to make negligable difference
+            // This may impact performace in some scenarios, but it has been tested to make negligable difference with the simple collisions used
 
             // Check collision on x axis change
             if (!CheckCollision(x, 0))
@@ -344,7 +353,7 @@ namespace RaylibStarterCS
             return "";
         }
 
-        // Check if this object is currently colliding with object
+        // Check if this object is currently colliding with another scene object
         public bool IsCollidingWithObject(SceneObject obj, float xChange = 0, float yChange = 0)
         {
             if (obj.collisionBoundary.GetType() == typeof(CircleCollider))
@@ -354,7 +363,7 @@ namespace RaylibStarterCS
             return collisionBoundary.Overlaps((AABB)obj.collisionBoundary, xChange, yChange);
         }
         
-        // Check if this object is currently colliding with tag
+        // Check if this object is currently colliding with other scene objects with specified tag
         public bool IsCollidingWithTag(string checkTag)
         {
             // Check collision with every scene object
@@ -370,86 +379,53 @@ namespace RaylibStarterCS
             return false;
         }
 
-        public void SeperateIntersectingObject(List<string> checkTag, float normx = 1, float normy = 1)
-        {
-            foreach (SceneObject obj in Game.sceneObjects)
-            {
-                // Skip iteration if any of these are met
-                if (!obj.hasCollision || obj == this || !checkTag.Contains(obj.tag))
-                {
-                    continue;
-                }
-                while (true)
-                {
-                    if (IsCollidingWithObject(obj))
-                    {
-                        obj.Translate(100, 100);
-                        Translate(-100, -100);
-                        continue;
-                    }
-                    break; 
-                }
-            }
-        }
-        public void SeperateIntersectingObject(SceneObject obj, float normx = 1, float normy = 1)
-        {
-                // Skip if any of these are met
-                if (!obj.hasCollision || obj == this)
-                {
-                    return;
-                }
-                if (IsCollidingWithObject(obj))
-                {
-                obj.Translate(100, 100);
-                }
-            }
 
-
-            // General check collision for this object
-            public bool CheckCollision(float x, float y)
-            {
+        // General check collision for this object
+        public bool CheckCollision(float x, float y)
+        {
             // Return if there is no collision on this object
             if (!hasCollision)
             {
                 return false;
             }
          
-            List<SceneObject> objects = new List<SceneObject>(Game.sceneObjects);
             // Check collision with every scene object
-            foreach (SceneObject obj in objects)
+            foreach (SceneObject obj in Game.sceneObjects)
             {
-                // Has collision, not itself, aren't both bullets, and the collision boundries aren't empty
+                // Has collision, not itself, aren't both bullets, collision boundries aren't empty, and the last collision id's aren't the same
                 if (obj.hasCollision && obj != this && (!obj.collisionBoundary.IsEmpty() && !collisionBoundary.IsEmpty()) && lastCollide != obj.id && obj.lastCollide != id)
                 {
-                    Vector3 norm = new Vector3(0,0,0);
-                    // Get the side that will be colliding
-                    if (obj.collisionBoundary.GetType() == typeof(CircleCollider))
-                    {
-                        norm = collisionBoundary.CalculateNorm((CircleCollider)obj.collisionBoundary, x, y);
-                    }
-                    else
-                    {
-                        norm = collisionBoundary.CalculateNorm((AABB)obj.collisionBoundary, x, y);
-                    }
-
-                    
-                    // Check if that location is colliding
+                    // Check if object is colliding with this object
                     if (IsCollidingWithObject(obj, x, y))
                     {
+
+                        Vector3 normal = new Vector3(0, 0, 0);
+                        // Calculate the normal against circle collider
+                        if (obj.collisionBoundary.GetType() == typeof(CircleCollider))
+                        {
+                            normal = collisionBoundary.CalculateNormal((CircleCollider)obj.collisionBoundary, x, y);
+                        }
+                        // Calculate normal against AABB
+                        else
+                        {
+                            normal = collisionBoundary.CalculateNormal((AABB)obj.collisionBoundary, x, y);
+                        }
+
+                        // Collide bullets
                         if ((tag == "Bullet" && obj.tag == "CollideAll"))
                         {
-                            ((BulletObject)this).CollideEvent(norm);
+                            ((BulletObject)this).CollideEvent(normal);
 
                             if (obj.movable)
                             {
-                                obj.Translate(norm.x, norm.y);
+                                obj.Translate(normal.x, normal.y);
                             }
                             // Save the bullets last collide in order to implement "invunerable" period for collisions
                             lastCollide = obj.id;
                             return true;
                         }
 
-                        // Collide player and enemy tanks with eachother
+                        // Collide player and enemy tanks with eachother, and player with player collider
                         else if((tag == "Player" && obj.tag == "Enemy") || (obj.tag == "Player" && tag == "Enemy") || (tag == "Player" && obj.tag == "CollidePlayer"))
                         {
                             return true;
@@ -458,17 +434,18 @@ namespace RaylibStarterCS
                         // Check for collison between movable objects
                         else if ( (obj.movable && (tag == "Player" || tag == "Enemy")) || (movable && obj.movable))
                         {
-                            // Store this object inside the collided object to avoid this object being collided again while translating the collided object 
+                            // Store this objects id inside the collided object to avoid this object being collided again while translating the collided object 
                             obj.lastCollide = id;
 
                             // Offset hit object by the amount being forced onto it
-                            obj.Translate(norm.x, norm.y);
+                            obj.Translate(normal.x, normal.y);
                                 
                             // Reset the objects last collide
                             obj.lastCollide = -1;
                             return true;
                         }
 
+                        // Basic collide all call
                         else if (obj.tag == "CollideAll")
                         {
                             return true;
@@ -477,10 +454,11 @@ namespace RaylibStarterCS
                         // If bullet object has hit it's target
                         else if (tag == "Bullet" && (obj.tag == ((BulletObject)this).bulletTarget))
                         {
+                            // Destroy both objects
                             obj.isWaitingDestroy = true;
                             isWaitingDestroy = true;
 
-                            // Bullet hits enemy give points to player
+                            // If bullet hits enemy, give points to player
                             if (obj.tag == "Enemy")
                             {
                                 Game.playerTank.AddDestroyedTankPoints();
@@ -522,14 +500,13 @@ namespace RaylibStarterCS
             return false;
         }
 
+        // Collide event used in some cases such as bullet
         public virtual void CollideEvent(Vector3 Normal)
         {
 
         }
 
-
-
-        // Return the amount of children
+        // Return the amount of children that scene object has
         public int GetChildCount()
         {
             return children.Count;
@@ -544,8 +521,6 @@ namespace RaylibStarterCS
         // Add child to this sceneObject
         public void AddChild(SceneObject child)
         {
-            // Check and make sure the object that's being added doesn't already have a parent
-            //Debug.Assert(child.parent == null);
             // Make this sceneObject the parent of the child 
             child.parent = this;
             // Add the child to children list

@@ -15,6 +15,7 @@ namespace RaylibStarterCS
         public string defaultText = "Type Here";
         public string storedText = "";
 
+        // Constructor (Uses base button constructor for most values)
         public InputBox(int X, int Y, int length, int height, string text, int FontSize, Color FontColour, string action = "") : base(X, Y, length, height, text, FontSize, FontColour, action = "")
         {
             defaultText = text;
@@ -25,85 +26,86 @@ namespace RaylibStarterCS
             base.OnUpdate(deltaTime);
             keyPressTimer += deltaTime;
 
+            // If box is empty, use default text
             if (storedText.Length == 0)
             {
                 buttonText = defaultText;
                 MeasureFontText();
             }
 
-            if (isFocused)
-            { 
-                
-                if (keyPressTimer >= keyPressCooldown)
+            // Leave method if not text box is not focused or typing cooldown has not completed
+            if (!isFocused || !(keyPressTimer >= keyPressCooldown))
+            {
+                return;
+            }
+             
+            // Find the key being presseed
+            string key = GetCurrentPressedKeys();    
+            if (key != "")
+            {
+                buttonText = storedText;
+                // Delete characters
+                if (key == "backspace")
                 {
-                    string key = GetCurrentPressedKey();
-                    
-                    if (key != "")
+                    // Check if there are any characters left
+                    if (buttonText.Length > 0)
                     {
-                        buttonText = storedText;
-                        // Delete characters
-                        if (key == "backspace")
-                        {
-                            // Check if there are any characters left
-                            if (buttonText.Length > 0)
-                            {
-                                // Remove last character
-                                buttonText = buttonText.Remove(buttonText.Length - 1);
-                            }
-                            key = "";
-                        }
-
-                        // Check if length is less than maximum
-                        if (buttonText.Length < maxCharacters)
-                        {
-                            buttonText += key;
-                            storedText = buttonText;
-                        }
-
-
-                        MeasureFontText();
-                        keyPressTimer = 0;
-
+                        // Remove last character
+                        buttonText = buttonText.Remove(buttonText.Length - 1);
                     }
+                    key = "";
                 }
+
+                // Check if length is less than maximum
+                if (buttonText.Length < maxCharacters)
+                {
+                    // Add character
+                    buttonText += key;
+                    storedText = buttonText;
+                }
+
+                // Measure text to re-center
+                MeasureFontText();
+                // Reset typing cooldown
+                keyPressTimer = 0;
             }
         }
 
 
-
-        public string GetCurrentPressedKey()
+        // Return pressed keys
+        public string GetCurrentPressedKeys()
         {
-            string pressedKey = "";
-            if (IsKeyDown(KeyboardKey.KEY_A)) pressedKey += "a";
-            if (IsKeyDown(KeyboardKey.KEY_B)) pressedKey += "b";
-            if (IsKeyDown(KeyboardKey.KEY_C)) pressedKey += "c";
-            if (IsKeyDown(KeyboardKey.KEY_D)) pressedKey += "d";
-            if (IsKeyDown(KeyboardKey.KEY_E)) pressedKey += "e";
-            if (IsKeyDown(KeyboardKey.KEY_F)) pressedKey += "f";
-            if (IsKeyDown(KeyboardKey.KEY_G)) pressedKey += "g";
-            if (IsKeyDown(KeyboardKey.KEY_H)) pressedKey += "h";
-            if (IsKeyDown(KeyboardKey.KEY_I)) pressedKey += "i";
-            if (IsKeyDown(KeyboardKey.KEY_J)) pressedKey += "j";
-            if (IsKeyDown(KeyboardKey.KEY_K)) pressedKey += "k";
-            if (IsKeyDown(KeyboardKey.KEY_L)) pressedKey += "l";
-            if (IsKeyDown(KeyboardKey.KEY_M)) pressedKey += "m";
-            if (IsKeyDown(KeyboardKey.KEY_N)) pressedKey += "n";
-            if (IsKeyDown(KeyboardKey.KEY_O)) pressedKey += "o";
-            if (IsKeyDown(KeyboardKey.KEY_P)) pressedKey += "p";
-            if (IsKeyDown(KeyboardKey.KEY_Q)) pressedKey += "q";
-            if (IsKeyDown(KeyboardKey.KEY_R)) pressedKey += "r";
-            if (IsKeyDown(KeyboardKey.KEY_S)) pressedKey += "s";
-            if (IsKeyDown(KeyboardKey.KEY_T)) pressedKey += "t";
-            if (IsKeyDown(KeyboardKey.KEY_U)) pressedKey += "u";
-            if (IsKeyDown(KeyboardKey.KEY_V)) pressedKey += "v";
-            if (IsKeyDown(KeyboardKey.KEY_W)) pressedKey += "w";
-            if (IsKeyDown(KeyboardKey.KEY_X)) pressedKey += "x";
-            if (IsKeyDown(KeyboardKey.KEY_Y)) pressedKey += "y";
-            if (IsKeyDown(KeyboardKey.KEY_Z)) pressedKey += "z";
+            string pressedKeys = "";
+            if (IsKeyDown(KeyboardKey.KEY_A)) pressedKeys += "a";
+            if (IsKeyDown(KeyboardKey.KEY_B)) pressedKeys += "b";
+            if (IsKeyDown(KeyboardKey.KEY_C)) pressedKeys += "c";
+            if (IsKeyDown(KeyboardKey.KEY_D)) pressedKeys += "d";
+            if (IsKeyDown(KeyboardKey.KEY_E)) pressedKeys += "e";
+            if (IsKeyDown(KeyboardKey.KEY_F)) pressedKeys += "f";
+            if (IsKeyDown(KeyboardKey.KEY_G)) pressedKeys += "g";
+            if (IsKeyDown(KeyboardKey.KEY_H)) pressedKeys += "h";
+            if (IsKeyDown(KeyboardKey.KEY_I)) pressedKeys += "i";
+            if (IsKeyDown(KeyboardKey.KEY_J)) pressedKeys += "j";
+            if (IsKeyDown(KeyboardKey.KEY_K)) pressedKeys += "k";
+            if (IsKeyDown(KeyboardKey.KEY_L)) pressedKeys += "l";
+            if (IsKeyDown(KeyboardKey.KEY_M)) pressedKeys += "m";
+            if (IsKeyDown(KeyboardKey.KEY_N)) pressedKeys += "n";
+            if (IsKeyDown(KeyboardKey.KEY_O)) pressedKeys += "o";
+            if (IsKeyDown(KeyboardKey.KEY_P)) pressedKeys += "p";
+            if (IsKeyDown(KeyboardKey.KEY_Q)) pressedKeys += "q";
+            if (IsKeyDown(KeyboardKey.KEY_R)) pressedKeys += "r";
+            if (IsKeyDown(KeyboardKey.KEY_S)) pressedKeys += "s";
+            if (IsKeyDown(KeyboardKey.KEY_T)) pressedKeys += "t";
+            if (IsKeyDown(KeyboardKey.KEY_U)) pressedKeys += "u";
+            if (IsKeyDown(KeyboardKey.KEY_V)) pressedKeys += "v";
+            if (IsKeyDown(KeyboardKey.KEY_W)) pressedKeys += "w";
+            if (IsKeyDown(KeyboardKey.KEY_X)) pressedKeys += "x";
+            if (IsKeyDown(KeyboardKey.KEY_Y)) pressedKeys += "y";
+            if (IsKeyDown(KeyboardKey.KEY_Z)) pressedKeys += "z";
+            if(IsKeyDown(KeyboardKey.KEY_LEFT_SHIFT) || IsKeyDown(KeyboardKey.KEY_RIGHT_SHIFT)) pressedKeys = pressedKeys.ToUpper();
             if (IsKeyDown(KeyboardKey.KEY_BACKSPACE)) return "backspace";
-            if(IsKeyDown(KeyboardKey.KEY_LEFT_SHIFT) || IsKeyDown(KeyboardKey.KEY_RIGHT_SHIFT)) pressedKey = pressedKey.ToUpper();
 
-            return pressedKey;
+            return pressedKeys;
         }
     }
 }

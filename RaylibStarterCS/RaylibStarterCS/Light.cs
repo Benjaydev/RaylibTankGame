@@ -17,6 +17,8 @@ namespace RaylibStarterCS
         public float brightness = 1f;
         public float sourceFadoff = 0.5f;
 
+
+        // Constructor
         public Light(int Size, float Brightness, float SourceFadeoff, Color Colour, bool HasNoColour = false)
         {
             colour = Colour;
@@ -25,11 +27,6 @@ namespace RaylibStarterCS
             brightness = Brightness;
             sourceFadoff = SourceFadeoff;
             hasNoColour = HasNoColour;
-        }
-
-        public void SetFadeColour(Color colour)
-        {
-            fadeColour = colour;
         }
 
         // Copy constructor
@@ -43,7 +40,13 @@ namespace RaylibStarterCS
             sourceFadoff = copy.sourceFadoff;
             hasNoColour = copy.hasNoColour;
         }
+        // Change the colour that the light fades into
+        public void SetFadeColour(Color colour)
+        {
+            fadeColour = colour;
+        }
 
+        // Remove self from game lighting
         public override void RemoveSelfFromSceneObjects()
         {
             base.RemoveSelfFromSceneObjects();
@@ -74,6 +77,7 @@ namespace RaylibStarterCS
         {
             if (!Raylib.WindowShouldClose() && !Game.IsDebugActive)
             {
+                // Multiplying a colour by the colour equivalent of 0 (Invisible colour) will result in that colour being removed (Removing dark spots in this case)
                 DrawCircleGradient((int)globalTransform.m20, (int)globalTransform.m21, size, ColorAlpha(Color.WHITE, 0), ColorAlpha(Color.WHITE, 1f));
             }
         }

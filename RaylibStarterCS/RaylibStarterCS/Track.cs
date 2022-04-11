@@ -12,6 +12,7 @@ namespace RaylibStarterCS
         float lifetimeMax = 2.5f;
         public static Texture2D trackTexture = LoadTextureFromImage(LoadImage("./PNG/Tanks/tracksSmall.png"));
 
+        // Constructor
         public Track()
         {
             Game.sceneObjects.Insert(0, this);
@@ -20,7 +21,9 @@ namespace RaylibStarterCS
 
         public override void OnUpdate(float deltaTime)
         {
+            // Keep track of lifetime
             lifetime += deltaTime;
+            // Destroy if lifetime is complete
             if(lifetime > lifetimeMax)
             {
                 isWaitingDestroy = true;

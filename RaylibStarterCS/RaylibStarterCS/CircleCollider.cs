@@ -13,10 +13,12 @@ namespace RaylibStarterCS
         public float radius = 0;
 
 
+        // Constructor
         public CircleCollider()
         {
         }
 
+        // Construct using point and radius
         public CircleCollider(Vector3 p, float r)
         {
             this.center = p;
@@ -24,7 +26,7 @@ namespace RaylibStarterCS
         }
 
         /// <summary>
-        /// Draw debug circle
+        /// Draw debug wireframe of circle
         /// </summary>
         public override void DrawDebug()
         {
@@ -119,10 +121,9 @@ namespace RaylibStarterCS
 
         /// <summary>
         /// Check the normals of an AABB against this circle collider
-        ///  <para>Optional: xChange and yChange represent whether this circle is moving and must correct it's max and min positions
-        /// in order to calculate normals (As boxes must not be overlapping to calculate)</para>
+        ///  <para>Optional: xChange and yChange represent whether this circle is moving and must correct it's max and min positions</para>
         /// </summary>
-        public override Vector3 CalculateNorm(AABB aabb, float xChange = 0, float yChange = 0)
+        public override Vector3 CalculateNormal(AABB aabb, float xChange = 0, float yChange = 0)
         {
             Vector3 direction = aabb.ClosestPoint(center) - center;
             direction.Normalize();
@@ -130,10 +131,9 @@ namespace RaylibStarterCS
         }
         /// <summary>
         /// Check the normals of another circle collider against this circle collider
-        ///  <para>Optional: xChange and yChange represent whether this circle is moving and must correct it's max and min positions
-        /// in order to calculate normals (As boxes must not be overlapping to calculate)</para>
+        ///  <para>Optional: xChange and yChange represent whether this circle is moving and must correct it's max and min positions</para>
         /// </summary>
-        public override Vector3 CalculateNorm(CircleCollider other, float xChange = 0, float yChange = 0)
+        public override Vector3 CalculateNormal(CircleCollider other, float xChange = 0, float yChange = 0)
         {
             Vector3 direction = other.center - center;
             direction.Normalize();
@@ -143,10 +143,9 @@ namespace RaylibStarterCS
 
         /// <summary>
         /// Check the normals of another point against this circle collider
-        ///  <para>Optional: xChange and yChange represent whether this circle is moving and must correct it's max and min positions
-        /// in order to calculate normals (As boxes must not be overlapping to calculate)</para>
+        ///  <para>Optional: xChange and yChange represent whether this circle is moving and must correct it's max and min positions</para>
         /// </summary>
-        public override Vector3 CalculateNorm(Vector3 p, float xChange = 0, float yChange = 0)
+        public override Vector3 CalculateNormal(Vector3 p, float xChange = 0, float yChange = 0)
         {
             Vector3 direction = p - center;
             direction.Normalize();
@@ -154,7 +153,7 @@ namespace RaylibStarterCS
         }
 
         /// <summary>
-        /// Find the closest point on circle to the inputted point
+        /// Find the closest point on circle to point
         /// </summary>
         public Vector3 ClosestPoint(Vector3 p)
         {

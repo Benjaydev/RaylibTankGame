@@ -28,6 +28,7 @@ namespace RaylibStarterCS
         public static Texture2D defaultTexture = LoadTextureFromImage(LoadImage("./PNG/Buttons/ButtonDefault.png"));
         public static Texture2D pressedTexture = LoadTextureFromImage(LoadImage("./PNG/Buttons/ButtonPressed.png"));
 
+        // Constructor
         public Button(int X, int Y, int length, int height, string text, int FontSize, Color FontColour, string action = "", bool SingleUse = false)
         {
             SetPosition(X, Y);
@@ -35,6 +36,7 @@ namespace RaylibStarterCS
             fontColour = FontColour;
 
             centre = new Vector3(X + (length/2), Y + (height / 2), 0);
+            // Represent corners as two points (Stored in Vector4 - minX, minY, maxX, maxY)
             corners = new Vector4(X, Y, X + length, Y + height);
 
             buttonText = text;
@@ -54,6 +56,7 @@ namespace RaylibStarterCS
             Game.sceneObjects.Add(this);
         }
 
+        // Remove from buttons
         public override void RemoveSelfFromSceneObjects()
         {
             base.RemoveSelfFromSceneObjects();
@@ -61,6 +64,7 @@ namespace RaylibStarterCS
             Game.buttons.Remove(this);
         }
 
+        // Measure the length of the text inside this button (Used to centre text when drawing)
         public void MeasureFontText()
         {
             textSize = MeasureText(buttonText, fontSize);
@@ -93,27 +97,34 @@ namespace RaylibStarterCS
         // Click button
         public string ClickButton()
         {
+            // If button is single use, destroy it after clicked
             if (isSingleUse)
             {
                 isWaitingDestroy = true;
             }
+            // Return back the necessary action
             return buttonAction;
         }
 
+        // Trigger overlap (Change texture based on state)
         public void OverlapButton(bool state)
         {
+            // If button has been pressed, show pressed texture
             if (isFocused)
             {
                 texture = pressedTexture;
             }
+            // Show hovered texture
             else if (state)
             {
                 texture = hoverTexture;
             }
+            // Reset to default texture
             else
             {
                 texture = defaultTexture;
             }
+            // Keep the width and height the same between each texture
             Width = buttonWidth;
             Height = buttonHeight;
         }
@@ -123,7 +134,7 @@ namespace RaylibStarterCS
         {
             base.OnDraw();
     
-
+            // Draw text inside the button
             DrawText($"{buttonText}", (int)centre.x - (textSize/2), Convert.ToInt32(centre.y - (fontSize/ 2.5f)), fontSize, fontColour);
         }
 

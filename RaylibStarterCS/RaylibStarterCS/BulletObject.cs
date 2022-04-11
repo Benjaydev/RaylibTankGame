@@ -29,17 +29,22 @@ namespace RaylibStarterCS
             bulletSprite.SetPosition(-(bulletSprite.Width / 2), -(bulletSprite.Height / 2));
             HitWidth = bulletSprite.Width;
 
+            // Setup default rotation
             SetRotate(90 * (float)(Math.PI / 180.0f));
+            // Then rotate to the forward vector
             Rotate(MathF.Atan2(ForwardVector.y, ForwardVector.x));
+            // Use circle collider
             SetCollisionType(new CircleCollider(new Vector3(0, 0, 0), HitWidth));
             AddChild(bulletSprite);
 
+            // Setup light for bullet
             Light BulletLight = new Light(15, 1f, .15f, new Color(255, 100, 0, 255));
             BulletLight.SetPosition(0, bulletSprite.Height/2);
             AddChild(BulletLight);
             Game.lights.Add(BulletLight);
         }
 
+        // Called when bullet collides
         public override void CollideEvent(Vector3 Normal)
         {
             base.CollideEvent(Normal);
@@ -49,6 +54,7 @@ namespace RaylibStarterCS
 
             // Make sure normal is normalised
             Normal.Normalize();
+
             // Record the poisition of the bullet at hit
             Vector3 prevpos = new Vector3(globalTransform.m20, globalTransform.m21, 0);
 
@@ -65,27 +71,31 @@ namespace RaylibStarterCS
             SetPosition(prevpos.x, prevpos.y);
         }
 
+        // 
         public override void OnUpdate(float deltaTime)
         {
             base.OnUpdate(deltaTime);
-            UpdateBullet(deltaTime);
+
+            // Get facing direction
+            Vector3 f = ForwardVector * deltaTime;
+            // Calculate new sloweed velocity
+            velocityMultiple *= 1 - (0.5f * deltaTime);
+
+            // Destroy bullet when it has slowed down enough
+            if (velocityMultiple < (0.05f * (1 + deltaTime)))
+            {
+                
+                isWaitingDestroy = true;
+            }
+            // Move bullet
+            Translate(f.x * velocityMultiple, f.y * velocityMultiple);
         }
+
         public override void OnDraw()
         {
             base.OnDraw();
         }
 
-        public void UpdateBullet(float deltaTime)
-        {
-            Vector3 f = ForwardVector * deltaTime;
-            velocityMultiple *= 1 - (0.5f * deltaTime);
-            if(velocityMultiple < (0.05f * (1+deltaTime)))
-            {
-   
-                isWaitingDestroy = true;
-            }
-            Translate(f.x* velocityMultiple, f.y* velocityMultiple);
-        }
 
 
 

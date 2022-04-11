@@ -19,30 +19,37 @@ namespace RaylibStarterCS
 
         public GameMap()
         {
+            // Create sprites for sandbags
             sandbagBeigeS = CreateSandbagSpriteTemplate("sandbagBeige");
             sandbagBrownS = CreateSandbagSpriteTemplate("sandbagBrown");
 
+            // Create sprites for barrels
             barrelGreenS = CreateBarrelSpriteTemplate("barrelGreen");
             barrelRedS = CreateBarrelSpriteTemplate("barrelRed");
             barrelGreyS = CreateBarrelSpriteTemplate("barrelGrey");
 
+            // ------ Create building on bottom left ------
             // Main body of building
             CornerSandbagStructure(4, 325, GetScreenHeight()-425, 90);
             LineSandbagStructure(8, 180, GetScreenHeight()-195, 0);
             // The door way edges against walls
             LineSandbagStructure(1, 0, GetScreenHeight() - 435, 0);
             LineSandbagStructure(2, 515, GetScreenHeight(), -90);
-
+            // Corner of building
             CornerSandbagStructure(2, GetScreenWidth()-200, GetScreenHeight()-150, 180);
+            // ------------
 
+            // Spawn barrels in different areas of map
             SpawnRandomBarrels(10, 400, 50, GetScreenWidth()-250, GetScreenHeight()-250);
             SpawnRandomBarrels(3, 50, 50, 350, 200);
             SpawnRandomBarrels(3, 50, GetScreenHeight() - 100, 200, GetScreenHeight() - 50);
 
+            // Create lighting inside building
             CreateLamp(250, 320, new Light(200, 0.6f, .3f, new Color(150, 150, 255, 255)));
             CreateLamp(430, 650, new Light(200, 0.6f, .3f, new Color(150, 150, 255, 255)));
             CreateLamp(35, 500, new Light(150, 0.6f, .3f, new Color(150, 150, 255, 255)));
 
+            // Create fire pits around the map
             CreateFirePit(30, 30, new Light(200, 0.5f, .15f, new Color(255, 150, 0, 255)));
             CreateFirePit(1070, 80, new Light(200, 0.5f, .15f, new Color(255, 150, 0, 255)));
             CreateFirePit(940, 480, new Light(200, 0.5f, .15f, new Color(255, 150, 0, 255)));
@@ -74,7 +81,7 @@ namespace RaylibStarterCS
             Game.lights.Add(light);
         }
 
-        // Create lamp object which has custom light
+        // Create fire pit object which has custom light
         public void CreateFirePit(int x, int y, Light light)
         {
             SceneObject lightObject = new SceneObject();
@@ -127,7 +134,7 @@ namespace RaylibStarterCS
             return sandbagS;
         }
         
-        // Create sandbag sprite
+        // Create barrel sprite
         public SpriteObject CreateBarrelSpriteTemplate(string type = "barrelGreen")
         {
             // Setup barrel sprite
@@ -147,7 +154,7 @@ namespace RaylibStarterCS
                 case 1:
                     return sandbagBrownS;
                 default:
-                    return new SpriteObject();
+                    return sandbagBeigeS;
             }
         }
         
@@ -163,18 +170,15 @@ namespace RaylibStarterCS
                 case 2:
                     return barrelGreyS;
                 default:
-                    return new SpriteObject();
+                    return barrelGreenS;
             }
         }
 
         /// <summary>
         /// Create a corner sandbag structure and return it. Default corner formation is top left
         /// </summary>
-
         public void CornerSandbagStructure(int size, int posX = 0, int posY = 0, int rotDegrees = 0)
         {
-            
-
             SceneObject sandBagStructure = new SceneObject();
             sandBagStructure.SetPosition(posX, posY);
 
@@ -208,7 +212,9 @@ namespace RaylibStarterCS
                 sandBagStructure.AddChild(sandbagH);
 
             }
+            // Apply rotation to structure
             sandBagStructure.Rotate(rotDegrees * DEG2RAD);
+            // Add to scene
             sandBagStructure.AddSelfToSceneObjects();
           
         }
@@ -232,14 +238,16 @@ namespace RaylibStarterCS
                 sandBagStructure.AddChild(sandbagW);
 
             }
+            // Apply rotation to structure
             sandBagStructure.Rotate(rotDegrees * DEG2RAD);
+            // Add to scene
             sandBagStructure.AddSelfToSceneObjects();
 
         }
 
 
 
-
+        // Spawn barrels randomly within area
         public void SpawnRandomBarrels(int amount, int minX = 0, int minY = 0, int maxX = 200, int maxY = 200)
         {
             // Setup barrel obstacles
@@ -253,6 +261,7 @@ namespace RaylibStarterCS
                 int randomX = Game.gameRandom.Next(minX, maxX);
                 int randomY = Game.gameRandom.Next(minY, maxY);
 
+                // Vary size slightly
                 float randomSize = (1f + (float)Game.gameRandom.NextDouble())/1.5f;
 
                 // Setup barrel object
