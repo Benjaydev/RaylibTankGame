@@ -57,7 +57,7 @@ namespace RaylibStarterCS
         public void Init(float xPos = 0, float yPos = 0)
         {
             // Setup player tanks
-            if(tag == "Player" || tag == "Menu"){
+            if(tag == "Player"){
                 tankSprite.Load("./PNG/Tanks/tankRed_outline.png");
                 turretSprite.Load("./PNG/Tanks/barrelBlack_outline.png");
                 bulletTexture = LoadTextureFromImage(LoadImage("./PNG/Bullets/bulletRedSilver_outline.png"));
@@ -65,6 +65,13 @@ namespace RaylibStarterCS
                 // Setup tank light
                 Light TankLight = new Light(new Vector3(50, 50, 50), 0.3f, 1f, new Color(255, 100, 0, 255));
                 AddChild(TankLight);
+            }
+            else if(tag == "Menu")
+            {
+                tankSprite.Load("./PNG/Tanks/tankRed_outline.png");
+                turretSprite.Load("./PNG/Tanks/barrelBlack_outline.png");
+                bulletTexture = LoadTextureFromImage(LoadImage("./PNG/Bullets/bulletRedSilver_outline.png"));
+
             }
             else if(tag == "Enemy")
             {

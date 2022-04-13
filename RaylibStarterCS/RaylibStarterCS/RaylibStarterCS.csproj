@@ -6,98 +6,31 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="PNG\Bullets\bulletBeige.png" />
-    <None Remove="PNG\Bullets\bulletBeigeSilver.png" />
     <None Remove="PNG\Bullets\bulletBeigeSilver_outline.png" />
-    <None Remove="PNG\Bullets\bulletBeige_outline.png" />
-    <None Remove="PNG\Bullets\bulletBlue.png" />
-    <None Remove="PNG\Bullets\bulletBlueCircle.png" />
-    <None Remove="PNG\Bullets\bulletBlueSilver.png" />
     <None Remove="PNG\Bullets\bulletBlueSilver_outline.png" />
-    <None Remove="PNG\Bullets\bulletBlue_outline.png" />
-    <None Remove="PNG\Bullets\bulletGreen.png" />
-    <None Remove="PNG\Bullets\bulletGreenSilver.png" />
     <None Remove="PNG\Bullets\bulletGreenSilver_outline.png" />
-    <None Remove="PNG\Bullets\bulletGreen_outline.png" />
-    <None Remove="PNG\Bullets\bulletRed.png" />
-    <None Remove="PNG\Bullets\bulletRedSilver.png" />
     <None Remove="PNG\Bullets\bulletRedSilver_outline.png" />
-    <None Remove="PNG\Bullets\bulletRed_outline.png" />
-    <None Remove="PNG\Bullets\bulletSilver.png" />
-    <None Remove="PNG\Bullets\bulletSilverSilver.png" />
     <None Remove="PNG\Bullets\bulletSilverSilver_outline.png" />
-    <None Remove="PNG\Bullets\bulletSilver_outline.png" />
-    <None Remove="PNG\Bullets\bulletYellow.png" />
-    <None Remove="PNG\Bullets\bulletYellowSilver.png" />
-    <None Remove="PNG\Bullets\bulletYellowSilver_outline.png" />
-    <None Remove="PNG\Bullets\bulletYellow_outline.png" />
     <None Remove="PNG\Buttons\ButtonDefault.png" />
     <None Remove="PNG\Buttons\ButtonHover.png" />
     <None Remove="PNG\Buttons\ButtonPressed.png" />
     <None Remove="PNG\Environment\black.png" />
     <None Remove="PNG\Environment\dirt.png" />
-    <None Remove="PNG\Environment\grass.png" />
     <None Remove="PNG\Environment\rock.png" />
     <None Remove="PNG\Environment\sand.png" />
     <None Remove="PNG\Environment\TitleBackground.png" />
-    <None Remove="PNG\Environment\treeLarge.png" />
-    <None Remove="PNG\Environment\treeSmall.png" />
-    <None Remove="PNG\Obstacles\barrelGreen_side.png" />
-    <None Remove="PNG\Obstacles\barrelGreen_side_damaged.png" />
     <None Remove="PNG\Obstacles\barrelGreen_up.png" />
-    <None Remove="PNG\Obstacles\barrelGrey_sde_rust.png" />
-    <None Remove="PNG\Obstacles\barrelGrey_side.png" />
     <None Remove="PNG\Obstacles\barrelGrey_up.png" />
-    <None Remove="PNG\Obstacles\barrelRed_side.png" />
     <None Remove="PNG\Obstacles\barrelRed_up.png" />
     <None Remove="PNG\Obstacles\firePit.png" />
     <None Remove="PNG\Obstacles\light.png" />
-    <None Remove="PNG\Obstacles\oil.png" />
     <None Remove="PNG\Obstacles\sandbagBeige.png" />
     <None Remove="PNG\Obstacles\sandbagBrown.png" />
-    <None Remove="PNG\Smoke\smokeGrey0.png" />
-    <None Remove="PNG\Smoke\smokeGrey1.png" />
-    <None Remove="PNG\Smoke\smokeGrey2.png" />
-    <None Remove="PNG\Smoke\smokeGrey3.png" />
-    <None Remove="PNG\Smoke\smokeGrey4.png" />
-    <None Remove="PNG\Smoke\smokeGrey5.png" />
-    <None Remove="PNG\Smoke\smokeOrange0.png" />
-    <None Remove="PNG\Smoke\smokeOrange1.png" />
-    <None Remove="PNG\Smoke\smokeOrange2.png" />
-    <None Remove="PNG\Smoke\smokeOrange3.png" />
-    <None Remove="PNG\Smoke\smokeOrange4.png" />
-    <None Remove="PNG\Smoke\smokeOrange5.png" />
-    <None Remove="PNG\Smoke\smokeWhite0.png" />
-    <None Remove="PNG\Smoke\smokeWhite1.png" />
-    <None Remove="PNG\Smoke\smokeWhite2.png" />
-    <None Remove="PNG\Smoke\smokeWhite3.png" />
-    <None Remove="PNG\Smoke\smokeWhite4.png" />
-    <None Remove="PNG\Smoke\smokeWhite5.png" />
-    <None Remove="PNG\Smoke\smokeYellow0.png" />
-    <None Remove="PNG\Smoke\smokeYellow1.png" />
-    <None Remove="PNG\Smoke\smokeYellow2.png" />
-    <None Remove="PNG\Smoke\smokeYellow3.png" />
-    <None Remove="PNG\Smoke\smokeYellow4.png" />
-    <None Remove="PNG\Smoke\smokeYellow5.png" />
-    <None Remove="PNG\Tanks\barrelBeige.png" />
-    <None Remove="PNG\Tanks\barrelBeige_outline.png" />
-    <None Remove="PNG\Tanks\barrelBlack.png" />
     <None Remove="PNG\Tanks\barrelBlack_outline.png" />
-    <None Remove="PNG\Tanks\barrelBlue.png" />
-    <None Remove="PNG\Tanks\barrelBlue_outline.png" />
-    <None Remove="PNG\Tanks\barrelGreen.png" />
-    <None Remove="PNG\Tanks\barrelGreen_outline.png" />
-    <None Remove="PNG\Tanks\barrelRed.png" />
-    <None Remove="PNG\Tanks\barrelRed_outline.png" />
-    <None Remove="PNG\Tanks\tankBeige.png" />
     <None Remove="PNG\Tanks\tankBeige_outline.png" />
-    <None Remove="PNG\Tanks\tankBlack.png" />
     <None Remove="PNG\Tanks\tankBlack_outline.png" />
-    <None Remove="PNG\Tanks\tankBlue.png" />
     <None Remove="PNG\Tanks\tankBlue_outline.png" />
-    <None Remove="PNG\Tanks\tankGreen.png" />
     <None Remove="PNG\Tanks\tankGreen_outline.png" />
-    <None Remove="PNG\Tanks\tankRed.png" />
     <None Remove="PNG\Tanks\tankRed_outline.png" />
     <None Remove="PNG\Tanks\tracksLarge.png" />
     <None Remove="PNG\Tanks\tracksSmall.png" />
@@ -106,79 +39,19 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="PNG\Bullets\bulletBeige.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PNG\Bullets\bulletBeigeSilver.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="PNG\Bullets\bulletBeigeSilver_outline.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PNG\Bullets\bulletBeige_outline.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PNG\Bullets\bulletBlue.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PNG\Bullets\bulletBlueCircle.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PNG\Bullets\bulletBlueSilver.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="PNG\Bullets\bulletBlueSilver_outline.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="PNG\Bullets\bulletBlue_outline.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PNG\Bullets\bulletGreen.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PNG\Bullets\bulletGreenSilver.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="PNG\Bullets\bulletGreenSilver_outline.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PNG\Bullets\bulletGreen_outline.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PNG\Bullets\bulletRed.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PNG\Bullets\bulletRedSilver.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="PNG\Bullets\bulletRedSilver_outline.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="PNG\Bullets\bulletRed_outline.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PNG\Bullets\bulletSilver.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PNG\Bullets\bulletSilverSilver.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="PNG\Bullets\bulletSilverSilver_outline.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PNG\Bullets\bulletSilver_outline.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PNG\Bullets\bulletYellow.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PNG\Bullets\bulletYellowSilver.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PNG\Bullets\bulletYellowSilver_outline.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PNG\Bullets\bulletYellow_outline.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="PNG\Buttons\ButtonPressed.png">
@@ -196,9 +69,6 @@
     <Content Include="PNG\Environment\dirt.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="PNG\Environment\grass.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="PNG\Environment\rock.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -208,31 +78,10 @@
     <Content Include="PNG\Environment\TitleBackground.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="PNG\Environment\treeLarge.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PNG\Environment\treeSmall.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PNG\Obstacles\barrelGreen_side.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PNG\Obstacles\barrelGreen_side_damaged.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="PNG\Obstacles\barrelGreen_up.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="PNG\Obstacles\barrelGrey_sde_rust.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PNG\Obstacles\barrelGrey_side.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="PNG\Obstacles\barrelGrey_up.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PNG\Obstacles\barrelRed_side.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="PNG\Obstacles\barrelRed_up.png">
@@ -244,142 +93,25 @@
     <Content Include="PNG\Obstacles\light.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="PNG\Obstacles\oil.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="PNG\Obstacles\sandbagBeige.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="PNG\Obstacles\sandbagBrown.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="PNG\Smoke\smokeGrey0.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PNG\Smoke\smokeGrey1.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PNG\Smoke\smokeGrey2.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PNG\Smoke\smokeGrey3.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PNG\Smoke\smokeGrey4.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PNG\Smoke\smokeGrey5.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PNG\Smoke\smokeOrange0.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PNG\Smoke\smokeOrange1.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PNG\Smoke\smokeOrange2.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PNG\Smoke\smokeOrange3.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PNG\Smoke\smokeOrange4.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PNG\Smoke\smokeOrange5.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PNG\Smoke\smokeWhite0.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PNG\Smoke\smokeWhite1.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PNG\Smoke\smokeWhite2.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PNG\Smoke\smokeWhite3.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PNG\Smoke\smokeWhite4.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PNG\Smoke\smokeWhite5.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PNG\Smoke\smokeYellow0.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PNG\Smoke\smokeYellow1.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PNG\Smoke\smokeYellow2.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PNG\Smoke\smokeYellow3.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PNG\Smoke\smokeYellow4.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PNG\Smoke\smokeYellow5.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PNG\Tanks\barrelBeige.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PNG\Tanks\barrelBeige_outline.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PNG\Tanks\barrelBlack.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="PNG\Tanks\barrelBlack_outline.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PNG\Tanks\barrelBlue.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PNG\Tanks\barrelBlue_outline.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PNG\Tanks\barrelGreen.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PNG\Tanks\barrelGreen_outline.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PNG\Tanks\barrelRed.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PNG\Tanks\barrelRed_outline.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PNG\Tanks\tankBeige.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="PNG\Tanks\tankBeige_outline.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="PNG\Tanks\tankBlack.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="PNG\Tanks\tankBlack_outline.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PNG\Tanks\tankBlue.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="PNG\Tanks\tankBlue_outline.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="PNG\Tanks\tankGreen.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="PNG\Tanks\tankGreen_outline.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PNG\Tanks\tankRed.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="PNG\Tanks\tankRed_outline.png">
