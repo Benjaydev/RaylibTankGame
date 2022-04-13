@@ -7,7 +7,7 @@ using MathClasses;
 
 namespace RaylibStarterCS
 {
-    public class BulletObject : SceneObject
+    public class Bullet : SceneObject
     {
         public float startVelocity = 1000f;
         public float velocityMultiple = 1f;
@@ -18,7 +18,7 @@ namespace RaylibStarterCS
         public string bulletTarget = "Enemy";
 
         // Constructor
-        public BulletObject(Texture2D bulletTexture, Vector3 facing, float velocity = 1000f, string bt = "Enemy") : base()
+        public Bullet(Texture2D bulletTexture, Vector3 facing, float velocity = 1000f, string bt = "Enemy") : base()
         {
             startVelocity = velocity;
             tag = "Bullet";
@@ -38,10 +38,9 @@ namespace RaylibStarterCS
             AddChild(bulletSprite);
 
             // Setup light for bullet
-            Light BulletLight = new Light(15, 1f, .15f, new Color(255, 100, 0, 255));
+            Light BulletLight = new Light(new Vector3(15, 10, 20), 1f, .15f, new Color(255, 100, 0, 255));
             BulletLight.SetPosition(0, bulletSprite.Height/2);
             AddChild(BulletLight);
-            Game.lights.Add(BulletLight);
         }
 
         // Called when bullet collides
@@ -89,6 +88,7 @@ namespace RaylibStarterCS
             }
             // Move bullet
             Translate(f.x * velocityMultiple, f.y * velocityMultiple);
+
         }
 
         public override void OnDraw()

@@ -57,6 +57,11 @@ namespace MathClasses
             y /= magnitude;
             z /= magnitude;
         }
+        public Vector3 Normalized()
+        {
+            float magnitude = Magnitude();
+            return new Vector3(x / magnitude, y / magnitude, z / magnitude);
+        }
 
         // Minimum function to find the minimum value between each Vector3
         public static Vector3 Min(Vector3 p1, Vector3 p2)
@@ -116,7 +121,6 @@ namespace MathClasses
         public static Vector3 operator -(Vector3 v1, Vector3 v2)
         {
             return new Vector3(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z);
-            return new Vector3(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z);
         }
         // Overload negative base operator to set vector values to negative
         public static Vector3 operator -(Vector3 v)
@@ -138,7 +142,23 @@ namespace MathClasses
         {
             return new Vector3(v.x * f, v.y * f, v.z * f);
         }
-        
+        // Overload multiply operator for dividing vector by float
+        public static Vector3 operator /(Vector3 v, float f)
+        {
+            return new Vector3(v.x / f, v.y / f, v.z / f);
+        }
+        // Overload multiply operator for dividing float by vector
+        public static Vector3 operator /(float f, Vector3 v)
+        {
+            return new Vector3(v.x / f, v.y / f, v.z / f);
+        }
+
+        // Overload multiply operator for dividing vector by vector
+        public static Vector3 operator /(Vector3 v, Vector3 v2)
+        {
+            return new Vector3(v.x / v2.x, v.y / v2.y, v.z / v2.z);
+        }
+
 
     }
 }

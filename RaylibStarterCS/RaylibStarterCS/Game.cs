@@ -21,6 +21,7 @@ namespace RaylibStarterCS
         private int frames;
         public static float deltaTime = 0.005f;
 
+        public static float screenScale = 1f;
 
         // Debug
         float debugCooldown = 0.5f;
@@ -93,10 +94,10 @@ namespace RaylibStarterCS
         // Initialise game
         public void Init(int width, int height)
         {
+           
             // Setup window and game world size
             SetWindowSize(width, height);
             WorldBoundries = new Vector3[] { new Vector3(GetScreenWidth(), GetScreenHeight(), 0), new Vector3(0, 0, 0) };
-
             // Start world time
             stopwatch.Start();
             lastTime = stopwatch.ElapsedMilliseconds;
@@ -104,7 +105,7 @@ namespace RaylibStarterCS
             // Load backgrounds for later use
             // Main game background
             background.Load("./PNG/Environment/dirt.png");
-            background.textureScale = 10;
+            background.textureScale = 20;
             // End menu background
             endGameBackground.Load("./PNG/Environment/TitleBackground.png");
             endGameBackground.textureScale = 5;
@@ -169,7 +170,7 @@ namespace RaylibStarterCS
             mainMenuTank.Scale(0.5f, 0.5f);
 
             // Setup back light for menu
-            Light menuLight = new Light(1000, 1f, 1f, new Color(255, 255, 255, 255), true);
+            Light menuLight = new Light(new Vector3(1000, 1000, 1000), 1f, 1f, new Color(255, 255, 255, 255), true);
             menuLight.SetPosition(GetScreenWidth() / 2, GetScreenHeight() / 2);
             lights.Add(menuLight);
 
@@ -202,7 +203,7 @@ namespace RaylibStarterCS
 
             
             // Setup end game back lighting
-            Light endMenuLight = new Light(1000, 0.1f, 1f, new Color(255, 0, 0, 255));
+            Light endMenuLight = new Light(new Vector3(1000, 200, 1100), 0.1f, 1f, new Color(255, 0, 0, 255));
             endMenuLight.SetPosition(GetScreenWidth() / 2, GetScreenHeight() / 2);
             lights.Add(endMenuLight);
         }
@@ -296,12 +297,12 @@ namespace RaylibStarterCS
                 // Move tank forward
                 if (IsKeyDown(KeyboardKey.KEY_W))
                 {
-                    playerTank.Accelerate(deltaTime * 2, 1);
+                    playerTank.Accelerate(1);
                 }
                 // Move tank backwards
                 if (IsKeyDown(KeyboardKey.KEY_S))
                 {
-                    playerTank.Accelerate(deltaTime * 1.5f, -1);
+                    playerTank.Accelerate(-1);
                 }
 
                 // Rotate tank turret to the the left
@@ -358,12 +359,7 @@ namespace RaylibStarterCS
                 TriggerAction("Restart");
 
             }
-            // Check for close window key
-            if (IsKeyDown(KeyboardKey.KEY_ESCAPE))
-            {
-                TriggerAction("Close");
-            }
-
+            
             // Call updates and destroys for each scene object
             CreateStoreUpdateDelegate();
             delegateUpdateStore?.Invoke(deltaTime);
@@ -529,12 +525,13 @@ namespace RaylibStarterCS
             {
                 light.DrawLighting();
             }
-            EndBlendMode();
+            BeginBlendMode(BlendMode.BLEND_ALPHA);
             // Add colour to the removed areas for each light
             foreach (Light light in lights)
             {
                 light.ApplyColour();
             }
+            EndBlendMode();
 
             // Game screen text
             if (!MainMenu && !GameOver)

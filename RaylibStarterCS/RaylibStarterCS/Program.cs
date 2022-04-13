@@ -10,7 +10,11 @@ namespace RaylibStarterCS
             // Setup game
             Game game = new Game();
             // Initialise game
+            
             Raylib.InitWindow(640, 480, "Tank Game - Ben Wharton");
+            Raylib.SetWindowIcon(Raylib.LoadImage("./PNG/Tanks/tankRed_outline.png"));
+            Raylib.SetWindowPosition(50, 50);
+            Raylib.SetExitKey(KeyboardKey.KEY_ESCAPE);
             game.Init(1200, 700);
             Raylib.SetTargetFPS(520);
 

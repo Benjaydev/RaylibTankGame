@@ -16,12 +16,6 @@ namespace RaylibStarterCS
         public SpriteObject turretSprite = new SpriteObject();
         public Texture2D bulletTexture;
 
-        // Movement values for tank
-        public float maxVelocity = 200f;
-        public float velocity = 0f;
-        public float movingDirection = 0f;
-        public float acceleration = 100f;
-        public float deceleration = 300;
         public float turretMoveSpeed = 1f;
         public float turnSpeed = 1f;
 
@@ -69,12 +63,12 @@ namespace RaylibStarterCS
                 bulletTexture = LoadTextureFromImage(LoadImage("./PNG/Bullets/bulletRedSilver_outline.png"));
 
                 // Setup tank light
-                Light TankLight = new Light(400, 0.5f, 0f, new Color(255, 100, 0, 255), true);
+                Light TankLight = new Light(new Vector3(50, 50, 50), 0.3f, 1f, new Color(255, 100, 0, 255));
                 AddChild(TankLight);
-                Game.lights.Add(TankLight);
             }
             else if(tag == "Enemy")
-            {  
+            {
+                
                 // Initialise random enemy
                 EnemyRandomiseInit();
             }
@@ -125,80 +119,27 @@ namespace RaylibStarterCS
             AddSelfToSceneObjects();
         }
 
-        // Remove tank from scene (Overriden to remove enemies too)
-        public override void RemoveSelfFromSceneObjects()
-        {
-            base.RemoveSelfFromSceneObjects();
-
-            if(tag == "Enemy")
-            {
-                Game.enemies.Remove(this);
-            }
-        }
-
-        // Call on update everytime tank scene object is updated
-        public override void OnUpdate(float deltaTime)
-        {
-            base.OnUpdate(deltaTime);
-
-
-            MoveTank(deltaTime);
-            if (movingDirection == 0)
-            {
-                Decelerate(deltaTime);
-            }
-
-
-            // Check if shooting cooldown is not complete
-            if (shootCooldownCount <= shootCooldown)
-            {
-                shootCooldownCount += deltaTime;
-            }
-            // Check if track cooldown is not complete
-            if (trackCooldownCount <= trackCooldown)
-            {
-                trackCooldownCount += deltaTime;
-            }
-            
-            // Execute enemy AI
-            if(tag == "Enemy")
-            {
-                ExecuteEnemyAI(deltaTime);
-            }
-            // Update menu tank
-            if(tag == "Menu")
-            {
-                UpdateMenuTank(deltaTime);
-            }
-
-            movingDirection = 0f;
-        }
-
-        // Add points
-        public void AddDestroyedTankPoints()
-        {
-            points += (int)MathF.Pow(100, 1 + (totalDestroyedTanks / 100f));
-            totalDestroyedTanks++;
-        }
-
         // Randomise enemy tank initialisation
         public void EnemyRandomiseInit()
         {
             int chosen = Game.gameRandom.Next(0, 3);
 
             // Black tank, slow moving, slow shooter, long distance shooter, and fast bullets
-            if(chosen == 0)
+            if (chosen == 0)
             {
                 tankSprite.Load("./PNG/Tanks/tankBlack_outline.png");
                 turretSprite.Load("./PNG/Tanks/barrelBlack_outline.png");
                 bulletTexture = LoadTextureFromImage(LoadImage("./PNG/Bullets/bulletSilverSilver_outline.png"));
 
+                // Setup enemy tank light
+                Light TankLight = new Light(new Vector3(50, 50, 50), 0.3f, 1f, new Color(100, 0, 100, 255));
+                AddChild(TankLight);
+
                 shootCooldown = 5f;
                 shootSpeed = 2000f;
 
-                maxVelocity = 100f;
-                acceleration = 75f;
-                deceleration = 50f;
+                moveSpeed = 50f;
+                maxSpeed = 100f;
 
                 turnSpeed = 0.25f;
                 shootingAccuracy = 0.4f;
@@ -209,13 +150,15 @@ namespace RaylibStarterCS
                 tankSprite.Load("./PNG/Tanks/tankBlue_outline.png");
                 turretSprite.Load("./PNG/Tanks/barrelBlue_outline.png");
                 bulletTexture = LoadTextureFromImage(LoadImage("./PNG/Bullets/bulletBlueSilver_outline.png"));
+                // Setup enemy tank light
+                Light TankLight = new Light(new Vector3(50, 50, 50), 0.3f, 1f, new Color(0, 0, 255, 255));
+                AddChild(TankLight);
 
                 shootCooldown = 1f;
                 shootSpeed = 250f;
 
-                maxVelocity = 250f;
-                acceleration = 150f;
-                deceleration = 100f;
+                moveSpeed = 200f;
+                maxSpeed = 250f;
 
                 turnSpeed = 2f;
                 shootingAccuracy = 0.9f;
@@ -226,13 +169,15 @@ namespace RaylibStarterCS
                 tankSprite.Load("./PNG/Tanks/tankGreen_outline.png");
                 turretSprite.Load("./PNG/Tanks/barrelGreen_outline.png");
                 bulletTexture = LoadTextureFromImage(LoadImage("./PNG/Bullets/bulletGreenSilver_outline.png"));
+                // Setup enemy tank light
+                Light TankLight = new Light(new Vector3(50, 50, 50), 0.3f, 1f, new Color(0, 255, 0, 255));
+                AddChild(TankLight);
 
                 shootCooldown = 3f;
                 shootSpeed = 600f;
 
-                maxVelocity = 200f;
-                acceleration = 200f;
-                deceleration = 100f;
+                moveSpeed = 100f;
+                maxSpeed = 200f;
 
                 turnSpeed = 0.9f;
                 shootingAccuracy = 0.8f;
@@ -257,6 +202,43 @@ namespace RaylibStarterCS
             Game.enemies.Add(this);
         }
 
+        // Call on update everytime tank scene object is updated
+        public override void OnUpdate(float deltaTime)
+        {
+            base.OnUpdate(deltaTime);
+            // Check if shooting cooldown is not complete
+            if (shootCooldownCount <= shootCooldown)
+            {
+                shootCooldownCount += deltaTime;
+            }
+            // Check if track cooldown is not complete
+            if (trackCooldownCount <= trackCooldown)
+            {
+                trackCooldownCount += deltaTime;
+            }
+            
+            // Execute enemy AI
+            if(tag == "Enemy")
+            {
+                ExecuteEnemyAI(deltaTime);
+            }
+            // Update menu tank
+            if(tag == "Menu")
+            {
+                UpdateMenuTank(deltaTime);
+            }
+
+            // Apply tank movements
+            velocity += acceleration;
+            Decelerate();
+            if (velocity.MagnitudeSqr() != 0f)
+            {
+                velocity = velocity.Normalized() * Math.Min(velocity.Magnitude(), maxSpeed);
+            }
+            acceleration = new Vector3();
+            MoveTank(deltaTime);
+        }
+
 
         float lastAngle = 0f;
         public void UpdateMenuTank(float deltaTime)
@@ -269,14 +251,14 @@ namespace RaylibStarterCS
             Vector3 diff = new Vector3(difX, difY, 0);
 
             // Move tank towards mouse if far enough away
-            if (diff.MagnitudeSqr() >= 30*30) {
-                velocity = 100f;
+            if (diff.MagnitudeSqr() > 30*30) {
+                Accelerate(1);
                 MoveTank(deltaTime);
             }
             // If too close, move backwards
             else
             {
-                velocity = -100f;
+                Accelerate(-1);
                 MoveTank(deltaTime);
             }
 
@@ -303,6 +285,7 @@ namespace RaylibStarterCS
         {
             Tank playerTank = Game.playerTank;
 
+            // Apply turning
             if (AICanTurn)
             {
                 // Should AI toggle turn
@@ -316,12 +299,14 @@ namespace RaylibStarterCS
                 {
                     AIturningDirection = -AIturningDirection;
                 }
+                // If AI is currently turning, rotate
                 if (AIturning)
                 {
                     Rotate(AIturningDirection * deltaTime * turnSpeed);
                 }
             }
 
+            // Apply any movements if enemy is allowed
             if (AICanMove)
             {
                 // Should AI toggle movement
@@ -329,17 +314,19 @@ namespace RaylibStarterCS
                 {
                     AImoving = !AImoving;
                 }
-
+                // Random direction Forwards or backwards
                 if (Game.gameRandom.Next(0, 100000) == 1)
                 {
                     AImovingDirection = -AImovingDirection;
                 }
+                // If AI is moving, accelerate in chosen direction
                 if (AImoving)
                 {
-                    Accelerate(deltaTime, AImovingDirection);
+                    Accelerate(AImovingDirection);
                 }
             }
 
+            // Make the turret face the player so that the tank can shoot bullets towards the playr
             if (AITurretTracksPlayer)
             {
                 // Calculate the angle to face player
@@ -350,9 +337,8 @@ namespace RaylibStarterCS
                 turretObject.SetRotate(angle - angle2);
             }
             
-         
+            // Finally, attempt to fire a bullet
             ShootBullet("Player");
-
         }
 
 
@@ -360,29 +346,46 @@ namespace RaylibStarterCS
         public override void OnDraw()
         {
             base.OnDraw();
+            // Update hit dimensions
             HitHeight = tankSprite.HitHeight;
             HitWidth = tankSprite.HitWidth;
 
         }
 
-        // Add velocity
-        public void Accelerate(float deltaTime, float direction = 1f)
+        // Add points
+        public void AddDestroyedTankPoints()
         {
-            movingDirection = direction;
-            velocity = Math.Clamp(velocity + (movingDirection*(acceleration * deltaTime)), -maxVelocity, maxVelocity);
+            points += (int)MathF.Pow(100, 1 + (totalDestroyedTanks / 100f));
+            totalDestroyedTanks++;
+        }
+        // Remove tank from scene (Overriden to remove enemies too)
+        public override void RemoveSelfFromSceneObjects()
+        {
+            base.RemoveSelfFromSceneObjects();
+
+            if (tag == "Enemy")
+            {
+                Game.enemies.Remove(this);
+            }
+        }
+
+        // Add acceleration
+        public void Accelerate(float direction)
+        {
+            // Find the facing direction of tank
+            Vector3 facing = new Vector3(LocalTransform.m00, LocalTransform.m01, 1);
+
+            // Calculate the direction and time adjusted movement vector
+            Vector3 f = moveSpeed * direction * facing;
+
+            // Add to acceleration
+            acceleration += f;
         }
 
         // Slow tank down
-        public void Decelerate(float deltaTime)
+        public void Decelerate()
         {
-            if(velocity == 0f)
-            {
-                return;
-            }
-            float direction = velocity / Math.Abs(velocity);
-
-            // If the tank is trying to move forward and velocity is negative, clamp between lowest possible velocity and 0
-            velocity = Math.Clamp(velocity - (direction * (deceleration * deltaTime)), -maxVelocity, maxVelocity);
+            velocity *= deceleration;
         }
 
         // Function used to move tank in direction adjusted by delta time
@@ -392,7 +395,7 @@ namespace RaylibStarterCS
             Vector3 facing = new Vector3(LocalTransform.m00, LocalTransform.m01, 1);
             
             // Calculate the direction and time adjusted movement vector
-            Vector3 f = facing * (velocity) * deltaTime;
+            Vector3 f = (velocity) * deltaTime;
 
             // Translate position
             Translate(f.x, f.y);
@@ -430,7 +433,7 @@ namespace RaylibStarterCS
             }
                 
             // Create new bullet
-            BulletObject newbullet = new BulletObject(bulletTexture, turretFacing, shootSpeed, target);
+            Bullet newbullet = new Bullet(bulletTexture, turretFacing, shootSpeed, target);
 
             // Set position of new bullet to the tank fire point
             newbullet.SetPosition(firePoint.GlobalTransform.m20, firePoint.GlobalTransform.m21);

@@ -45,14 +45,14 @@ namespace RaylibStarterCS
             SpawnRandomBarrels(3, 50, GetScreenHeight() - 100, 200, GetScreenHeight() - 50);
 
             // Create lighting inside building
-            CreateLamp(250, 320, new Light(200, 0.6f, .3f, new Color(150, 150, 255, 255)));
-            CreateLamp(430, 650, new Light(200, 0.6f, .3f, new Color(150, 150, 255, 255)));
-            CreateLamp(35, 500, new Light(150, 0.6f, .3f, new Color(150, 150, 255, 255)));
+            CreateLamp(250, 320, new Light(new Vector3(200, 149, 151), 0.3f, .3f, new Color(150, 150, 255, 255)));
+            CreateLamp(430, 650, new Light(new Vector3(200, 149, 151), 0.3f, .3f, new Color(150, 150, 255, 255)));
+            CreateLamp(35, 500, new Light(new Vector3(150, 149, 151), 0.3f, .3f, new Color(150, 150, 255, 255)));
 
             // Create fire pits around the map
-            CreateFirePit(30, 30, new Light(200, 0.5f, .15f, new Color(255, 150, 0, 255)));
-            CreateFirePit(1070, 80, new Light(200, 0.5f, .15f, new Color(255, 150, 0, 255)));
-            CreateFirePit(940, 480, new Light(200, 0.5f, .15f, new Color(255, 150, 0, 255)));
+            CreateFirePit(30, 30, new Light(new Vector3(400, 200, 400), 0.5f, .5f, new Color(255, 150, 0, 255)));
+            CreateFirePit(1070, 80, new Light(new Vector3(300, 200, 300), 0.5f, .5f, new Color(255, 150, 0, 255)));
+            CreateFirePit(940, 480, new Light(new Vector3(300, 200, 300), 0.5f, .5f, new Color(255, 150, 0, 255)));
         }
 
         // Create lamp object which has custom light
@@ -78,7 +78,6 @@ namespace RaylibStarterCS
 
             // Add to scene
             lightObject.AddSelfToSceneObjects();
-            Game.lights.Add(light);
         }
 
         // Create fire pit object which has custom light
@@ -103,7 +102,6 @@ namespace RaylibStarterCS
 
             // Add to scene
             lightObject.AddSelfToSceneObjects();
-            Game.lights.Add(light);
         }
 
 
@@ -279,7 +277,7 @@ namespace RaylibStarterCS
                 barrel.SetCollisionType(new CircleCollider(new Vector3(0, 0, 0), barrel.HitWidth));
 
                 // Add to scene
-                Game.sceneObjects.Add(barrel);
+                barrel.AddSelfToSceneObjects();
             }
         }
     }

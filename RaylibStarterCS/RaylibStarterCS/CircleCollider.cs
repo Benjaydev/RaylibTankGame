@@ -32,6 +32,10 @@ namespace RaylibStarterCS
         {
             
             DrawCircleLines((int)center.x, (int)center.y, radius, Color.BLUE);
+            DrawText($"x:{center.x}", (int)(center.x + radius), (int)(center.y - radius), 6, Color.WHITE);
+            DrawText($"y:{center.y}", (int)(center.x + radius), (int)(center.y - radius + 10), 6, Color.WHITE);
+
+            DrawText($"r:{(int)radius}", (int)(center.x), (int)(center.y), 6, Color.WHITE);
         }
 
         /// <summary>

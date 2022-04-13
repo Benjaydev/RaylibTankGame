@@ -29,6 +29,13 @@ namespace RaylibStarterCS
         public float HitHeight = 5f;
         public Collider2D collisionBoundary = new AABB();
 
+        // Movement
+        public float maxSpeed = 200f;
+        public float moveSpeed = 100f;
+        public Vector3 velocity = new Vector3();
+        public Vector3 acceleration = new Vector3();
+        public float deceleration = 0.99f;
+
         public bool isWaitingDestroy = false;
 
         // Keep track of the id of the object that was last collided with. Default (Empty value) is -1
@@ -414,7 +421,7 @@ namespace RaylibStarterCS
                         // Collide bullets
                         if ((tag == "Bullet" && obj.tag == "CollideAll"))
                         {
-                            ((BulletObject)this).CollideEvent(normal);
+                            ((Bullet)this).CollideEvent(normal);
 
                             if (obj.movable)
                             {
@@ -452,7 +459,7 @@ namespace RaylibStarterCS
                         }
 
                         // If bullet object has hit it's target
-                        else if (tag == "Bullet" && (obj.tag == ((BulletObject)this).bulletTarget))
+                        else if (tag == "Bullet" && (obj.tag == ((Bullet)this).bulletTarget))
                         {
                             // Destroy both objects
                             obj.isWaitingDestroy = true;

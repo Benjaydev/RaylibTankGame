@@ -13,17 +13,31 @@ namespace RaylibStarterCS
         public Color fadeColour = Color.WHITE;
         public bool hasNoColour = false;
         public Vector3 position = new Vector3();
-        public int size = 20;
+       
+        // Current size, min size, and max size
+        public Vector3 sizes = new Vector3(20f, 5f, 30f);
+
+        public float size
+        {
+            get { return sizes.x; }
+            set { sizes.x = value; }
+        }
+
+        public float changeDirection = 0;
+        public float changeSpeed = 25f;
+
+
         public float brightness = 1f;
         public float sourceFadoff = 0.5f;
 
 
         // Constructor
-        public Light(int Size, float Brightness, float SourceFadeoff, Color Colour, bool HasNoColour = false)
+        // Sizes represents (Current size, min size, and max size)
+        public Light(Vector3 Sizes, float Brightness, float SourceFadeoff, Color Colour, bool HasNoColour = false)
         {
             colour = Colour;
             fadeColour = Colour;
-            size = Size;
+            sizes = Sizes;
             brightness = Brightness;
             sourceFadoff = SourceFadeoff;
             hasNoColour = HasNoColour;
@@ -33,13 +47,14 @@ namespace RaylibStarterCS
         public Light(Light copy) : base(copy)
         {
             position = copy.position;
-            size = copy.size;
+            sizes = copy.sizes;
             colour = copy.colour;
             brightness = copy.brightness;
             fadeColour = copy.fadeColour;
             sourceFadoff = copy.sourceFadoff;
             hasNoColour = copy.hasNoColour;
         }
+
         // Change the colour that the light fades into
         public void SetFadeColour(Color colour)
         {
@@ -53,6 +68,33 @@ namespace RaylibStarterCS
 
             Game.lights.Remove(this);
         }
+        public override void AddSelfToSceneObjects()
+        {
+            base.AddSelfToSceneObjects();
+
+            Game.lights.Add(this);
+        }
+
+
+        public void RandomLightSizeVariation(float deltaTime)
+        {
+            if (Game.gameRandom.Next(1, 100) == 1)
+            {
+                changeDirection = Game.gameRandom.Next(-1, 2);
+            }
+            size = Math.Clamp(size + (changeSpeed * changeDirection * deltaTime), sizes.y, sizes.z);
+        }
+
+
+
+        public override void OnUpdate(float deltaTime)
+        {
+            base.OnUpdate(deltaTime);
+
+            RandomLightSizeVariation(deltaTime);
+
+        }
+
 
 
         /// <summary>
@@ -63,10 +105,10 @@ namespace RaylibStarterCS
             if (!Raylib.WindowShouldClose() && !Game.IsDebugActive && !hasNoColour)
             {
                 // Draw drop off
-                DrawCircleGradient((int)globalTransform.m20, (int)globalTransform.m21, size, ColorAlpha(colour, brightness-0.1f), ColorAlpha(fadeColour, 0f));
+                DrawCircleGradient((int)globalTransform.m20, (int)globalTransform.m21, (int)size, ColorAlpha(colour, brightness-0.1f), ColorAlpha(fadeColour, 0f));
 
                 // Draw centre source
-                DrawCircleGradient((int)globalTransform.m20, (int)globalTransform.m21, size*sourceFadoff, ColorAlpha(colour, brightness), ColorAlpha(fadeColour, 0f));
+                DrawCircleGradient((int)globalTransform.m20, (int)globalTransform.m21, (int) (size *sourceFadoff), ColorAlpha(colour, brightness), ColorAlpha(fadeColour, 0f));
             }
 
         }
@@ -78,7 +120,7 @@ namespace RaylibStarterCS
             if (!Raylib.WindowShouldClose() && !Game.IsDebugActive)
             {
                 // Multiplying a colour by the colour equivalent of 0 (Invisible colour) will result in that colour being removed (Removing dark spots in this case)
-                DrawCircleGradient((int)globalTransform.m20, (int)globalTransform.m21, size, ColorAlpha(Color.WHITE, 0), ColorAlpha(Color.WHITE, 1f));
+                DrawCircleGradient((int)globalTransform.m20, (int)globalTransform.m21, (int)size, ColorAlpha(Color.WHITE, 0), ColorAlpha(Color.WHITE, 1f));
             }
         }
 

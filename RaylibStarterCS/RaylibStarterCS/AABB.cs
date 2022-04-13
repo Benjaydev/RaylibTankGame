@@ -64,6 +64,13 @@ namespace RaylibStarterCS
             DrawLine((int)corners[1].x, (int)corners[1].y, (int)corners[2].x, (int)corners[2].y, Color.RED);
             DrawLine((int)corners[2].x, (int)corners[2].y, (int)corners[3].x, (int)corners[3].y, Color.RED);
             DrawLine((int)corners[3].x, (int)corners[3].y, (int)corners[0].x, (int)corners[0].y, Color.RED);
+
+            Vector3 center = Center();
+            DrawCircle((int)min.x, (int)min.y, 3, Color.VIOLET);
+            DrawCircle((int)max.x, (int)min.y, 3, Color.GREEN);
+            DrawCircle((int)min.x, (int)max.y, 3, Color.BLUE);
+            DrawCircle((int)max.x, (int)max.y, 3, Color.YELLOW);
+
         }
 
         // Translate AABB by x and y
