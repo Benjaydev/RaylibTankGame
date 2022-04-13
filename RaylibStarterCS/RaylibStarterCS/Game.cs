@@ -180,6 +180,7 @@ namespace RaylibStarterCS
             // Set state of game
             GameOver = true;
             GameActive = false;
+            IsDebugActive = false;
 
             // Reset all scene objects, UI, and Lighting
             resetAllOUL();
