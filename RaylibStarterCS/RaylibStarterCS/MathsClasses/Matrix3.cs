@@ -135,7 +135,7 @@ namespace MathsClasses
 
         }
 
-        // Rotate all axes
+        // Rotate all axes of matrix
         public void Rotate(double radX, double radY, double radZ)
         {
             // Make new matrix for each axis
@@ -234,6 +234,7 @@ namespace MathsClasses
                 M1.GetRow(2).Dot(M2.GetColumn(2)));
         }
 
+        // Overload Vector added to matrix operator
         public static Matrix3 operator +(Matrix3 M1, Vector3 v)
         {
             return new Matrix3(M1.m00 + v.x, M1.m01 + v.x, M1.m02 + v.x, M1.m10 + v.y, M1.m11 + v.y, M1.m12 + v.y, M1.m20 + v.z, M1.m21 + v.z, M1.m22 + v.z);

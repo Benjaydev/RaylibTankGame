@@ -494,7 +494,7 @@ namespace RaylibStarterCS
             // Debug texts
             if (ShowFPS)
             {
-                DrawText(fps.ToString() + $" ({(FPSCapped ? "Capped 520" : "Uncapped")}, F3 to {(FPSCapped ? "Uncap" : "Cap")})", 10, 10, 24, Color.RED);
+                DrawText(fps.ToString() + $" ({(FPSCapped ? "Capped 520" : "Uncapped")}, F3 to {(FPSCapped ? "Uncap" : "Cap")})", 10, 10, 24, Color.BLUE);
             }
             if (IsDebugActive)
             {

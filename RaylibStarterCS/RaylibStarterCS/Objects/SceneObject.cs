@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using MathsClasses;
+using static Raylib_cs.Raylib;
 
 namespace RaylibStarterCS
 {
@@ -171,6 +172,16 @@ namespace RaylibStarterCS
             if (Game.IsDebugActive)
             {
                 collisionBoundary.DrawDebug();
+
+                if (hasCollision)
+                {
+                    // Draw the forward vector
+                    Matrix3 transformed = new Matrix3(globalTransform);
+                    transformed.RotateZ(MathF.Atan2(globalTransform.m00, globalTransform.m01));
+                    transformed.Translate(globalTransform.m00 * 40, globalTransform.m01 * 40);
+                    DrawLine((int)globalTransform.m20, (int)globalTransform.m21, (int)transformed.m20, (int)transformed.m21, Raylib_cs.Color.ORANGE);
+                }
+                
             }
         }
 
@@ -200,6 +211,7 @@ namespace RaylibStarterCS
                 child.Draw();
             }
         }
+
 
 
         // Set the collision type of the collision boundry

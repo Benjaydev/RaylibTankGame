@@ -24,6 +24,8 @@ namespace MathsClasses
             y = Y;
             z = Z;
         }
+
+        // Copy constructor
         public Vector3(Vector3 v)
         {
             x = v.x;
@@ -37,10 +39,10 @@ namespace MathsClasses
             return (x * v.x) + (y * v.y) + (z * v.z);
         }
 
-        // Calculate the maginitude of vector (Length)
+        // Calculate the squared maginitude of vector (Squared Length)
         public float MagnitudeSqr()
         {
-            return (float)this.Dot(this);
+            return this.Dot(this);
         }
 
         // Calculate the maginitude of vector (Length)
@@ -57,35 +59,38 @@ namespace MathsClasses
             y /= magnitude;
             z /= magnitude;
         }
+
+        // Return the normalised vector
         public Vector3 Normalized()
         {
             float magnitude = Magnitude();
             return new Vector3(x / magnitude, y / magnitude, z / magnitude);
         }
 
-        // Minimum function to find the minimum value between each Vector3
-        public static Vector3 Min(Vector3 p1, Vector3 p2)
+        // Static function to find the minimum value between two Vectors
+        public static Vector3 Min(Vector3 v1, Vector3 v2)
         {
-            float x = p1.x <= p2.x ? p1.x : p2.x;
-            float y = p1.y <= p2.y ? p1.y : p2.y;
-            float z = p1.z <= p2.z ? p1.z : p2.z;
+            float x = v1.x <= v2.x ? v1.x : v2.x;
+            float y = v1.y <= v2.y ? v1.y : v2.y;
+            float z = v1.z <= v2.z ? v1.z : v2.z;
             return new Vector3(x, y, z);
         }
         
-        // Minimum function to find the maximum value between each Vector3
-        public static Vector3 Max(Vector3 p1, Vector3 p2)
+        // Static function to find the maximum value between each Vectors
+        public static Vector3 Max(Vector3 v1, Vector3 v2)
         {
-            float x = p1.x >= p2.x ? p1.x : p2.x;
-            float y = p1.y >= p2.y ? p1.y : p2.y;
-            float z = p1.z >= p2.z ? p1.z : p2.z;
+            float x = v1.x >= v2.x ? v1.x : v2.x;
+            float y = v1.y >= v2.y ? v1.y : v2.y;
+            float z = v1.z >= v2.z ? v1.z : v2.z;
             return new Vector3(x, y, z);
         }
 
-        public static Vector3 Clamp(Vector3 p, Vector3 min, Vector3 max)
+        // Static function to find the value of a vector locked within a minimum and maximum range
+        public static Vector3 Clamp(Vector3 v, Vector3 min, Vector3 max)
         {
-            float x = p.x <= min.x ? min.x : p.x;
-            float y = p.y <= min.y ? min.y : p.y;
-            float z = p.z <= min.z ? min.z : p.z;
+            float x = v.x <= min.x ? min.x : v.x;
+            float y = v.y <= min.y ? min.y : v.y;
+            float z = v.z <= min.z ? min.z : v.z;
 
             x = x >= max.x ? max.x : x;
             y = y >= max.y ? max.y : y;
@@ -93,9 +98,10 @@ namespace MathsClasses
             return new Vector3(x, y, z);
         }
 
+        // Find the distance between this vector and another vector
         public float Distance(Vector3 v)
         {
-            return (float)Math.Sqrt(Math.Pow(v.x - x, 2f) + Math.Pow(v.y - y, 2f) + Math.Pow(v.z - z, 2f));
+            return (float)Math.Sqrt(Math.Pow(v.x - x, 2) + Math.Pow(v.y - y, 2) + Math.Pow(v.z - z, 2));
         }
 
 

@@ -15,6 +15,7 @@ namespace MathsClasses
         public float m20, m21, m22, m23;
         public float m30, m31, m32, m33;
 
+        // Constructor
         public Matrix4()
         {
             m00 = m11 = m22 = m33 = m01 = m02 = m03 = m10 = m12 = m13 = m20 = m21 = m23 = m30 = m31 = m32 = 0;
@@ -125,6 +126,17 @@ namespace MathsClasses
             return new Vector4(0, 0, 0, 0);
         }
 
+        // Transpose the matrix
+        public void Transpose()
+        {
+            Matrix4 temp = new Matrix4();
+            temp.m00 = m00; temp.m10 = m01; temp.m20 = m02; temp.m30 = m03;
+            temp.m01 = m10; temp.m11 = m11; temp.m21 = m12; temp.m31 = m13;
+            temp.m02 = m20; temp.m12 = m21; temp.m22 = m22; temp.m32 = m23;
+            temp.m03 = m30; temp.m13 = m31; temp.m23 = m32; temp.m33 = m33;
+
+            Set(temp);
+        }
 
         // Set rotation of X
         public void SetRotateX(double rad)
