@@ -440,8 +440,8 @@ namespace RaylibStarterCS
                             return true;
                         }
 
-                        // Collide player and enemy tanks with eachother, and player with player collider
-                        else if((tag == "Player" && obj.tag == "Enemy") || (obj.tag == "Player" && tag == "Enemy") || (tag == "Player" && obj.tag == "CollidePlayer"))
+                        // Collide player with player collider
+                        else if((tag == "Player" && obj.tag == "CollidePlayer"))
                         {
                             return true;
                         }

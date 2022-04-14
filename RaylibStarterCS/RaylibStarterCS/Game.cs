@@ -120,6 +120,7 @@ namespace RaylibStarterCS
 
             // Setup player tank
             playerTank = new Tank("Player");
+            
 
             // Reset all scene objects, UI, and Lighting
             resetAllOUL();
@@ -219,7 +220,8 @@ namespace RaylibStarterCS
             resetAllOUL();
 
             // Initiate player
-            playerTank.Init(GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f);
+            playerTank.Init(1100, 630);
+            playerTank.Rotate(-90*DEG2RAD);
 
             // Create main game map
             new GameMap();
