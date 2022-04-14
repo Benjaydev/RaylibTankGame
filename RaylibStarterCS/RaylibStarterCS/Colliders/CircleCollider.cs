@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using MathClasses;
+﻿using System.Collections.Generic;
+using MathsClasses;
 using static Raylib_cs.Raylib;
 using Raylib_cs;
 

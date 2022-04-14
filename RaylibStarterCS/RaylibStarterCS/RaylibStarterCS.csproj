@@ -26,7 +26,10 @@
     <None Remove="PNG\Obstacles\light.png" />
     <None Remove="PNG\Obstacles\sandbagBeige.png" />
     <None Remove="PNG\Obstacles\sandbagBrown.png" />
+    <None Remove="PNG\Tanks\barrelBeige_outline.png" />
     <None Remove="PNG\Tanks\barrelBlack_outline.png" />
+    <None Remove="PNG\Tanks\barrelBlue_outline.png" />
+    <None Remove="PNG\Tanks\barrelGreen_outline.png" />
     <None Remove="PNG\Tanks\tankBeige_outline.png" />
     <None Remove="PNG\Tanks\tankBlack_outline.png" />
     <None Remove="PNG\Tanks\tankBlue_outline.png" />
@@ -99,7 +102,16 @@
     <Content Include="PNG\Obstacles\sandbagBrown.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="PNG\Tanks\barrelBeige_outline.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="PNG\Tanks\barrelBlack_outline.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PNG\Tanks\barrelBlue_outline.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PNG\Tanks\barrelGreen_outline.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="PNG\Tanks\tankBeige_outline.png">

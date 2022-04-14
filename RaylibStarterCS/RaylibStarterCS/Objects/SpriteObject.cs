@@ -1,6 +1,6 @@
 ﻿using System;
 using Raylib_cs;
-using MathClasses;
+using MathsClasses;
 using static Raylib_cs.Raylib;
 
 
